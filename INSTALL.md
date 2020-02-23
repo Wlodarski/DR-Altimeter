@@ -4,18 +4,18 @@
 
 1. Download the precompiled files to a folder of your choice:
    - DR-Altimeter.exe
-   - Chromedriver.exe
+   - [Chromedriver.exe](INSTALL.md#chromedriverexe)
    
 2. Run DR-Altimeter.exe
    - At first run, config.ini will be created and configured with your current latitude and longitude. You'll see briefly an empty Chrome window. It's normal. It's required to acquire your position.
    
-3. Edit the congiguration file (config.ini) to fit your need.
+3. Edit the configuration file ([config.ini](CONFIG.md)) to fit your need.
 
 4. _Optional_ Configure a Slack bot
    - Create a bot and register it to a chat room
    - Add SLACK_API_TOKEN to windows system environment variables
    - Restart Windows
-   - Create a shortcut with the --slack argument pointing to your designated chat room
+   - Create a shortcut with the [--slack](COMMAND.md#-s---slack) argument pointing to your designated chat room
 
 ## Linux and other OS
 
