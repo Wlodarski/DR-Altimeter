@@ -1,8 +1,9 @@
 # Configuration File
 
-A default configuration file (config.ini) is created at first run. 
+A default configuration file, config.ini, is created at first run. 
 
 To rebuilt the configuration file, delete config.ini. 
+To reset a single setting to its default value, delete it. It will be regenerate at next run.
 
 ## Content
 ```
@@ -63,5 +64,5 @@ geolocation always on |  0 = no, 1 = yes, default = 0
 [Command line options](COMMAND.md) have priority over the configuration file.
 
 
-|[Back to README.md](README.md#configuration-file-configini)|
+|[Back to README.md](README.md#configuration)|
 |----
