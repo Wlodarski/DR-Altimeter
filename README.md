@@ -141,7 +141,8 @@ By chat room Cxxxxxx id : `--slack CTU2MKQ5P`
 By room hashtag : `--slack #random`
 
 A **Bot User OAuth Access Token** must be register with the postman and included among the OS system environment variables as SLACK_API_TOKEN. The session needs to be restart (or the computer rebooted) for the environment variable to take effect. See [Create a Slack app and authenticate with Postman](https://api.slack.com/tutorials/slack-apps-and-postman) for more information and a tutorial.
- 
+
+ ![DR Altimeter bot](example/Bot_on_Slack.png)
  
 ### -v, --verbose
 
