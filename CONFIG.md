@@ -55,3 +55,7 @@ longitude | East = dd.ddddd, West = -dd.dddd
 override url | URL of a specific weather station's hourly forecast page. Always starts with [https://www.wunderground.com/hourly/...](https://www.wunderground.com/hourly/ca/orford/IQUEBECO4)
 geolocation always on |  0 = no, 1 = yes, default = 0
 **https page** | URL of a random webpage, used to activate Chrome's geolocator
+
+## Note
+
+[Command line options](COMMAND.md) have priority over the configuration file.
