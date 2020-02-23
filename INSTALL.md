@@ -31,3 +31,9 @@ DR-Altimeter haven't been tested on other os system than Windows 10 running Pyth
    - pip install matplotlib numpy slack selenium termcolor colorama
 
 3. Run DR-Altimeter.py and adapt the configuration file, config.ini, generated at first run to suit your need.
+
+
+## Chromedriver.exe
+
+If you encounter problems with the provided Chromedriver, dowload another version from [Google's repository](https://chromedriver.storage.googleapis.com/index.html). Choose one that matches your current Chrome browser version to maximise compatibility.
+
