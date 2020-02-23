@@ -4,9 +4,7 @@
 
 ### -n, --no-key 
 
-**Disables "*Press any key*" pauses.** 
-
-Useful to automate execution without user intervention
+Disables "*Press any key*" pauses. Especially useful to automate execution without user intervention.
 
 ### --latitude, --longitude
 
