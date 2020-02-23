@@ -145,11 +145,11 @@ Ocean Hill, Brooklin Station : `--override-url https://www.wunderground.com/hour
 `
 ### -s, --slack
 
-If provided, the textual output will be posted in your private [Slack](https://slack.com/) room.
+If set, the textual output will be posted to your private [Slack](https://slack.com/) chat room.
 
-By chat room Cxxxxxx id : `--slack CTU2MKQ5P`
+By chat room _CTxxxxxxx_ id : `--slack CTU2MKQ5P`
 
-By room hashtag : `--slack #random`
+By room _#hashtag_ : `--slack #random`
 
 A **Bot User OAuth Access Token** must be register with the postman and included among the OS system environment variables as SLACK_API_TOKEN. The session needs to be restart (or the computer rebooted) for the environment variable to take effect. See [Create a Slack app and authenticate with Postman](https://api.slack.com/tutorials/slack-apps-and-postman) for more information and a tutorial.
 
