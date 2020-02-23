@@ -1,4 +1,4 @@
-# Command line options
+# Command Line Options
 
 ***Command lines options take precedence over *config.ini* settings***
 
