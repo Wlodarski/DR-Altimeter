@@ -30,7 +30,7 @@ DR-Altimeter has not been tested on other operating systems than Windows 10 runn
 2. Install all the required librairies:
    - ``pip install matplotlib numpy slack selenium termcolor colorama``
 
-3. Run DR-Altimeter.py and adapt the configuration file, [config.ini](CONFIG.md), generated at first run to suit your need.
+3. Run ``python DR-Altimeter.py`` and adapt the configuration file, [config.ini](CONFIG.md), generated at first run to suit your need.
 
 
 ## Chromedriver.exe
