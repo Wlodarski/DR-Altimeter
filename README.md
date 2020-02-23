@@ -101,7 +101,7 @@ longitude =
 | **autosave papertype** | _letter_ or _legal_  |
 | press any key | 0 = no, 1 = yes, default = 0 |
 **minimum hours**| Fetch at least x hours of forecast
-**display x hours** | How many of the minimum hours will be displayed 
+**display x hours** | How many of the fetched hours will be displayed 
 latitude | North = dd.ddddd, South = -dd.dddd
 longitude | East = dd.ddddd, West = -dd.dddd
 override url | URL of a specific weather station's hourly forecast page. Always starts with 'https://www.wunderground.com/hourly/...
@@ -146,4 +146,4 @@ A **Bot User OAuth Access Token** must be register with the postman and included
 
 ## Chromedriver.exe
 
-The latest (and previous versions) can be downloaded from [Google repository](https://chromedriver.storage.googleapis.com/index.html)
+The latest (and previous versions) can be downloaded from [Google's repository](https://chromedriver.storage.googleapis.com/index.html)
