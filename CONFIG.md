@@ -63,5 +63,5 @@ geolocation always on |  0 = no, 1 = yes, default = 0
 [Command line options](COMMAND.md) have priority over the configuration file.
 
 
-|[Back to README.md](README.md)|
+|[Back to README.md](README.md#configuration-file-configini)|
 |----
