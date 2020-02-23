@@ -42,7 +42,7 @@ from txttable import PredictionTable
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
 
 FULLNAME = 'DR Polynomial Altimeter'
-VERSION = '0.1 alpha'
+VERSION = '0.9.20 alpha'
 DESCRIPTION = "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
 SHORTNAME = 'DR-Altimeter'
 
