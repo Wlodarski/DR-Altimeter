@@ -1,6 +1,8 @@
-## Config.ini
+## Configuration File
 
-To regenerate the configuration file, delete config.ini. A new one will be recreated with default values.
+A default configuration file (config.ini) is created at first run. 
+
+To rebuilt the configuration file, delete config.ini. 
 
 ```
 [USER SETTINGS]
