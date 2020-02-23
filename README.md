@@ -80,7 +80,7 @@ _Altitude dead reckoning_ uses the same principle as dead reckoning but applies 
  23h    1014.91 hPa     30.9m     5.0m   23h15[32], 23h38[33]                  
 ````
 
-##### Simple use
+##### Simple example
 At 21h01, you determine that you are at an known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
 
       21h01[fix] = 450m ASL
@@ -90,8 +90,8 @@ Later, at twelve minutes passed midnight, your watch indicates an altitude of 47
       00h12[I] = 476m, indicated
       00h12[DR] = 476m - 00h02[2] = 474m ASL, deduced
       
-##### More advanced use
-On the same trek (see above simple example), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this know altitude. Here and on after, this new [fix] becomes your new reference.
+##### More advanced example
+On the same trek ([see above](DR-Altimeter#simple-use)), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this know altitude. Here and on after, this new [fix] becomes your new reference.
 
       00h50[fix] @ [3] = 523m ASL
      
