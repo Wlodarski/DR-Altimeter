@@ -1,6 +1,6 @@
 # Installation
 
-## Windows 
+## Windows 10
 
 1. Download the precompiled files to a folder of your choice:
    - DR-Altimeter.exe
@@ -17,6 +17,10 @@
    - Restart Windows
    - Create a shortcut with the [--slack](COMMAND.md#-s---slack) argument pointing to your designated chat room
    - It's also often useful to add [--no-key](COMMAND.md#-n---no-key) to the shortcut
+   
+#### Chromedriver.exe
+
+If you encounter problems with the provided Chromedriver, download another version from [Google's repository](https://chromedriver.storage.googleapis.com/index.html). Choose one that matches your current Chrome browser version to maximise compatibility.
 
 ## Linux and other OS
 
@@ -32,11 +36,6 @@ DR-Altimeter has not been tested on other operating systems than Windows 10 runn
    - ``pip install matplotlib numpy slack selenium termcolor colorama``
 
 3. Run ``python DR-Altimeter.py`` and adapt the configuration file, [config.ini](CONFIG.md), generated at first run to suit your need.
-
-
-## Chromedriver.exe
-
-If you encounter problems with the provided Chromedriver, download another version from [Google's repository](https://chromedriver.storage.googleapis.com/index.html). Choose one that matches your current Chrome browser version to maximise compatibility.
 
 
 |[Back to README.md](README.md#Installation)|
