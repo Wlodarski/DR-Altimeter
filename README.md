@@ -110,10 +110,6 @@ See [CONFIG.md](CONFIG.md)
 
 See [COMMAND.md](COMMAND.md)
 
-## Chromedriver.exe
-
-The latest driver can be obtained from [Google's repository](https://chromedriver.storage.googleapis.com/index.html). Choose one that matches your current Chrome browser version to maximise compatibility.
-
 ## Known Issues
 
 - **[Top right y axis (altitude) : scale not formatted](https://github.com/Wlodarski/DR-Altimeter/issues/1)**  
