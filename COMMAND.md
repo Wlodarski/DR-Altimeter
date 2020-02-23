@@ -29,3 +29,7 @@ A **Bot User OAuth Access Token** must be register with the postman and included
  ![DR Altimeter bot](example/Bot_on_Slack.png)
  
 ### -v, --verbose
+Displays more information about the polynomial curve fitting and general processing.
+
+|[Back to README.md](README.md)|
+|----
