@@ -6,6 +6,28 @@ _DR-Altimeter_ predicts how much the indicated altitude will deviate due to chan
 ##### Graphical output:
 ![graphical output](example/graph_example.png)
 
+#### Measuring altitudes based on changes in atmospheric pressure
+The altimeter determines the altitude at your current location based on accumulated atmospheric pressure changes measured by the pressure sensor. Setting the altimeter at a location where you know the precise altitude before starting your ascent enables it to take even more precise altitude measurements.
+
+#### Sea level measurement
+Setting the altimeter at a location where you know the precise altitude enables you to determine the elevation of your current position with respect to sea level. If you come across a marker indicating 400 meters above sea level while hiking or climbing, for example, simply set the altimeter at 400 meters. This enables you to obtain more accurate readings with respect to sea
+
+#### Vertical Dead Reckoning
+[_Dead Reckoning_](https://en.wikipedia.org/wiki/Dead_reckoning) is the process of calculating one's current position by using a previously determined position, or fix, and advancing that position based upon known or estimated speeds over elapsed time and course. 
+
+_Altitude dead reckoning_ uses the same principle as dead reckoning but applies it to the vertical plan. Whilst standing still at a fixed altitude, you'll notice that the altimeter perceives atmospheric pressure variations due to weather changes as altitude changes _as if you climbed or descended_. DR Altimeter displays in brackets [] the expected contribution of weather changes to the indicated altitude.
+
+## Example of use
+##### Simple use
+At 21h01, you determine that you are at an known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
+
+      21h01[fix] = 450m ASL
+
+Later, at twelve minutes passed midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters, you can estimate your true altitude to be 476 - 2 = 474 meter above sea level.
+
+      00h12[I] = 476m, indicated
+      00h12[DR] = 476m - 00h02[2] = 474m ASL, deduced
+
 ##### Textual output:
 ```
   H      PRESSURE       ALT     ALT/hr                                         
@@ -66,7 +88,17 @@ _DR-Altimeter_ predicts how much the indicated altitude will deviate due to chan
 -------------------------------------------------------------------------------
  23h    1014.91 hPa     30.9m     5.0m   23h15[32], 23h38[33]                  
 ````
+##### More advanced use
+On the same trek (see above simple example), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this know altitude. Here and on after, this new [fix] becomes your new reference.
 
+      00h50[fix] = 523m ASL
+     
+Next morning, at 07:30, your watch indicates an altitude of 478m. Since your last fix was taken at the [3] compensation level (00h44[3]) and you are current at the [2] compensation level (06h49[2]), your deduced altitude is 478 + [3] - [2] = 479 m.
+
+      07h30[i] = 478m, indicated
+      07h30[DR] = (478m + 0044[3]) - 06h49[2]
+                = 481 - 2
+                = 479m ASL, deduced 
 ## Config.ini
 
 To regenerate the configuration file, delete config.ini. A new one will be recreated with default values.
