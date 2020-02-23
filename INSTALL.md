@@ -35,9 +35,9 @@ DR-Altimeter haven't been tested on other os system than Windows 10 running Pyth
 
 ## Chromedriver.exe
 
-If you encounter problems with the provided Chromedriver, dowload another version from [Google's repository](https://chromedriver.storage.googleapis.com/index.html). Choose one that matches your current Chrome browser version to maximise compatibility.
+If you encounter problems with the provided Chromedriver, download another version from [Google's repository](https://chromedriver.storage.googleapis.com/index.html). Choose one that matches your current Chrome browser version to maximise compatibility.
 
 
-|[Back to README.md](README.md)|
+|[Back to README.md](README.md#Installation)|
 |----
 
