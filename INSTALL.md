@@ -16,7 +16,7 @@
    - Add SLACK_API_TOKEN to Windows system environment variables
    - Restart Windows
    - Create a shortcut with the [--slack](COMMAND.md#-s---slack) argument pointing to your designated chat room
-   - It's a good idea to also use ``--no-key``
+   - It's also often useful to add [--no-key](COMMAND.md#-n---no-key) to the shortcut
 
 ## Linux and other OS
 
