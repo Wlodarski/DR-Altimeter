@@ -24,7 +24,7 @@ Setting the altimeter at a location where you know the precise altitude enables 
 #### Vertical Dead Reckoning
 [_Dead Reckoning_](https://en.wikipedia.org/wiki/Dead_reckoning) is the process of calculating one's current position by using a previously determined position, or fix, and advancing that position based upon known or estimated speeds over elapsed time and course. 
 
-_Altitude dead reckoning_ uses the same principle as dead reckoning but applies it to the vertical plan. Whilst standing still at a fixed altitude, you'll notice that the altimeter perceives atmospheric pressure variations due to weather changes as altitude changes _as if you climbed or descended_. DR Altimeter displays in brackets [] the expected contribution of weather changes to the indicated altitude.
+_Altitude dead reckoning_ uses the same principle as dead reckoning but applies it to the vertical plane. Whilst standing still at a fixed altitude, you'll notice that the altimeter perceives atmospheric pressure variations due to weather changes as altitude changes _as if you climbed or descended_. DR Altimeter displays in brackets [] the expected contribution of weather changes to the indicated altitude.
 
 ## Example of use
 
