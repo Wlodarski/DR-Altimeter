@@ -3,6 +3,14 @@ Altitude '[Dead Reckoning](https://en.wikipedia.org/wiki/Dead_reckoning)' for Ca
 
 _DR-Altimeter_ predicts how much the indicated altitude will deviate due to changing weather in the vicinity of a [Wunderground.com](http://wunderground.com) station. By substracting the predicted altitude change, to remove its influence, one can greatly improve the accuracy of the _Casio Pro Trek_ wristwatch altimeter. Depending on the accuracy of the weather forecast, the indicated altitude can follow true altitude well within a ± 5 meters error margin.
 
+#### Some features
+
+- Predictions both produced in graphical and textual format;
+- Textual resultats can be automatically posted to a Slack chat room, therefore to a smartphone;
+- Graphical User Interface (GUI) with zoom and pan functions, to export portions of the graph that interests you specifically
+- Fully configurable;
+- Command line options, for shortcuts and tasks schedulling.
+
 ##### Figure 1: Graphical output
 ![graphical output](example/graph_example.png)
 
@@ -102,7 +110,7 @@ Next morning, at 07:30, your watch indicates an altitude of 478m. Since your las
                 = 481 - 2
                 = 479m ASL, compensated for forecasted weather 
                
-###  Configuration File (config.ini)
+##  Configuration File (config.ini)
 
 See [CONFIG.md](CONFIG.md)
 
