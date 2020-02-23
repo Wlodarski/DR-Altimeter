@@ -1,7 +1,7 @@
 # DR-Altimeter
 Altitude 'Dead Reckoning' for Casio Triple Sensor v.3
 
-##Command line options
+## Command line options
 
 ***Command lines options take precedence over *config.ini* settings***
 
