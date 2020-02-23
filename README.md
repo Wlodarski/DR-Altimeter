@@ -102,95 +102,13 @@ Next morning, at 07:30, your watch indicates an altitude of 478m. Since your las
                 = 481 - 2
                 = 479m ASL, compensated for forecasted weather 
                
-## Config.ini
+###  Configuration file (config.ini)
 
-To regenerate the configuration file, delete config.ini. A new one will be recreated with default values.
-
-```
-[USER SETTINGS]
-https page = https://blank.org
-override url = 
-geolocation always on = 0
-autosave dpi = 300
-autosave orientation = landscape
-autosave papertype = letter
-autosave png-pdf-eps filename = graph.png
-press any key = 1
-short timeout = 5
-long timeout = 10
-verbose = 0
-minimum hours = 8
-display x hours = 6
-latitude =
-longitude = 
-
-```
-
-**bold** = required, cannot be left empty or missing
-
-#### Timeouts
-| Keyword | Note |
-| --- | --- |
-| **short timeout** | About 5 seconds |
-| **long timeout** | Between 10 and 60 seconds |
-
-#### Automatic Save
-| Keyword | Note |
-| --- | --- |
-| **autosave png-pdf-eps filename** | The extension determines whether a PDF, an EPS, or an PNG image file is automatically saved |
-| **autosave dpi** | dot per inch |
-| **autosave orientation** | _portrait_ or _landscape_  |
-| **autosave papertype** | _letter_ or _legal_  |
-| press any key | 0 = no, 1 = yes, default = 0 |
-
-#### Interactive GUI, Pan/Zoom window size
-| Keyword | Note |
-| --- | --- |
-**minimum hours**| Fetch at least n hours of forecast
-**display x hours** | How many of the fetched hours will be displayed 
-
-#### Geolocation
-| Keyword | Note |
-| --- | --- |
-latitude | North = dd.ddddd, South = -dd.dddd
-longitude | East = dd.ddddd, West = -dd.dddd
-override url | URL of a specific weather station's hourly forecast page. Always starts with [https://www.wunderground.com/hourly/...](https://www.wunderground.com/hourly/ca/orford/IQUEBECO4)
-geolocation always on |  0 = no, 1 = yes, default = 0
-**https page** | URL of a random webpage, used to activate Chrome's geolocator
+See [CONFIG.md](CONFIG.md)
 
 ## Command line options
 
-***Command lines options take precedence over *config.ini* settings***
-
-### -n, --no-key 
-
-**Disables "*Press any key*" pauses.** 
-
-Useful to automate execution without user intervention
-
-### --latitude, --longitude
-
-Somewhere in New York City : `--latitude 40.730610 --longitude -73.935242`
-
-### --override-url
-
-URL of a specific weather station's hourly forecast page. Always starts with 'https://www.wunderground.com/hourly/...
-
-Ocean Hill, Brooklin Station : `--override-url https://www.wunderground.com/hourly/us/ny/new-york%20city/KNYNEWYO736
-`
-### -s, --slack
-
-If set, the textual output will be posted to your private [Slack](https://slack.com/) chat room.
-
-By chat room _CTxxxxxxx_ id : `--slack CTU2MKQ5P`
-
-By room _#hashtag_ : `--slack #random`
-
-A **Bot User OAuth Access Token** must be register with the postman and included among the OS system environment variables as SLACK_API_TOKEN. The session needs to be restart (or the computer rebooted) for the environment variable to take effect. See [Create a Slack app and authenticate with Postman](https://api.slack.com/tutorials/slack-apps-and-postman) for more information and a tutorial.
-
- ![DR Altimeter bot](example/Bot_on_Slack.png)
- 
-### -v, --verbose
+See [COMMAND.md}(COMMAND.md)
 
 ## Chromedriver.exe
 
