@@ -3,6 +3,40 @@ Altitude 'Dead Reckoning' for Casio Triple Sensor v.3
 
 ![graph](example/graph_example.png)
 
+## Config.ini
+
+To regenerate the configuration file, delete config.ini. A new one will be recreated with default values.
+
+```
+[USER SETTINGS]
+https page = https://blank.org
+override url = 
+geolocation always on = 0
+autosave dpi = 300
+autosave orientation = landscape
+autosave papertype = letter
+autosave png-pdf-eps filename = graph.png
+press any key = 1
+short timeout = 5
+long timeout = 10
+verbose = 0
+minimum hours = 8
+display x hours = 6
+latitude =
+longitude = 
+
+```
+
+| Keyword | Note |
+| --- | --- |
+| short timeout |  |
+| long timeout |  |
+| autosave png-pdf-eps filename | The extension determines twhether a PDF, an EPS, or an PNG image file is automatically saved |
+| autosave dpi | dot per inch |
+| autosave orientation | _portrait_ or _landscape_  |
+| autosave papertype | _letter_ or _legal_  |
+
+
 ## Command line options
 
 ***Command lines options take precedence over *config.ini* settings***
