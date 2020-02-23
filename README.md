@@ -110,6 +110,10 @@ Next morning, at 07:30, your watch indicates an altitude of 478m. Since your las
                 = 481 - 2
                 = 479m ASL, compensated for forecasted weather 
                
+## Installation
+
+See [INSTALL.md](INSTALL.md)
+
 ##  Configuration File (config.ini)
 
 See [CONFIG.md](CONFIG.md)
