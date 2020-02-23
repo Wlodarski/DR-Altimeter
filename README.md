@@ -85,7 +85,7 @@ At 21h01, you determine that you are at an known altitude of 450 meters above me
 
       21h01[fix] @ [0] = 450m ASL
 
-Later, at twelve minutes passed midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters (see Figure 1 or 2), you can estimate your true altitude to be 476 - 2 = 474 meter above sea level.
+Later, at twelve minutes passed midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters (see [Figure 2](README.md#figure-2-textual-output)), you can estimate your true altitude to be 476 - 2 = 474 meter above sea level.
 
       00h12[I] = 476m, indicated
       00h12[DR] = 476m - 00h02[2] = 474m ASL, deduced
