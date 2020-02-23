@@ -1,7 +1,7 @@
 # DR-Altimeter
 Altitude 'Dead Reckoning' for Casio Triple Sensor v.3
 
-_DR-Altimeter_ predicts how much the indicated altitude will deviate due to changing weather in the vicinity of a [Wunderground.com](wunderground.com) station. By substracting the predicted altitude change, to remove its imfluence, one can improve greatly the accuracy of the _Casio Pro Trek_ wristwatch altimeter.
+_DR-Altimeter_ predicts how much the indicated altitude will deviate due to changing weather in the vicinity of a [Wunderground.com](http://wunderground.com) station. By substracting the predicted altitude change, to remove its influence, one can greatly improve the accuracy of the _Casio Pro Trek_ wristwatch altimeter. Depending on the accuracy of the weather forecast, the indicated altitude can follow true altitude well within a ± 5 error margin.
 
 ##### Graphical output:
 ![graphical output](example/graph_example.png)
