@@ -1,9 +1,10 @@
-## Configuration File
+# Configuration File
 
 A default configuration file (config.ini) is created at first run. 
 
 To rebuilt the configuration file, delete config.ini. 
 
+## Content
 ```
 [USER SETTINGS]
 https page = https://blank.org
@@ -23,6 +24,7 @@ latitude =
 longitude = 
 
 ```
+## Description 
 
 **bold** = required, cannot be left empty or missing
 
