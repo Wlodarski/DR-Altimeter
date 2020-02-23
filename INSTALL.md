@@ -13,13 +13,13 @@
 
 4. _Optional_ Configure a Slack bot
    - Create a bot and register it to a chat room
-   - Add SLACK_API_TOKEN to windows system environment variables
+   - Add SLACK_API_TOKEN to Windows system environment variables
    - Restart Windows
    - Create a shortcut with the [--slack](COMMAND.md#-s---slack) argument pointing to your designated chat room
 
 ## Linux and other OS
 
-DR-Altimeter haven't been tested on other os system than Windows 10 running Python 3.6, but it should work with only minor tweeks.
+DR-Altimeter has not been tested on other operating systems than Windows 10 running Python 3.6, but it should work with other os, only minor tweeks.
 
 1. Download the Python source files:
    - DR-Altimeter.py
@@ -28,9 +28,9 @@ DR-Altimeter haven't been tested on other os system than Windows 10 running Pyth
    - txttable.py
    
 2. Install all the required librairies:
-   - pip install matplotlib numpy slack selenium termcolor colorama
+   - ``pip install matplotlib numpy slack selenium termcolor colorama``
 
-3. Run DR-Altimeter.py and adapt the configuration file, config.ini, generated at first run to suit your need.
+3. Run DR-Altimeter.py and adapt the configuration file, [config.ini](CONFIG.md), generated at first run to suit your need.
 
 
 ## Chromedriver.exe
