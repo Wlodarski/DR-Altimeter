@@ -22,6 +22,10 @@
 
 If you encounter problems with the provided Chromedriver, download another version from [Google's repository](https://chromedriver.storage.googleapis.com/index.html). Choose one that matches your current Chrome browser version to maximise compatibility.
 
+
+|[Back to README.md](README.md#Installation)|
+|----
+
 ## Linux and other OS
 
 DR-Altimeter has not been tested on other operating systems than Windows 10 running Python 3.6, but it should work with other os, only minor tweeks.
