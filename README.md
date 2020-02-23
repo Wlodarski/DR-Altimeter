@@ -31,7 +31,7 @@ longitude =
 | --- | --- |
 | **short timeout** | About 5 seconds |
 | **long timeout** | Between 10 and 60 seconds |
-| **autosave png-pdf-eps filename** | The extension determines twhether a PDF, an EPS, or an PNG image file is automatically saved |
+| **autosave png-pdf-eps filename** | The extension determines whether a PDF, an EPS, or an PNG image file is automatically saved |
 | **autosave dpi** | dot per inch |
 | **autosave orientation** | _portrait_ or _landscape_  |
 | **autosave papertype** | _letter_ or _legal_  |
