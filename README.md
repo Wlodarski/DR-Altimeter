@@ -141,3 +141,7 @@ A **Bot User OAuth Access Token** must be register with the postman and included
  
  
 ### -v, --verbose
+
+## Chromedriver.exe
+
+The latest (and previous versions) can be downloaded from [Google repository](https://chromedriver.storage.googleapis.com/index.html)
