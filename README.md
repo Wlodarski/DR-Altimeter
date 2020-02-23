@@ -114,7 +114,7 @@ Next morning, at 07:30, your watch indicates an altitude of 478m. Since your las
 
 See [INSTALL.md](INSTALL.md)
 
-##  Configuration File (config.ini)
+##  Configuration
 
 See [CONFIG.md](CONFIG.md)
 
