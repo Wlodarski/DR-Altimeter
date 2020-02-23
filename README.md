@@ -80,7 +80,7 @@ _Altitude dead reckoning_ uses the same principle as dead reckoning but applies 
  23h    1014.91 hPa     30.9m     5.0m   23h15[32], 23h38[33]                  
 ````
 
-##### Simple example
+##### Simple Example
 At 21h01, you determine that you are at an known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
 
       21h01[fix] @ [0] = 450m ASL
@@ -90,7 +90,7 @@ Later, at twelve minutes passed midnight, your watch indicates an altitude of 47
       00h12[I] = 476m, indicated
       00h12[DR] = 476m - 00h02[2] = 474m ASL, compensated for forecasted weather
       
-##### More advanced example
+##### More Advanced Example
 On the same trek ([see above](DR-Altimeter#simple-use)), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this know altitude. Here and on after, this new [fix] becomes your new reference.
 
       00h50[fix] @ [3] = 523m ASL
@@ -102,13 +102,13 @@ Next morning, at 07:30, your watch indicates an altitude of 478m. Since your las
                 = 481 - 2
                 = 479m ASL, compensated for forecasted weather 
                
-###  Configuration file (config.ini)
+###  Configuration File (config.ini)
 
 See [CONFIG.md](CONFIG.md)
 
-## Command line options
+## Command Line Options
 
-See [COMMAND.md}(COMMAND.md)
+See [COMMAND.md](COMMAND.md)
 
 ## Chromedriver.exe
 
