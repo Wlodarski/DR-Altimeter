@@ -88,7 +88,7 @@ At 21h01, you determine that you are at an known altitude of 450 meters above me
 Later, at twelve minutes passed midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters (see [Figure 2](README.md#figure-2-textual-output)), you can estimate your true altitude to be 476 - 2 = 474 meter above sea level.
 
       00h12[I] = 476m, indicated
-      00h12[DR] = 476m - 00h02[2] = 474m ASL, deduced
+      00h12[DR] = 476m - 00h02[2] = 474m ASL, compensated for forecasted weather
       
 ##### More advanced example
 On the same trek ([see above](DR-Altimeter#simple-use)), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this know altitude. Here and on after, this new [fix] becomes your new reference.
@@ -100,7 +100,7 @@ Next morning, at 07:30, your watch indicates an altitude of 478m. Since your las
       07h30[I] = 478m, indicated
       07h30[DR] = (478m + @ 0044[3]) - 06h49[2]
                 = 481 - 2
-                = 479m ASL, deduced 
+                = 479m ASL, compensated for forecasted weather 
                
 ## Config.ini
 
@@ -143,10 +143,10 @@ longitude =
 | **autosave papertype** | _letter_ or _legal_  |
 | press any key | 0 = no, 1 = yes, default = 0 |
 
-#### Interactive Pan/Zoom
+#### Interactive GUI, Pan/Zoom window size
 | Keyword | Note |
 | --- | --- |
-**minimum hours**| Fetch at least x hours of forecast
+**minimum hours**| Fetch at least n hours of forecast
 **display x hours** | How many of the fetched hours will be displayed 
 
 #### Geolocation
