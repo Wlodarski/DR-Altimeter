@@ -31,5 +31,5 @@ A **Bot User OAuth Access Token** must be register with the postman and included
 ### -v, --verbose
 Displays more information about the polynomial curve fitting and general processing.
 
-|[Back to README.md](README.md)|
+|[Back to README.md](README.md#command-line-options)|
 |----
