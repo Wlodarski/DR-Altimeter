@@ -41,7 +41,7 @@ longitude =
 latitude | North = dd.ddddd, South = -dd.dddd
 longitude | East = dd.ddddd, West = -dd.dddd
 override url | URL of a specific weather station's hourly forecast page. Always starts with 'https://www.wunderground.com/hourly/...
-https page | URL of a random webpage, used to activate Chrome's geolocator
+**https page** | URL of a random webpage, used to activate Chrome's geolocator
 
 
 **bold** = required, cannot be empty
