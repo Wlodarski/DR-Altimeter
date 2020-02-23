@@ -152,6 +152,6 @@ The latest driver can be obtained from [Google's repository](https://chromedrive
 
 ## Known Issues
 
-- **[Top right y axis (altitude) : scale not formatted](https://github.com/matplotlib/matplotlib/issues/15621)**  
+- **[Top right y axis (altitude) : scale not formatted](https://github.com/Wlodarski/DR-Altimeter/issues/1)**  
   - A [temporary solution](https://github.com/matplotlib/matplotlib/issues/15621#issuecomment-571744504) is to manually edit axis.py, line 760. 
   - The definitive one is to wait for a Matplotlib update (schedulled for 0.3.30), `pip install --upgrade matplotlib`
