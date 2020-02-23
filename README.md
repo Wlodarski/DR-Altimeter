@@ -29,12 +29,22 @@ longitude =
 
 | Keyword | Note |
 | --- | --- |
-| short timeout |  |
-| long timeout |  |
-| autosave png-pdf-eps filename | The extension determines twhether a PDF, an EPS, or an PNG image file is automatically saved |
-| autosave dpi | dot per inch |
-| autosave orientation | _portrait_ or _landscape_  |
-| autosave papertype | _letter_ or _legal_  |
+| **short timeout** | About 5 seconds |
+| **long timeout** | Between 10 and 60 seconds |
+| **autosave png-pdf-eps filename** | The extension determines twhether a PDF, an EPS, or an PNG image file is automatically saved |
+| **autosave dpi** | dot per inch |
+| **autosave orientation** | _portrait_ or _landscape_  |
+| **autosave papertype** | _letter_ or _legal_  |
+| press any key | 0 = no, 1 = yes, default = 0 |
+**minimum hours**| Fetch at least x hours of forecast
+**display x hours** | How many of the minimum hours will be displayed 
+latitude | North = dd.ddddd, South = -dd.dddd
+longitude | East = dd.ddddd, West = -dd.dddd
+override url | URL of a specific weather station's hourly forecast page. Always starts with 'https://www.wunderground.com/hourly/...
+https page | URL of a random webpage, used to activate Chrome's geolocator
+
+
+**bold** = required, cannot be empty
 
 
 ## Command line options
