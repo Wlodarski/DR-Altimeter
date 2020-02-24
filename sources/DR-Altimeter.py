@@ -775,9 +775,11 @@ try:
                 dpi=program.GRAPH_DPI,
                 orientation=program.GRAPH_ORIENTATION,
                 papertype=program.GRAPH_PAPERTYPE)
-    mng = plt.get_current_fig_manager()
-    mng.window.state('zoomed')
-    plt.show()
+
+    if not program.PAUSE:
+        mng = plt.get_current_fig_manager()
+        mng.window.state('zoomed')
+        plt.show()
 
 except Exception as e:
     logging.error(traceback.format_exc())
