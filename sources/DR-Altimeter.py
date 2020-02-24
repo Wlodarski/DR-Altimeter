@@ -1,10 +1,5 @@
 #! python3
 
-# https://stackoverflow.com/questions/56701417/how-to-suppress-all-warnings-in-window-of-executable-file-generated-by-pyinstall
-# https://chromedriver.storage.googleapis.com/index.html
-# https://icoconvert.com/
-# https://github.com/matplotlib/matplotlib/issues/15621
-
 import argparse
 import logging
 import traceback
