@@ -2,7 +2,7 @@
 
 ## Windows 10
 
-1. Download the precompiled files to a folder of your choice:
+1. Download the [precompiled files](windows/precompiled) to a folder of your choice:
    - DR-Altimeter.exe
    - [Chromedriver.exe](INSTALL.md#chromedriverexe)
    
