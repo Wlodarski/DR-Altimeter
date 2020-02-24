@@ -4,7 +4,7 @@
 
 1. Download the [precompiled files](windows/precompiled) to a folder of your choice:
    - DR-Altimeter.exe
-   - Chromedriver.exe [*](INSTALL.md#chromedriverexe)
+   - Chromedriver.exe <sup>[problems?](INSTALL.md#chromedriverexe)
    
 2. Run ``DR-Altimeter.exe``
    - At first run, config.ini will be created and configured with your current latitude and longitude. You'll see briefly an empty Chrome window. It's normal. It's required to acquire your position.
