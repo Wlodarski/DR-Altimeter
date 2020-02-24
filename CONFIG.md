@@ -2,8 +2,8 @@
 
 A default configuration file, config.ini, is created at first run. 
 
-To rebuilt the configuration file, delete config.ini. 
-To reset a single setting to its default value, delete it. It will be regenerate at next run.
+To rebuild the configuration file, delete config.ini. 
+To reset a single setting to its default value, delete it. It will be regenerated at next run.
 
 ## Content
 ```
@@ -39,7 +39,7 @@ longitude =
 | Keyword | Note |
 | --- | --- |
 | **autosave png-pdf-eps filename** | The extension determines whether a PDF, an EPS, or an PNG image file is automatically saved |
-| **autosave dpi** | dot per inch |
+| **autosave dpi** | resolution in _dots per inch_ |
 | **autosave orientation** | _portrait_ or _landscape_  |
 | **autosave papertype** | _letter_ or _legal_  |
 | press any key | 0 = no, 1 = yes, default = 0 |
