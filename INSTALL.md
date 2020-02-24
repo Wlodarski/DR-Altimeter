@@ -11,7 +11,7 @@
    
 3. Edit the configuration file, [config.ini](CONFIG.md), to suit your need.
 
-4. _Optional_ Configure a Slack bot
+4. _Optional_ Configure a Slack bot:
    - Create a bot and register it to a chat room
    - Add SLACK_API_TOKEN to Windows system environment variables
    - Restart Windows
@@ -20,7 +20,7 @@
    
 #### Chromedriver.exe
 
-If you encounter problems with the provided Chromedriver, download another version from ~~[Google's repository](https://chromedriver.storage.googleapis.com/index.html)~~ [Chromium.org](https://chromedriver.chromium.org/downloads). Choose one that matches your current Chrome browser version to ensure compatibility.
+If you encounter problems with the provided Chromedriver, download another version from [Chromium.org](https://chromedriver.chromium.org/downloads) ~~or [Google's repository](https://chromedriver.storage.googleapis.com/index.html)~~. Choose one that matches your current Chrome browser version to ensure compatibility.
 
 
 |[Back to README.md](README.md#Installation)|
