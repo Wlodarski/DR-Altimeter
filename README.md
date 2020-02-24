@@ -124,8 +124,3 @@ See [CONFIG.md](CONFIG.md)
 
 See [COMMAND.md](COMMAND.md)
 
-## Known Issues
-
-- **[Top right y axis (altitude) : scale not formatted](https://github.com/Wlodarski/DR-Altimeter/issues/1)**  
-  - A [temporary solution](https://github.com/matplotlib/matplotlib/issues/15621#issuecomment-571744504) is to manually edit axis.py, line 760. 
-  - The definitive solution is to wait for the [matplotlib](https://matplotlib.org/) library to updated. The patch to squash that bug is scheduled to be included with version 0.3.30. Please execute `pip install --upgrade matplotlib` when it will available.
