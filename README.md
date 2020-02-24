@@ -1,7 +1,7 @@
 # DR-Altimeter
 **Altitude '[Dead Reckoning](https://en.wikipedia.org/wiki/Dead_reckoning)' for Casio Triple Sensor v.3**
 
-_DR-Altimeter_ predicts how much the indicated altitude will deviate due to changing weather in the vicinity of a [Wunderground.com](http://wunderground.com) station. By substracting the predicted altitude change, to remove its influence, one can greatly improve the accuracy of the _Casio Pro Trek_ wristwatch altimeter. Depending on the accuracy of the weather forecast, the indicated altitude can follow true altitude well within a ± 5 meters error margin.
+_DR-Altimeter_ predicts how much the indicated altitude will deviate due to changing weather in the vicinity of a [Wunderground.com](http://wunderground.com) station. By subtracting the predicted altitude change, to remove its influence, one can greatly improve the accuracy of the _Casio Pro Trek_ wristwatch altimeter. Depending on the accuracy of the weather forecast, the indicated altitude can follow true altitude well within a ± 5 meters error margin.
 
 #### Some features
 
@@ -19,7 +19,7 @@ _DR-Altimeter_ predicts how much the indicated altitude will deviate due to chan
 The altimeter determines the altitude at your current location based on accumulated atmospheric pressure changes measured by the pressure sensor. Setting the altimeter at a location where you know the precise altitude before starting your ascent enables it to take even more precise altitude measurements.
 
 #### Sea level measurement
-Setting the altimeter at a location where you know the precise altitude enables you to determine the elevation of your current position with respect to sea level. If you come across a marker indicating 400 meters above sea level while hiking or climbing, for example, simply set the altimeter at 400 meters. This enables you to obtain more accurate readings with respect to sea
+Setting the altimeter at a location where you know the precise altitude enables you to determine the elevation of your current position with respect to sea level. If you come across a marker indicating 400 meters above sea level while hiking or climbing, for example, simply set the altimeter at 400 meters. This enables you to obtain more accurate readings with respect to sea.
 
 #### Vertical Dead Reckoning
 [_Dead Reckoning_](https://en.wikipedia.org/wiki/Dead_reckoning) is the process of calculating one's current position by using a previously determined position, or fix, and advancing that position based upon known or estimated speeds over elapsed time and course. 
@@ -90,21 +90,21 @@ _Altitude dead reckoning_ uses the same principle as dead reckoning but applies 
 ````
 
 ##### Simple Example
-At 21h01, you determine that you are at an known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
+At 21h01, you determine that you are at a known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
 
       21h01[fix] @ [0] = 450m ASL
 
-Later, at twelve minutes passed midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters (see [Figure 2](README.md#figure-2-textual-output)), you can estimate your true altitude to be 476 - 2 = 474 meter above sea level.
+Later, at twelve minutes past midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters (see [Figure 2](README.md#figure-2-textual-output)), you can estimate your true altitude to be 476 - 2 = 474 meters above sea level.
 
       00h12[I] = 476m, indicated
       00h12[DR] = 476m - 00h02[2] = 474m ASL, compensated for forecasted weather
       
 ##### More Advanced Example
-On the same trek ([see above](DR-Altimeter#simple-use)), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this know altitude. Here and on after, this new [fix] becomes your new reference.
+On the same trek ([see above](DR-Altimeter#simple-use)), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this known altitude. Here and on after, this new [fix] becomes your new reference.
 
       00h50[fix] @ [3] = 523m ASL
      
-Next morning, at 07:30, your watch indicates an altitude of 478m. Since your last fix was taken at the [3] compensation level (00h44[3]) and you are current at the [2] compensation level (06h49[2]), your deduced altitude is 478 + @[3] - [2] = 479 m.
+Next morning, at 07:30, your watch indicates an altitude of 478 meters. Since your last fix was taken at the [3] compensation level (00h44[3]) and you are current at the [2] compensation level (06h49[2]), your deduced altitude is 478 + @[3] - [2] = 479 meters.
 
       07h30[I] = 478m, indicated
       07h30[DR] = (478m + @ 0044[3]) - 06h49[2]
