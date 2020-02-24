@@ -103,7 +103,7 @@ Later, at twelve minutes past midnight, your watch indicates an altitude of 476 
 ##### More Advanced Example
 On the same trek ([see above](DR-Altimeter#simple-use)), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this known altitude. Here and on after, this new [fix] becomes your new reference.
 
-      00h50[fix] @ [3] = 523m ASL
+      00h50[fix @ 3] = 523m ASL
      
 Next morning, at 07:30, your watch indicates an altitude of 478 meters. Since your last fix was taken at the [3] compensation level (00h44[3]) and you are current at the [2] compensation level (06h49[2]), your deduced altitude is 478 + @[3] - [2] = 479 meters.
 
