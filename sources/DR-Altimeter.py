@@ -1,4 +1,6 @@
 #! python3
+# TODO: I18N
+# TODO: restruct main()
 
 import argparse
 import logging
@@ -37,7 +39,7 @@ from txttable import PredictionTable
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
 
 FULLNAME = 'DR Polynomial Altimeter'
-VERSION = '0.9.20 alpha'
+VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
 DESCRIPTION = "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
 SHORTNAME = 'DR-Altimeter'
 
@@ -530,7 +532,7 @@ try:
         print(program.register_info(' POLYNOMIAL CURVE FIT '.center(79, '=')))
         print()
 
-    # seeks to find a degree that fits the fix  # TODO: optimize fix + later
+    # seeks to find a degree that fits the fix
     pass_through_zero = 0
     half_point = len(x) // 2
     for d in range(1, half_point + 1):
@@ -544,7 +546,7 @@ try:
         if program.VERBOSE:
             print(program.register_info('Degree : {:2d}/{}, '
                                         'passing through zero {} times'.format(d, half_point, pass_through_zero)))
-        if pass_through_zero == 2:  # TODO
+        if pass_through_zero == 2:
             if program.VERBOSE:
                 print('Found a good match')
                 print()
