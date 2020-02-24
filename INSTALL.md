@@ -20,7 +20,7 @@
    
 #### Chromedriver.exe
 
-If you encounter problems with the provided Chromedriver, download another version from [Google's repository](https://chromedriver.storage.googleapis.com/index.html) or [Chromium.org](https://chromedriver.chromium.org/downloads). Choose one that matches your current Chrome browser version to ensure compatibility.
+If you encounter problems with the provided Chromedriver, download another version from ~~[Google's repository](https://chromedriver.storage.googleapis.com/index.html)~~ [Chromium.org](https://chromedriver.chromium.org/downloads). Choose one that matches your current Chrome browser version to ensure compatibility.
 
 
 |[Back to README.md](README.md#Installation)|
