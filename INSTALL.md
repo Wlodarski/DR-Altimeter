@@ -28,7 +28,7 @@ If you encounter problems with the provided Chromedriver, download another versi
 
 ## Linux and other OS
 
-DR-Altimeter has not been tested on other operating systems than Windows 10 running Python 3.6, but it should work with other os, only minor tweeks.
+DR-Altimeter has not been tested on operating systems other than Windows 10 running Python 3.6, but it should work with only minor tweeks.
 
 1. Download the Python [source files](sources):
    - DR-Altimeter.py
