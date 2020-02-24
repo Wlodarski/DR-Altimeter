@@ -93,7 +93,7 @@ _Altitude dead reckoning_ uses the same principle as dead reckoning but applies 
 ##### Simple Example
 At 21h01, you determine that you are at a known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
 
-      21h01[fix] @ [0] = 450m ASL
+      21h01[fix] = 450m ASL 
 
 Later, at twelve minutes past midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters (see [Figure 2](README.md#figure-2-textual-output)), you can estimate your true altitude to be 476 - 2 = 474 meters above sea level.
 
