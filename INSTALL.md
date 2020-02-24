@@ -6,7 +6,7 @@
      - DR-Altimeter.exe
      - Chromedriver.exe <sup>[problems?](INSTALL.md#chromedriverexe)
    
-2. Run ``DR-Altimeter.exe``
+2. Run ``DR-Altimeter.exe`` .
    - At first run, config.ini will be created and configured with your current latitude and longitude. You'll see briefly an empty Chrome window. It's normal. It's required to acquire your position.
    
 3. Edit the configuration file, [config.ini](CONFIG.md), to suit your need.
@@ -20,7 +20,7 @@
    
 #### Chromedriver.exe
 
-If you encounter problems with the provided Chromedriver, download another version from [Chromium.org](https://chromedriver.chromium.org/downloads). Choose one that matches your current Chrome browser version to ensure compatibility.
+If you encounter problems with the provided Chrome driver, download another version from [Chromium.org](https://chromedriver.chromium.org/downloads). Choose one that matches your current Chrome browser version to ensure compatibility.
 
 
 |[Back to README.md](README.md#Installation)|
@@ -28,7 +28,7 @@ If you encounter problems with the provided Chromedriver, download another versi
 
 ## Linux and other OS
 
-DR-Altimeter has not been tested on operating systems other than Windows 10 running Python 3.6, but it should work with only minor tweeks.
+DR-Altimeter has not been tested on operating systems other than Windows 10 running Python 3.6, but it should work with only minor tweaks.
 
 1. Download the Python [source files](sources):
    - DR-Altimeter.py
@@ -36,9 +36,9 @@ DR-Altimeter has not been tested on operating systems other than Windows 10 runn
    - ISA.py
    - txttable.py
    
-2. Download the Chromedriver compatible with your OS at [Chromium.org](https://chromedriver.chromium.org/downloads)
+2. Download the Chrome driver compatible with your OS at [Chromium.org](https://chromedriver.chromium.org/downloads)
    
-3. Install all the required librairies:
+3. Install all the required libraries:
    - ``pip install matplotlib numpy slack selenium termcolor colorama``
 
 4. Run ``python DR-Altimeter.py`` and adapt the configuration file, [config.ini](CONFIG.md), generated at first run to suit your need.
