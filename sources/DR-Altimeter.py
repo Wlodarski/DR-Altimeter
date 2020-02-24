@@ -771,7 +771,7 @@ try:
                 orientation=program.GRAPH_ORIENTATION,
                 papertype=program.GRAPH_PAPERTYPE)
 
-    if program.PAUSE:
+    if not args.no_key:
         mng = plt.get_current_fig_manager()
         mng.window.state('zoomed')
         plt.show()
