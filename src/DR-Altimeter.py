@@ -9,6 +9,7 @@ import traceback
 from abc import abstractmethod
 from configparser import ConfigParser
 from datetime import datetime, timedelta
+from locale import getdefaultlocale
 from os import system, environ
 from pathlib import Path
 from re import search
@@ -37,7 +38,8 @@ from ISA import InternationalStandardAtmosphere
 from forecastarray import Forecast
 from txttable import PredictionTable
 
-traduction = gettext.translation('DR-Altimeter', localedir='locales', fallback=True, languages=['fr'])
+current_locale, encoding = getdefaultlocale()
+traduction = gettext.translation('DR-Altimeter', localedir='locales', languages=[current_locale], fallback=True)
 traduction.install()
 _ = traduction.gettext
 
