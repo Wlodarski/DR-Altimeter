@@ -1,0 +1,260 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: DR-Altimeter v1.0\n"
+"POT-Creation-Date: 2020-02-24 20:37-0500\n"
+"PO-Revision-Date: 2020-02-24 21:15-0500\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
+
+#: src\DR-Altimeter.py:48
+msgid "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
+msgstr "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
+
+#: src\DR-Altimeter.py:54
+msgid "Disable \"Press any key\""
+msgstr "Disable \"Press any key\""
+
+#: src\DR-Altimeter.py:55
+msgid "Slack channel"
+msgstr "Slack channel"
+
+#: src\DR-Altimeter.py:56
+msgid "Latitude"
+msgstr "Latitude"
+
+#: src\DR-Altimeter.py:57
+msgid "Longitude"
+msgstr "Longitude"
+
+#: src\DR-Altimeter.py:58
+msgid "Specific weather station URL"
+msgstr "Specific weather station URL"
+
+#: src\DR-Altimeter.py:59
+msgid "show this help message and exit"
+msgstr "show this help message and exit"
+
+#: src\DR-Altimeter.py:64
+msgid "If one is provided, both --latitude and --longitude must be provided"
+msgstr "If one is provided, both --latitude and --longitude must be provided"
+
+#: src\DR-Altimeter.py:108
+msgid "Regenerating {}"
+msgstr "Regenerating {}"
+
+#: src\DR-Altimeter.py:209
+msgid "Latitude : {:.7f}"
+msgstr "Latitude : {:.7f}"
+
+#: src\DR-Altimeter.py:210
+msgid "Longitude : {:.7f}"
+msgstr "Longitude : {:.7f}"
+
+#: src\DR-Altimeter.py:211
+msgid "Accuracy : {}m"
+msgstr "Accuracy : {}m"
+
+#: src\DR-Altimeter.py:229
+msgid "Using override URL"
+msgstr "Using override URL"
+
+#: src\DR-Altimeter.py:235
+msgid "Using Lat/Lon found in"
+msgstr "Using Lat/Lon found in"
+
+#: src\DR-Altimeter.py:236
+msgid "Latitude: {}"
+msgstr "Latitude: {}"
+
+#: src\DR-Altimeter.py:237
+msgid "Longitude: {}"
+msgstr "Longitude: {}"
+
+#: src\DR-Altimeter.py:253
+msgid "Page with wrong title"
+msgstr "Page with wrong title"
+
+#: src\DR-Altimeter.py:255
+msgid "Connected to Wunderground"
+msgstr "Connected to Wunderground"
+
+#: src\DR-Altimeter.py:261
+msgid "Page is ready"
+msgstr "Page is ready"
+
+#: src\DR-Altimeter.py:263
+msgid "Page took too much time to load"
+msgstr "Page took too much time to load"
+
+#: src\DR-Altimeter.py:266
+msgid "Switching to metric"
+msgstr "Switching to metric"
+
+#: src\DR-Altimeter.py:273
+msgid "Unable to switch to metric"
+msgstr "Unable to switch to metric"
+
+#: src\DR-Altimeter.py:285
+msgid "Station name not found"
+msgstr "Station name not found"
+
+#: src\DR-Altimeter.py:292
+msgid "UNKNOWN"
+msgstr "UNKNOWN"
+
+#: src\DR-Altimeter.py:302
+msgid "Current atmospheric pressure : {} hPa (ISA={:0.1f}m)"
+msgstr "Current atmospheric pressure : {} hPa (ISA={:0.1f}m)"
+
+#: src\DR-Altimeter.py:313
+msgid "Observation time not found."
+msgstr "Observation time not found."
+
+#: src\DR-Altimeter.py:322
+msgid "Elevation not found. Assuming it to be zero"
+msgstr "Elevation not found. Assuming it to be zero"
+
+#: src\DR-Altimeter.py:324
+msgid "Weather station elevation : {}m (ISA={:7.2f}hPa)"
+msgstr "Weather station elevation : {}m (ISA={:7.2f}hPa)"
+
+#: src\DR-Altimeter.py:342
+msgid "Unable to send report to Slack"
+msgstr "Unable to send report to Slack"
+
+#: src\DR-Altimeter.py:539
+msgid " POLYNOMIAL CURVE FIT "
+msgstr " POLYNOMIAL CURVE FIT "
+
+#: src\DR-Altimeter.py:554
+msgid "Degree : {:2d}/{}, passing through zero {} times"
+msgstr "Degree : {:2d}/{}, passing through zero {} times"
+
+#: src\DR-Altimeter.py:558
+msgid "Found a good match"
+msgstr "Found a good match"
+
+#: src\DR-Altimeter.py:564
+msgid "End of search"
+msgstr "End of search"
+
+#: src\DR-Altimeter.py:570
+msgid "Degree : {}"
+msgstr "Degree : {}"
+
+#: src\DR-Altimeter.py:572
+msgid "Coefficients : {}"
+msgstr "Coefficients : {}"
+
+#: src\DR-Altimeter.py:574
+msgid "Time vector (x) : {}"
+msgstr "Time vector (x) : {}"
+
+#: src\DR-Altimeter.py:576
+msgid "Altitude vector (y) : {}"
+msgstr "Altitude vector (y) : {}"
+
+#: src\DR-Altimeter.py:578
+msgid "Pressure vector (z) : {}"
+msgstr "Pressure vector (z) : {}"
+
+#: src\DR-Altimeter.py:581
+msgid "altitude(time)"
+msgstr "altitude(time)"
+
+#: src\DR-Altimeter.py:582
+msgid "time"
+msgstr "time"
+
+#: src\DR-Altimeter.py:603
+msgid "{}[fix]"
+msgstr "{}[fix]"
+
+#: src\DR-Altimeter.py:673
+msgid "$\\Delta$altitude, $m$"
+msgstr "$\\Delta$altitude, $m$"
+
+#: src\DR-Altimeter.py:686
+msgid "altitude, $m$"
+msgstr "altitude, $m$"
+
+#: src\DR-Altimeter.py:760
+msgid "Hourly Forecast"
+msgstr "Hourly Forecast"
+
+#: src\DR-Altimeter.py:766
+msgid "$^{th}$"
+msgstr "$^{th}$"
+
+#: src\DR-Altimeter.py:766
+msgid "Polynomlal Steps of {}{} degree"
+msgstr "Polynomlal Steps of {}{} degree"
+
+#: src\DR-Altimeter.py:770
+msgid "Atmospheric Pressure"
+msgstr "Atmospheric Pressure"
+
+#: src\ISA.py:31
+msgid "Altitude out of range (-700 m < altitude < 10000 m)"
+msgstr "Altitude out of range (-700 m < altitude < 10000 m)"
+
+#: src\ISA.py:44
+msgid "Pressure out of range (260 hPa < pressure < 1100 hPa)"
+msgstr "Pressure out of range (260 hPa < pressure < 1100 hPa)"
+
+#: src\ISA.py:60
+msgid "Missing current pressure or pressure variation"
+msgstr "Missing current pressure or pressure variation"
+
+#: src\ISA.py:67
+msgid "Current pressure contradicted by pressure variation"
+msgstr "Current pressure contradicted by pressure variation"
+
+#: src\ISA.py:92
+msgid ""
+"At {} m above mean sea level, the standardized atmospheric pressure equals "
+"{:.2f} hPa"
+msgstr ""
+"At {} m above mean sea level, the standardized atmospheric pressure equals "
+"{:.2f} hPa"
+
+#: src\ISA.py:96
+msgid ""
+"A pressure of {:.2f} hPa corresponds to a standardized altitude of {:.0f} m"
+msgstr ""
+"A pressure of {:.2f} hPa corresponds to a standardized altitude of {:.0f} m"
+
+#: src\ISA.py:100
+msgid "Average Correction"
+msgstr "Average Correction"
+
+#: src\forecastarray.py:19
+msgid "Timestamp must be unique. {} already set"
+msgstr "Timestamp must be unique. {} already set"
+
+#: src\txttable.py:10
+msgid "ALT"
+msgstr "ALT"
+
+#: src\txttable.py:10
+msgid "ALT/hr"
+msgstr "ALT/hr"
+
+#: src\txttable.py:10
+msgid "H"
+msgstr "H"
+
+#: src\txttable.py:10
+msgid "PRESSURE"
+msgstr "PRESSURE"
