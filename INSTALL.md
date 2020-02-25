@@ -30,7 +30,7 @@ If you encounter problems with the provided Chrome driver, download another vers
 
 DR-Altimeter has not been tested on operating systems other than Windows 10 running Python 3.6, but it should work with only minor tweaks.
 
-1. Download the Python [source files](sources):
+1. Download the Python [source files](src):
    - DR-Altimeter.py
    - forcastarray.py
    - ISA.py

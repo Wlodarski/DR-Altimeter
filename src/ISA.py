@@ -1,3 +1,8 @@
+import gettext
+
+_ = gettext.gettext
+
+
 class InternationalStandardAtmosphere:
     """
      | Assumptions:
@@ -24,7 +29,7 @@ class InternationalStandardAtmosphere:
         if -700 < altitude < 10000:
             return self.PRESSURE_MSL * (1 - (altitude / (self.TEMP_MSL / self.TEMP_GRADIANT))) ** self.PERFECT_GAS
         else:
-            raise ValueError('Altitude out of range (-700 m < altitude < 10000 m)')
+            raise ValueError(_('Altitude out of range (-700 m < altitude < 10000 m)'))
 
     def altitude(self, pressure: float) -> float:
         """
@@ -37,7 +42,7 @@ class InternationalStandardAtmosphere:
         if 260 < pressure < 1100:
             return (self.TEMP_MSL / self.TEMP_GRADIANT) * (1 - (pressure / self.PRESSURE_MSL) ** (1 / self.PERFECT_GAS))
         else:
-            raise ValueError('Pressure out of range (260 hPa < pressure < 1100 hPa)')
+            raise ValueError(_('Pressure out of range (260 hPa < pressure < 1100 hPa)'))
 
     def delta_altitude(self, p_ref: float, current_p: float = None, delta_p: float = None) -> float:
         """
@@ -53,14 +58,14 @@ class InternationalStandardAtmosphere:
         not both.
         """
         if current_p is None and delta_p is None:
-            raise ValueError('Missing current pressure or pressure variation')
+            raise ValueError(_('Missing current pressure or pressure variation'))
 
         if current_p is not None:
             _dp = p_ref - current_p
             _cp = current_p
 
         if current_p is not None and delta_p is not None and _dp != delta_p:
-            raise ValueError('Current pressure contradicted by pressure variation')
+            raise ValueError(_('Current pressure contradicted by pressure variation'))
 
         if delta_p is not None:
             _cp = p_ref + delta_p
@@ -85,15 +90,15 @@ if __name__ == '__main__':
     isa = InternationalStandardAtmosphere()
 
     alt = 1200
-    print('At {} m above mean sea level, '
-          'the standardized atmospheric pressure equals {:.2f} hPa'.format(alt, isa.pressure(altitude=alt)))
+    print(_('At {} m above mean sea level, '
+            'the standardized atmospheric pressure equals {:.2f} hPa').format(alt, isa.pressure(altitude=alt)))
 
     pres = 800.0
-    print('A pressure of {:.2f} hPa corresponds '
-          'to a standardized altitude of {:.0f} m'.format(pres, isa.altitude(pressure=pres)))
+    print(_('A pressure of {:.2f} hPa corresponds '
+            'to a standardized altitude of {:.0f} m').format(pres, isa.altitude(pressure=pres)))
 
     print()
-    print('Average Correction'.center(73))
+    print(_('Average Correction').center(73))
     print('+/-hPa |', end='')
     for d in range(0, 11):
         print('{:5.1f}'.format(d / 10), end=' ')

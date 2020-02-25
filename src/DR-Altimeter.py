@@ -3,6 +3,7 @@
 # TODO: restruct main()
 
 import argparse
+import gettext
 import logging
 import traceback
 from abc import abstractmethod
@@ -36,27 +37,31 @@ from ISA import InternationalStandardAtmosphere
 from forecastarray import Forecast
 from txttable import PredictionTable
 
+traduction = gettext.translation('DR-Altimeter', localedir='locales', fallback=True, languages=['fr'])
+traduction.install()
+_ = traduction.gettext
+
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
 
 FULLNAME = 'DR Polynomial Altimeter'
 VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
-DESCRIPTION = "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
+DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
 
 parser = argparse.ArgumentParser(Path(__file__).name,
                                  description=DESCRIPTION,
                                  epilog='{}, version {}'.format(SHORTNAME, VERSION))
-parser.add_argument('-n', '--no-key', action='store_true', help='Disable "Press any key"')
-parser.add_argument('-s', '--slack', help='Slack channel')
-parser.add_argument('--latitude', help='Latitude', type=float)
-parser.add_argument('--longitude', help='Longitude', type=float)
-parser.add_argument('--override-url', help='Specific weather station URL', type=str)
-parser.add_argument('-v', '--verbose', action='store_true')
+parser.add_argument('-n', '--no-key', action='store_true', help=_('Disable "Press any key"'))
+parser.add_argument('-s', '--slack', help=_('Slack channel'))
+parser.add_argument('--latitude', help=_('Latitude'), type=float)
+parser.add_argument('--longitude', help=_('Longitude'), type=float)
+parser.add_argument('--override-url', help=_('Specific weather station URL'), type=str)
+parser.add_argument('-v', '--verbose', action='store_true', help=_('show this help message and exit'))
 
 args = parser.parse_args()
 
 if (args.longitude is not None and args.latitude is None) or (args.longitude is None and args.latitude is not None):
-    parser.error('If one is provided, both --latitude and --longitude must be provided')
+    parser.error(_('If one is provided, both --latitude and --longitude must be provided'))
 
 
 class Program:
@@ -100,7 +105,7 @@ class Program:
         self.cfg.read(self.CONFIG_FILENAME)
 
         if self.CS not in self.cfg.sections():
-            print('Regenerating ', self.CONFIG_FILENAME)
+            print(_('Regenerating {}').format(self.CONFIG_FILENAME))
             print()
             self.cfg.add_section(self.CS)
 
@@ -201,9 +206,9 @@ class Program:
         self.cfg.set(self.CS, self.LONGITUDE_T, str(pos['longitude']))
         self.save_ini()
 
-        print('Latitude : {:.7f}'.format(pos['latitude']))
-        print('Longitude : {:.7f}'.format(pos['longitude']))
-        print('Accuracy : {}m'.format(pos['accuracy']))
+        print(_('Latitude : {:.7f}').format(pos['latitude']))
+        print(_('Longitude : {:.7f}').format(pos['longitude']))
+        print(_('Accuracy : {}m').format(pos['accuracy']))
         logging.info('{:.7f} {:.7f} ±{}m'.format(pos['latitude'], pos['longitude'], pos['accuracy']))
         print()
 
@@ -221,15 +226,15 @@ class Program:
 
         elif self.OVERRIDE_URL_EXISTS:
 
-            print('Using override URL')
+            print(_('Using override URL'))
             _hourly_forecast_url = self.OVERRIDE_URL
 
         elif not self.MISSING_LATLONG:
 
             if args.latitude is None:
-                print('Using Lat/Lon found in', self.CONFIG_FILENAME)
-            print('Latitude: {}'.format(self.LATITUDE))
-            print('Longitude: {}'.format(self.LONGITUDE))
+                print(_('Using Lat/Lon found in'), self.CONFIG_FILENAME)
+            print(_('Latitude: {}').format(self.LATITUDE))
+            print(_('Longitude: {}').format(self.LONGITUDE))
             print()
             _hourly_forecast_url = self.GEOLOCATED_URL + '{},{}'.format(
                 self.LATITUDE,
@@ -245,27 +250,27 @@ class Program:
         try:
             assert title in self.browser.driver.title
         except AssertionError:
-            raise NameError('Page with wrong title')
+            raise NameError(_('Page with wrong title'))
 
-        print('Connected to Wunderground')
+        print(_('Connected to Wunderground'))
 
     def wait_until_page_is_loaded(self):
         try:
             WebDriverWait(self.browser.driver, self.TIMEOUT).until(
                 ec.presence_of_element_located((By.ID, 'hourly-forecast-table')))
-            print('Page is ready')
+            print(_('Page is ready'))
         except TimeoutException:
-            raise TimeoutException('Page took too much time to load')
+            raise TimeoutException(_('Page took too much time to load'))
 
     def switch_to_metric(self):
-        print('Switching to metric')
+        print(_('Switching to metric'))
         self.browser.driver.find_element_by_id('wuSettings').click()
         self.browser.driver.find_element_by_css_selector("[title^='Switch to Metric'").click()
         try:
             WebDriverWait(self.browser.driver, self.TIMEOUT_LONG).until(
                 ec.text_to_be_present_in_element((By.ID, 'hourly-forecast-table'), 'hPa'))
         except TimeoutException:
-            raise TimeoutException('Unable to switch to metric')
+            raise TimeoutException(_('Unable to switch to metric'))
 
     def click_next(self):
         self.browser.driver.find_element_by_xpath('//*[@id="nextForecasts"]/span[2]/button').click()
@@ -277,14 +282,14 @@ class Program:
             _st = search('^-?[0-9]* (.*)$', _elem.text)
             self.STATION_NAME = _st.group(1).strip()
         except NoSuchElementException:
-            print(self.register_error('Station name not found'))
+            print(self.register_error(_('Station name not found')))
         if self.STATION_NAME is None or self.STATION_NAME == 'STATION':
             try:
                 _elem = self.browser.driver.find_element_by_xpath(
                     '//*[@id="inner-content"]/div[2]/lib-city-header/div[1]/div/h1')
                 self.STATION_NAME = _elem.text[:20].lstrip(', ') + '...'
             except NoSuchElementException:
-                self.STATION_NAME = 'UNKNOWN'
+                self.STATION_NAME = _('UNKNOWN')
         logging.info(self.STATION_NAME)
         print()
         print(colored(self.STATION_NAME, attrs=['bold']))
@@ -294,8 +299,9 @@ class Program:
                                                           '/div[1]/lib-additional-conditions/lib-item-box/div/'
                                                           'div[2]/div/div[1]/div[2]/lib-display-unit/span/span[1]')
         self.P_INITIAL = float(_elem.text)
-        print(self.register_info('Current atmospheric pressure : '
-                                 '{} hPa (ISA={:0.1f}m)'.format(self.P_INITIAL, isa.altitude(pressure=self.P_INITIAL))))
+        print(self.register_info(_('Current atmospheric pressure : '
+                                   '{} hPa (ISA={:0.1f}m)').format(self.P_INITIAL,
+                                                                   isa.altitude(pressure=self.P_INITIAL))))
         return self.P_INITIAL
 
     def get_obs_time(self):
@@ -304,7 +310,7 @@ class Program:
         if _st is not None:
             return datetime.strptime(_st.group(1), '%Y-%m-%d %H:%M:%S')
         else:
-            print(self.register_error('Observation time not found.'))
+            print(self.register_error(_('Observation time not found.')))
             return datetime.now()
 
     def get_station_elevation(self):
@@ -313,10 +319,11 @@ class Program:
                                                                '/lib-city-header/div[1]/div/span/span/strong')
             self.ELEVATION = int(_elem.text)
         except NoSuchElementException:
-            print(self.register_error('Elevation not found. Assuming it to be zero'))
+            print(self.register_error(_('Elevation not found. Assuming it to be zero')))
             self.ELEVATION = 0
-        print(self.register_info('Weather station elevation : '
-                                 '{}m (ISA={:7.2f}hPa)'.format(self.ELEVATION, isa.pressure(altitude=self.ELEVATION))))
+        print(self.register_info(_('Weather station elevation : '
+                                   '{}m (ISA={:7.2f}hPa)').format(self.ELEVATION,
+                                                                  isa.pressure(altitude=self.ELEVATION))))
 
     def display_results(self):
         _txt = self.result.display_table()
@@ -332,7 +339,7 @@ class Program:
                                                     initial_comment=_comment)
                 assert _response["ok"]
             except AssertionError:
-                print(self.register_error('Unable to send report to Slack'))
+                print(self.register_error(_('Unable to send report to Slack')))
 
     @staticmethod
     def register_info(msg):
@@ -529,7 +536,7 @@ try:
     # ----------------------------------------------------------------------
 
     if program.VERBOSE:
-        print(program.register_info(' POLYNOMIAL CURVE FIT '.center(79, '=')))
+        print(program.register_info(_(' POLYNOMIAL CURVE FIT ').center(79, '=')))
         print()
 
     # seeks to find a degree that fits the fix
@@ -544,35 +551,35 @@ try:
             if pass_through_zero > 0:
                 pass_through_zero += -1
         if program.VERBOSE:
-            print(program.register_info('Degree : {:2d}/{}, '
-                                        'passing through zero {} times'.format(d, half_point, pass_through_zero)))
+            print(program.register_info(_('Degree : {:2d}/{}, '
+                                          'passing through zero {} times').format(d, half_point, pass_through_zero)))
         if pass_through_zero == 2:
             if program.VERBOSE:
-                print('Found a good match')
+                print(_('Found a good match'))
                 print()
             break
     else:
         if program.VERBOSE:
             # d += 1
-            print(program.register_info('End of search'))
+            print(program.register_info(_('End of search')))
             print()
     degree = d  # - 1
     poly = np.polyfit(x, y, degree)
 
     if program.VERBOSE:
-        print(program.register_info('Degree : {}'.format(degree)))
+        print(program.register_info(_('Degree : {}').format(degree)))
         print()
-        print(fill(program.register_info('Coefficients : {}'.format(poly)), 79))
+        print(fill(program.register_info(_('Coefficients : {}').format(poly)), 79))
         print()
-        print(fill(program.register_info('Time vector (x) : {}'.format(x)), 79))
+        print(fill(program.register_info(_('Time vector (x) : {}').format(x)), 79))
         print()
-        print(fill(program.register_info('Altitude vector (y) : {}'.format(y)), 79))
+        print(fill(program.register_info(_('Altitude vector (y) : {}').format(y)), 79))
         print()
-        print(fill(program.register_info('Pressure vector (z) : {}'.format(z)), 79))
+        print(fill(program.register_info(_('Pressure vector (z) : {}').format(z)), 79))
         print()
         print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=poly,
-                                                                  f_text='altitude(time)',
-                                                                  var_symbol='time',
+                                                                  f_text=_('altitude(time)'),
+                                                                  var_symbol=_('time'),
                                                                   equal_sign='='))))
         print(program.register_info(''.center(79, '-')))
         print()
@@ -593,7 +600,7 @@ try:
 
             if not fix_found and minutes == now_minutes:
                 fix_found = True
-                steps.append('{}[fix]'.format(datetime.now().strftime('%Hh%M')))
+                steps.append(_('{}[fix]').format(datetime.now().strftime('%Hh%M')))
 
             if previous_v is None:
                 previous_v = v
@@ -663,7 +670,7 @@ try:
         down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
         up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
     topsubplot.set_ylim(down_lim, up_lim)
-    topsubplot.set_ylabel('$\Delta$altitude, $m$')
+    topsubplot.set_ylabel(_('$\Delta$altitude, $m$'))
     topsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
     topsubplot.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
     topsubplot.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))
@@ -676,7 +683,7 @@ try:
     top_second_y_axis = topsubplot.secondary_yaxis("right",
                                                    functions=(lambda b: program.ELEVATION + b,
                                                               lambda b: b - program.ELEVATION))
-    top_second_y_axis.set_ylabel('altitude, $m$')
+    top_second_y_axis.set_ylabel(_('altitude, $m$'))
 
     top_second_y_axis.grid(True)
     # bug solved by patching .../site-packages/matplotlib/axis.py
@@ -750,17 +757,18 @@ try:
     inset_pressure.spines['right'].set_alpha(0.2)
 
     # adding curves/points to subplots
-    topsubplot.errorbar(x, y, fmt='go', yerr=[lower_err, upper_err], label='Hourly Forecast', markersize=5)
+    topsubplot.errorbar(x, y, fmt='go', yerr=[lower_err, upper_err], label=_('Hourly Forecast'), markersize=5)
     topsubplot.plot(np.arange(x[0], x[-1], 1 / 60),
                     [v for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
                     color='red', linestyle='dotted', alpha=0.5)
     topsubplot.step(np.arange(x[0], x[-1], 1 / 60),
                     [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
-                    color='red', where='post', label='Polynomlal Steps of {}{} degree'.format(degree, '$^{th}$'))
+                    color='red', where='post', label=_('Polynomlal Steps of {}{} degree').format(degree, _('$^{th}$')))
     topsubplot.scatter(now_minutes / 60, 0, color='red', marker='>', label='Fix at {}'.format(strftime('%#H:%M')))
     inset_altitude.plot(x, y, color='red', alpha=0.5)
 
-    bottomsubplot.plot(x, z, color='tab:blue', marker='o', markersize=3.5, label='Atmospheric Pressure', linestyle='--')
+    bottomsubplot.plot(x, z, color='tab:blue', marker='o', markersize=3.5, label=_('Atmospheric Pressure'),
+                       linestyle='--')
     inset_pressure.plot(x, z, color='tab:blue', alpha=0.5)
 
     # post-processing subplots

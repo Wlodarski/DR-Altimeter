@@ -1,5 +1,7 @@
+import gettext
 from datetime import datetime
 
+_ = gettext.gettext
 
 class Forecast:
     def __init__(self):
@@ -15,7 +17,7 @@ class Forecast:
                     self.forecast[n]['pressure'] = atm_pressure
                     overwrited = True
                 else:
-                    raise ValueError('Timestamp must be unique. {} already set'.format(timestamp))
+                    raise ValueError(_('Timestamp must be unique. {} already set').format(timestamp))
         if not overwrited:
             self.forecast.append({'date': timestamp, 'pressure': float(atm_pressure)})
 

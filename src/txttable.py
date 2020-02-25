@@ -7,7 +7,7 @@ class PredictionTable:
         self.table.set_cols_dtype(['t', 't', 't', 't', 't'])
         self.table.set_cols_align(['c', 'r', 'r', 'r', 'l'])
         self.table.set_cols_valign(['t', 't', 't', 't', 'm'])
-        self.table.header(['H', 'PRESSURE', 'ALT', 'ALT/hr', ''])
+        self.table.header([_('H'), _('PRESSURE'), _('ALT'), _('ALT/hr'), ''])
         self.table.set_cols_width([5, 11, 7, 6, 38])  # total width = 80 (with added borders)
 
     def _add(self, hour: str, pressure: str, alt: str = '', alt_h: str = '', times: str = ''):
@@ -35,6 +35,9 @@ class PredictionTable:
 
 
 if __name__ == '__main__':
+    def _(s):
+        return s
+
     tt = PredictionTable()
     tt.add_start(hour=9, minute=12, pressure=1017.61, times=['9h00', '9h08~9h12 fix', '9h28', '9h42'])
     tt.add(hour=10, pressure=1017.101, alt=4.2, alt_h=4.2,
