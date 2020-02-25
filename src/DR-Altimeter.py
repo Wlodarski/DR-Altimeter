@@ -38,6 +38,7 @@ from ISA import InternationalStandardAtmosphere
 from forecastarray import Forecast
 from txttable import PredictionTable
 
+# I18N translations, setup of gettext
 current_locale, encoding = getdefaultlocale()
 bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
 localedir = path.join(bundle_dir, 'locales')
