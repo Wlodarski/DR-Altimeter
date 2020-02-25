@@ -1,7 +1,5 @@
-# DR-Altimeter
-
 ![logo](example/repository-open-graph.png)
-
+# DR-Altimeter
 
 **Altitude '[Dead Reckoning](https://en.wikipedia.org/wiki/Dead_reckoning)' for Casio Triple Sensor v.3**
 
