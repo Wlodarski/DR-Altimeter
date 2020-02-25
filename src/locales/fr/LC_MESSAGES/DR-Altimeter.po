@@ -20,7 +20,7 @@ msgstr ""
 #: src\DR-Altimeter.py:48
 msgid "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
 msgstr ""
-"Altitude à l'estime pour les montres Casio équipé avec la version 3 du « "
+"Altitude à l'estime pour les montres Casio équipées avec la version 3 du « "
 "Triple Sensor »"
 
 #: src\DR-Altimeter.py:54
