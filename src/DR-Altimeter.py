@@ -1,16 +1,16 @@
 #! python3
-# TODO: I18N
 # TODO: restruct main()
 
 import argparse
 import gettext
 import logging
+import sys
 import traceback
 from abc import abstractmethod
 from configparser import ConfigParser
 from datetime import datetime, timedelta
 from locale import getdefaultlocale
-from os import system, environ
+from os import system, environ, path
 from pathlib import Path
 from re import search
 from textwrap import fill
@@ -39,7 +39,9 @@ from forecastarray import Forecast
 from txttable import PredictionTable
 
 current_locale, encoding = getdefaultlocale()
-traduction = gettext.translation('DR-Altimeter', localedir='locales', languages=[current_locale], fallback=True)
+bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
+localedir = path.join(bundle_dir, 'locales')
+traduction = gettext.translation('DR-Altimeter', localedir=localedir, languages=[current_locale], fallback=True)
 traduction.install()
 _ = traduction.gettext
 

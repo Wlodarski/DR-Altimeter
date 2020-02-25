@@ -1,7 +1,5 @@
-import gettext
 from datetime import datetime
 
-_ = gettext.gettext
 
 class Forecast:
     def __init__(self):
@@ -54,6 +52,10 @@ class Forecast:
 
 if __name__ == '__main__':
     from time import sleep
+
+
+    def _(s):
+        return s
 
     fc = Forecast()
     for hour in range(24):
