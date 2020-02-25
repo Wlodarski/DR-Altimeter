@@ -1,6 +1,6 @@
 # DR-Altimeter
 
-![logo](example/repository-open-graph.png)
+![logo](images/repository-open-graph.png)
 
 
 **Altitude '[Dead Reckoning](https://en.wikipedia.org/wiki/Dead_reckoning)' for Casio Triple Sensor v.3**
@@ -18,7 +18,7 @@ _DR-Altimeter_ predicts how much the indicated altitude will deviate due to chan
 
 
 ##### Figure 1: Graphical output
-![graphical output](example/graph_example.png)
+![graphical output](images/graph_example.png)
 
 #### Measuring altitudes based on changes in atmospheric pressure
 The altimeter determines the altitude at your current location based on accumulated atmospheric pressure changes measured by the pressure sensor. Setting the altimeter at a location where you know the precise altitude before starting your ascent enables it to take even more precise altitude measurements.
