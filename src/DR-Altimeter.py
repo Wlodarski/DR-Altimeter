@@ -1,5 +1,6 @@
 #! python3
 # TODO: restruct main()
+# TODO: rename locales?
 
 import argparse
 import gettext

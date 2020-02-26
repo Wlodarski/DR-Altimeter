@@ -45,11 +45,11 @@ msgstr "URL d'une station météo spécifique"
 
 #: src\DR-Altimeter.py:59
 msgid "show this help message and exit"
-msgstr "montrer ce message d'aide puis fermer"
+msgstr "Montrer ce message d'aide puis quitter"
 
 #: src\DR-Altimeter.py:64
 msgid "If one is provided, both --latitude and --longitude must be provided"
-msgstr "--latitude et --longitude doivent être fourni simultanément"
+msgstr "--latitude et --longitude doivent être fournis simultanément"
 
 #: src\DR-Altimeter.py:108
 msgid "Regenerating {}"
@@ -73,7 +73,7 @@ msgstr "Utilisation de l'URL forcé"
 
 #: src\DR-Altimeter.py:235
 msgid "Using Lat/Lon found in"
-msgstr "Utilisation de la latitude et de la longitude trouvés dans"
+msgstr "Utilisation de la latitude et de la longitude trouvées dans"
 
 #: src\DR-Altimeter.py:236
 msgid "Latitude: {}"
@@ -85,7 +85,7 @@ msgstr "Longitude: {}"
 
 #: src\DR-Altimeter.py:253
 msgid "Page with wrong title"
-msgstr "Page avec mauvais titre"
+msgstr "Mauvaise page, avec un titre inatendu"
 
 #: src\DR-Altimeter.py:255
 msgid "Connected to Wunderground"
@@ -129,11 +129,11 @@ msgstr "Élévation non trouvée. Fixée à zéro"
 
 #: src\DR-Altimeter.py:324
 msgid "Weather station elevation : {}m (ISA={:7.2f}hPa)"
-msgstr "Élévation de la sation météo : {}m (ISA={:7.2f}hPa)"
+msgstr "Élévation de la station météo : {}m (ISA={:7.2f}hPa)"
 
 #: src\DR-Altimeter.py:342
 msgid "Unable to send report to Slack"
-msgstr "Incapable d'envoyer le rapport à Slack"
+msgstr "Incapable de transmettre les données à Slack"
 
 #: src\DR-Altimeter.py:539
 msgid " POLYNOMIAL CURVE FIT "
@@ -201,7 +201,7 @@ msgstr "$^{e}$"
 
 #: src\DR-Altimeter.py:766
 msgid "Polynomlal Steps of {}{} degree"
-msgstr "Niveau polynomial du {}{} ordre"
+msgstr "Niveau polynomial d'ordre {}{}"
 
 #: src\DR-Altimeter.py:770
 msgid "Atmospheric Pressure"
