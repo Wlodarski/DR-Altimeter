@@ -10,8 +10,9 @@ _DR-Altimeter_ predicts how much the indicated altitude will deviate due to chan
 #### Some features
 
 - Fully configurable with an .ini file
-- Predictions both produced in graphical and text format;
-- Text results can be automatically posted to a [Slack](https://slack.com) chat room, therefore to a smartphone;
+- Predictions both produced in graphical and text format
+- Adaptive multilingual interface. English [en] and _français_ [fr], so far
+- Text results can be automatically posted to a [Slack](https://slack.com) chat room, therefore to a smartphone
 - Command line options, useful notably to create shortcuts and scheduled tasks (Windows equivalent of a cron job)
 - Graphical User Interface (GUI) with zoom and pan functions, to export portions of the graph that interests you specifically
 
