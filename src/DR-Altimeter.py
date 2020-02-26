@@ -1,6 +1,7 @@
 #! python3
 # TODO: restruct main()
 # TODO: rename locales?
+# TODO: --lang
 
 import argparse
 import gettext
@@ -63,6 +64,7 @@ parser.add_argument('--latitude', help=_('Latitude'), type=float)
 parser.add_argument('--longitude', help=_('Longitude'), type=float)
 parser.add_argument('--override-url', help=_('Specific weather station URL'), type=str)
 parser.add_argument('-v', '--verbose', action='store_true', help=_('show this help message and exit'))
+# TODO https://stackoverflow.com/questions/35847084/customize-argparse-help-message
 
 args = parser.parse_args()
 
@@ -732,8 +734,8 @@ try:
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: '{:.0f} hPa'.format(new), old_ticks)) + ['MSL$_{ISA}$'])
-    bottomsubplot.set_ylim(round(min(z[:nb_hours]) - 5, -1),  # multiple of 10, just below the minimum pressure
-                           max(z[:nb_hours]) + 1  # just above maximum pressure
+    bottomsubplot.set_ylim(round(min(z) - 5, -1),  # multiple of 10, just below the minimum pressure
+                           round(max(z) + 5, -1)  # multiple of 10, just above maximum pressure
                            )
     bottomsubplot.grid(True, which='major', alpha=0.6)
     bottomsubplot.grid(True, which='minor', alpha=0.3)
@@ -770,7 +772,7 @@ try:
     topsubplot.step(np.arange(x[0], x[-1], 1 / 60),
                     [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
                     color='red', where='post', label=_('Polynomlal Steps of {}{} degree').format(degree, _('$^{th}$')))
-    topsubplot.scatter(now_minutes / 60, 0, color='red', marker='>', label='Fix at {}'.format(strftime('%#H:%M')))
+    topsubplot.scatter(now_minutes / 60, 0, color='red', marker='>', label=_('Fix at {}').format(strftime('%#H:%M')))
     inset_altitude.plot(x, y, color='red', alpha=0.5)
 
     bottomsubplot.plot(x, z, color='tab:blue', marker='o', markersize=3.5, label=_('Atmospheric Pressure'),
