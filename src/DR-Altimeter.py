@@ -10,7 +10,7 @@ from abc import abstractmethod
 from configparser import ConfigParser
 from datetime import datetime, timedelta
 from locale import getdefaultlocale
-from os import system, environ, path
+from os import system, environ, path, walk
 from pathlib import Path
 from re import search
 from textwrap import fill
@@ -38,19 +38,18 @@ from ISA import InternationalStandardAtmosphere
 from forecastarray import Forecast
 from txttable import PredictionTable
 
+
+def _(message): return message  # until a proper gettext _() is defined
+
+
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
-
-
-def _(message): return message
-
 
 FULLNAME = 'DR Polynomial Altimeter'
 VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
 
-# TODO: aide toujours en english, sinon toute la logique fout le camp
-# -- override .ini
+# Command line options. They all override config.ini
 parser = argparse.ArgumentParser(Path(__file__).name,
                                  description=DESCRIPTION,
                                  epilog='{}, version {}'.format(SHORTNAME, VERSION))
@@ -59,14 +58,15 @@ parser.add_argument('-s', '--slack', help='Slack channel')
 parser.add_argument('--latitude', help='latitude', type=float)
 parser.add_argument('--longitude', help='longitude', type=float)
 parser.add_argument('--override-url', help='specific weather station URL', type=str)
-parser.add_argument('--lang', help='interface language (en, fr)')  # TODO: enum avail lang
+bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
+localedir = path.join(bundle_dir, 'locales')
+all_lang = ', '.join(next(walk(localedir))[1])
+parser.add_argument('--lang', help='interface language ({})'.format(all_lang))
 parser.add_argument('-v', '--verbose', action='store_true', help='include details about polynomial model')
 args = parser.parse_args()
 
 # I18N translations, setup of gettext
 current_locale, encoding = getdefaultlocale()
-bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
-localedir = path.join(bundle_dir, 'locales')
 lang = ''
 if args.lang is not None:
     lang = args.lang
