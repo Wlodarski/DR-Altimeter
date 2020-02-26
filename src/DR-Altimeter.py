@@ -1,7 +1,5 @@
 #! python3
 # TODO: restruct main()
-# TODO: rename locales?
-# TODO: --lang
 
 import argparse
 import gettext
@@ -40,33 +38,42 @@ from ISA import InternationalStandardAtmosphere
 from forecastarray import Forecast
 from txttable import PredictionTable
 
-# I18N translations, setup of gettext
-current_locale, encoding = getdefaultlocale()
-bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
-localedir = path.join(bundle_dir, 'locales')
-traduction = gettext.translation('DR-Altimeter', localedir=localedir, languages=[current_locale], fallback=True)
-traduction.install()
-_ = traduction.gettext
-
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
+
+
+def _(message): return message
+
 
 FULLNAME = 'DR Polynomial Altimeter'
 VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
 
+# TODO: aide toujours en english, sinon toute la logique fout le camp
+# -- override .ini
 parser = argparse.ArgumentParser(Path(__file__).name,
                                  description=DESCRIPTION,
                                  epilog='{}, version {}'.format(SHORTNAME, VERSION))
-parser.add_argument('-n', '--no-key', action='store_true', help=_('Disable "Press any key"'))
-parser.add_argument('-s', '--slack', help=_('Slack channel'))
-parser.add_argument('--latitude', help=_('Latitude'), type=float)
-parser.add_argument('--longitude', help=_('Longitude'), type=float)
-parser.add_argument('--override-url', help=_('Specific weather station URL'), type=str)
-parser.add_argument('-v', '--verbose', action='store_true', help=_('show this help message and exit'))
-# TODO https://stackoverflow.com/questions/35847084/customize-argparse-help-message
-
+parser.add_argument('-n', '--no-key', action='store_true', help='disable "Press any key to continue"')
+parser.add_argument('-s', '--slack', help='Slack channel')
+parser.add_argument('--latitude', help='latitude', type=float)
+parser.add_argument('--longitude', help='longitude', type=float)
+parser.add_argument('--override-url', help='specific weather station URL', type=str)
+parser.add_argument('--lang', help='interface language (en, fr)')  # TODO: enum avail lang
+parser.add_argument('-v', '--verbose', action='store_true', help='include details about polynomial model')
 args = parser.parse_args()
+
+# I18N translations, setup of gettext
+current_locale, encoding = getdefaultlocale()
+bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
+localedir = path.join(bundle_dir, 'locales')
+lang = ''
+if args.lang is not None:
+    lang = args.lang
+chosen_lang = gettext.translation('DR-Altimeter', localedir=localedir, languages=[lang, current_locale], fallback=True)
+chosen_lang.install()
+del _
+_ = chosen_lang.gettext
 
 if (args.longitude is not None and args.latitude is None) or (args.longitude is None and args.latitude is not None):
     parser.error(_('If one is provided, both --latitude and --longitude must be provided'))
@@ -466,7 +473,7 @@ def pretty_polyid(polynomial: object, f_text: str = 'f', var_symbol: str = 'x', 
 #  MAIN
 # =====================================================================
 
-program = Program(fullname=FULLNAME, version=VERSION, description=DESCRIPTION, shortname=SHORTNAME)
+program = Program(fullname=FULLNAME, version=VERSION, description=_(DESCRIPTION), shortname=SHORTNAME)
 isa = InternationalStandardAtmosphere()
 
 # noinspection PyBroadException
