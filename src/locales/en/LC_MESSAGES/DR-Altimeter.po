@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-02-26 17:11-0500\n"
-"PO-Revision-Date: 2020-02-26 17:17-0500\n"
+"POT-Creation-Date: 2020-02-26 21:15-0500\n"
+"PO-Revision-Date: 2020-02-26 21:16-0500\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,170 +17,178 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: en\n"
 
-#: src/DR-Altimeter.py:49
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:54
 msgid "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
 msgstr ""
 
-#: src/DR-Altimeter.py:79
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:84
 msgid "If one is provided, both --latitude and --longitude must be provided"
 msgstr ""
 
-#: src/DR-Altimeter.py:123
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:128
 msgid "Regenerating {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:224
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:229
 msgid "Latitude : {:.7f}"
 msgstr ""
 
-#: src/DR-Altimeter.py:225
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:230
 msgid "Longitude : {:.7f}"
 msgstr ""
 
-#: src/DR-Altimeter.py:226
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:231
 msgid "Accuracy : {}m"
 msgstr ""
 
-#: src/DR-Altimeter.py:244
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:249
 msgid "Using override URL"
 msgstr ""
 
-#: src/DR-Altimeter.py:250
-msgid "Using Lat/Lon found in"
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:255
+msgid "Using Lat/Lon found in {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:251
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:256
 msgid "Latitude: {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:252
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:257
 msgid "Longitude: {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:268
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:273
 msgid "Page with wrong title"
 msgstr ""
 
-#: src/DR-Altimeter.py:270
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:275
 msgid "Connected to Wunderground"
 msgstr ""
 
-#: src/DR-Altimeter.py:276
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:281
 msgid "Page is ready"
 msgstr ""
 
-#: src/DR-Altimeter.py:278
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:283
 msgid "Page took too much time to load"
 msgstr ""
 
-#: src/DR-Altimeter.py:281
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:286
 msgid "Switching to metric"
 msgstr ""
 
-#: src/DR-Altimeter.py:288
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:293
 msgid "Unable to switch to metric"
 msgstr ""
 
-#: src/DR-Altimeter.py:300
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:305
 msgid "Station name not found"
 msgstr ""
 
-#: src/DR-Altimeter.py:307
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:312
 msgid "UNKNOWN"
 msgstr ""
 
-#: src/DR-Altimeter.py:317
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:322
 msgid "Current atmospheric pressure : {} hPa (ISA={:0.1f}m)"
 msgstr ""
 
-#: src/DR-Altimeter.py:328
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:333
 msgid "Observation time not found."
 msgstr ""
 
-#: src/DR-Altimeter.py:337
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:342
 msgid "Elevation not found. Assuming it to be zero"
 msgstr ""
 
-#: src/DR-Altimeter.py:339
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:344
 msgid "Weather station elevation : {}m (ISA={:7.2f}hPa)"
 msgstr ""
 
-#: src/DR-Altimeter.py:357
-msgid "Unable to send report to Slack"
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:356
+msgid "Sending timetable to Slack channel {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:554
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:362
+msgid "Sending {} to Slack channel {}"
+msgstr ""
+
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:369
+msgid "Sending to Slack failed"
+msgstr ""
+
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:566
 msgid " POLYNOMIAL CURVE FIT "
 msgstr ""
 
-#: src/DR-Altimeter.py:569
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:581
 msgid "Degree : {:2d}/{}, passing through zero {} times"
 msgstr ""
 
-#: src/DR-Altimeter.py:573
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:585
 msgid "Found a good match"
 msgstr ""
 
-#: src/DR-Altimeter.py:579
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:591
 msgid "End of search"
 msgstr ""
 
-#: src/DR-Altimeter.py:585
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:597
 msgid "Degree : {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:587
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:599
 msgid "Coefficients : {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:589
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:601
 msgid "Time vector (x) : {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:591
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:603
 msgid "Altitude vector (y) : {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:593
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:605
 msgid "Pressure vector (z) : {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:596
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:608
 msgid "altitude(time)"
 msgstr ""
 
-#: src/DR-Altimeter.py:597
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:609
 msgid "time"
 msgstr ""
 
-#: src/DR-Altimeter.py:618
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:630
 msgid "{}[fix]"
 msgstr ""
 
-#: src/DR-Altimeter.py:688
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:700
 msgid "$\\Delta$altitude, $m$"
 msgstr ""
 
-#: src/DR-Altimeter.py:701
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:713
 msgid "altitude, $m$"
 msgstr ""
 
-#: src/DR-Altimeter.py:775
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:787
 msgid "Hourly Forecast"
 msgstr ""
 
-#: src/DR-Altimeter.py:781
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:793
 msgid "$^{th}$"
 msgstr ""
 
-#: src/DR-Altimeter.py:781
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:793
 msgid "Polynomlal Steps of {}{} degree"
 msgstr ""
 
-#: src/DR-Altimeter.py:782
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:794
 msgid "Fix at {}"
 msgstr ""
 
-#: src/DR-Altimeter.py:785
+#: C:\Users\Walter Wlodarski\Documents\DR-Altimeter\src\DR-Altimeter.py:797
 msgid "Atmospheric Pressure"
 msgstr ""

@@ -39,6 +39,11 @@ from forecastarray import Forecast
 from txttable import PredictionTable
 
 
+def printf(text: str) -> str:
+    print(fill(text, 79))
+    return text
+
+
 def _(message): return message  # until a proper gettext _() is defined
 
 
@@ -120,7 +125,7 @@ class Program:
         self.cfg.read(self.CONFIG_FILENAME)
 
         if self.CS not in self.cfg.sections():
-            print(_('Regenerating {}').format(self.CONFIG_FILENAME))
+            printf(_('Regenerating {}').format(self.CONFIG_FILENAME))
             print()
             self.cfg.add_section(self.CS)
 
@@ -221,9 +226,9 @@ class Program:
         self.cfg.set(self.CS, self.LONGITUDE_T, str(pos['longitude']))
         self.save_ini()
 
-        print(_('Latitude : {:.7f}').format(pos['latitude']))
-        print(_('Longitude : {:.7f}').format(pos['longitude']))
-        print(_('Accuracy : {}m').format(pos['accuracy']))
+        printf(_('Latitude : {:.7f}').format(pos['latitude']))
+        printf(_('Longitude : {:.7f}').format(pos['longitude']))
+        printf(_('Accuracy : {}m').format(pos['accuracy']))
         logging.info('{:.7f} {:.7f} ±{}m'.format(pos['latitude'], pos['longitude'], pos['accuracy']))
         print()
 
@@ -241,15 +246,15 @@ class Program:
 
         elif self.OVERRIDE_URL_EXISTS:
 
-            print(_('Using override URL'))
+            printf(_('Using override URL'))
             _hourly_forecast_url = self.OVERRIDE_URL
 
         elif not self.MISSING_LATLONG:
 
             if args.latitude is None:
-                print(_('Using Lat/Lon found in'), self.CONFIG_FILENAME)
-            print(_('Latitude: {}').format(self.LATITUDE))
-            print(_('Longitude: {}').format(self.LONGITUDE))
+                printf(_('Using Lat/Lon found in {}').format(self.CONFIG_FILENAME))
+            printf(_('Latitude: {}').format(self.LATITUDE))
+            printf(_('Longitude: {}').format(self.LONGITUDE))
             print()
             _hourly_forecast_url = self.GEOLOCATED_URL + '{},{}'.format(
                 self.LATITUDE,
@@ -267,18 +272,18 @@ class Program:
         except AssertionError:
             raise NameError(_('Page with wrong title'))
 
-        print(_('Connected to Wunderground'))
+        printf(_('Connected to Wunderground'))
 
     def wait_until_page_is_loaded(self):
         try:
             WebDriverWait(self.browser.driver, self.TIMEOUT).until(
                 ec.presence_of_element_located((By.ID, 'hourly-forecast-table')))
-            print(_('Page is ready'))
+            printf(_('Page is ready'))
         except TimeoutException:
             raise TimeoutException(_('Page took too much time to load'))
 
     def switch_to_metric(self):
-        print(_('Switching to metric'))
+        printf(_('Switching to metric'))
         self.browser.driver.find_element_by_id('wuSettings').click()
         self.browser.driver.find_element_by_css_selector("[title^='Switch to Metric'").click()
         try:
@@ -297,7 +302,7 @@ class Program:
             _st = search('^-?[0-9]* (.*)$', _elem.text)
             self.STATION_NAME = _st.group(1).strip()
         except NoSuchElementException:
-            print(self.register_error(_('Station name not found')))
+            printf(self.register_error(_('Station name not found')))
         if self.STATION_NAME is None or self.STATION_NAME == 'STATION':
             try:
                 _elem = self.browser.driver.find_element_by_xpath(
@@ -307,16 +312,16 @@ class Program:
                 self.STATION_NAME = _('UNKNOWN')
         logging.info(self.STATION_NAME)
         print()
-        print(colored(self.STATION_NAME, attrs=['bold']))
+        printf(colored(self.STATION_NAME, attrs=['bold']))
 
     def get_atm_pressure_at_station(self):
         _elem = self.browser.driver.find_element_by_xpath('//*[@id="inner-content"]/div[3]/div[2]/div/div[1]'
                                                           '/div[1]/lib-additional-conditions/lib-item-box/div/'
                                                           'div[2]/div/div[1]/div[2]/lib-display-unit/span/span[1]')
         self.P_INITIAL = float(_elem.text)
-        print(self.register_info(_('Current atmospheric pressure : '
-                                   '{} hPa (ISA={:0.1f}m)').format(self.P_INITIAL,
-                                                                   isa.altitude(pressure=self.P_INITIAL))))
+        printf(self.register_info(_('Current atmospheric pressure : '
+                                    '{} hPa (ISA={:0.1f}m)').format(self.P_INITIAL,
+                                                                    isa.altitude(pressure=self.P_INITIAL))))
         return self.P_INITIAL
 
     def get_obs_time(self):
@@ -325,7 +330,7 @@ class Program:
         if _st is not None:
             return datetime.strptime(_st.group(1), '%Y-%m-%d %H:%M:%S')
         else:
-            print(self.register_error(_('Observation time not found.')))
+            printf(self.register_error(_('Observation time not found.')))
             return datetime.now()
 
     def get_station_elevation(self):
@@ -334,11 +339,11 @@ class Program:
                                                                '/lib-city-header/div[1]/div/span/span/strong')
             self.ELEVATION = int(_elem.text)
         except NoSuchElementException:
-            print(self.register_error(_('Elevation not found. Assuming it to be zero')))
+            printf(self.register_error(_('Elevation not found. Assuming it to be zero')))
             self.ELEVATION = 0
-        print(self.register_info(_('Weather station elevation : '
-                                   '{}m (ISA={:7.2f}hPa)').format(self.ELEVATION,
-                                                                  isa.pressure(altitude=self.ELEVATION))))
+        printf(self.register_info(_('Weather station elevation : '
+                                    '{}m (ISA={:7.2f}hPa)').format(self.ELEVATION,
+                                                                   isa.pressure(altitude=self.ELEVATION))))
 
     def display_results(self):
         _txt = self.result.display_table()
@@ -348,13 +353,20 @@ class Program:
             _title = '{}-{}.txt'.format(self.STATION_NAME, strftime('%Y%m%d-%H%M')).replace(' ', '_')
             _comment = '{st} ({el}m)\n\n'.format(st=self.STATION_NAME, el=self.ELEVATION)
             try:
+                printf(_('Sending timetable to Slack channel {}').format(args.slack))
                 _response = self.slack.files_upload(content=_txt,
                                                     channels=args.slack,
                                                     title=_title,
                                                     initial_comment=_comment)
                 assert _response["ok"]
+                printf(_('Sending {} to Slack channel {}').format(program.GRAPH_FILENAME, args.slack))
+                _response = self.slack.files_upload(file=program.GRAPH_FILENAME,
+                                                    channels=args.slack,
+                                                    title=_title,
+                                                    initial_comment=_comment)
+                assert _response["ok"]
             except AssertionError:
-                print(self.register_error(_('Unable to send report to Slack')))
+                printf(self.register_error(_('Sending to Slack failed')))
 
     @staticmethod
     def register_info(msg):
@@ -380,8 +392,8 @@ class Console:
 
         system('title {name} {version}'.format(name=self.title, version=self.version))
 
-        print(colored('{name} {version}'.format(name=self.title, version=self.version), attrs=['bold']))
-        print(self.subtitle)
+        printf(colored('{name} {version}'.format(name=self.title, version=self.version), attrs=['bold']))
+        printf(self.subtitle)
         print()
 
 
@@ -497,7 +509,7 @@ try:
     first = True
     for d in dates:
         if program.VERBOSE:
-            print(hourly_forecast_url + '/date/' + d)
+            printf(hourly_forecast_url + '/date/' + d)
         if first:
             program.browser.go_to(webpage=hourly_forecast_url + '/date/' + d, hidden=True)
             program.check_page(title='Hourly Weather Forecast | Weather Underground')
@@ -566,31 +578,31 @@ try:
             if pass_through_zero > 0:
                 pass_through_zero += -1
         if program.VERBOSE:
-            print(program.register_info(_('Degree : {:2d}/{}, '
-                                          'passing through zero {} times').format(d, half_point, pass_through_zero)))
+            printf(program.register_info(_('Degree : {:2d}/{}, '
+                                           'passing through zero {} times').format(d, half_point, pass_through_zero)))
         if pass_through_zero == 2:
             if program.VERBOSE:
-                print(_('Found a good match'))
+                printf(_('Found a good match'))
                 print()
             break
     else:
         if program.VERBOSE:
             # d += 1
-            print(program.register_info(_('End of search')))
+            printf(program.register_info(_('End of search')))
             print()
     degree = d  # - 1
     poly = np.polyfit(x, y, degree)
 
     if program.VERBOSE:
-        print(program.register_info(_('Degree : {}').format(degree)))
+        printf(program.register_info(_('Degree : {}').format(degree)))
         print()
-        print(fill(program.register_info(_('Coefficients : {}').format(poly)), 79))
+        printf(program.register_info(_('Coefficients : {}').format(poly)))
         print()
-        print(fill(program.register_info(_('Time vector (x) : {}').format(x)), 79))
+        printf(program.register_info(_('Time vector (x) : {}').format(x)))
         print()
-        print(fill(program.register_info(_('Altitude vector (y) : {}').format(y)), 79))
+        printf(program.register_info(_('Altitude vector (y) : {}').format(y)))
         print()
-        print(fill(program.register_info(_('Pressure vector (z) : {}').format(z)), 79))
+        printf(program.register_info(_('Pressure vector (z) : {}').format(z)))
         print()
         print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=poly,
                                                                   f_text=_('altitude(time)'),
