@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2020-02-26 22:04-0500\n"
-"PO-Revision-Date: 2020-02-26 22:06-0500\n"
+"PO-Revision-Date: 2020-02-26 22:10-0500\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,172 +18,175 @@ msgstr ""
 "Language: en\n"
 
 msgid "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
-msgstr ""
+msgstr "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
 
 msgid "If one is provided, both --latitude and --longitude must be provided"
-msgstr ""
+msgstr "If one is provided, both --latitude and --longitude must be provided"
 
 msgid "Regenerating {}"
-msgstr ""
+msgstr "Regenerating {}"
 
 msgid "Latitude : {:.7f}"
-msgstr ""
+msgstr "Latitude : {:.7f}"
 
 msgid "Longitude : {:.7f}"
-msgstr ""
+msgstr "Longitude : {:.7f}"
 
 msgid "Accuracy : {}m"
-msgstr ""
+msgstr "Accuracy : {}m"
 
 msgid "Using override URL"
-msgstr ""
+msgstr "Using override URL"
 
 msgid "Using Lat/Lon found in {}"
-msgstr ""
+msgstr "Using Lat/Lon found in {}"
 
 msgid "Latitude: {}"
-msgstr ""
+msgstr "Latitude: {}"
 
 msgid "Longitude: {}"
-msgstr ""
+msgstr "Longitude: {}"
 
 msgid "Page with wrong title"
-msgstr ""
+msgstr "Page with wrong title"
 
 msgid "Connected to Wunderground"
-msgstr ""
+msgstr "Connected to Wunderground"
 
 msgid "Page is ready"
-msgstr ""
+msgstr "Page is ready"
 
 msgid "Page took too much time to load"
-msgstr ""
+msgstr "Page took too much time to load"
 
 msgid "Switching to metric"
-msgstr ""
+msgstr "Switching to metric"
 
 msgid "Unable to switch to metric"
-msgstr ""
+msgstr "Unable to switch to metric"
 
 msgid "Station name not found"
-msgstr ""
+msgstr "Station name not found"
 
 msgid "UNKNOWN"
-msgstr ""
+msgstr "UNKNOWN"
 
 msgid "Current atmospheric pressure : {} hPa (ISA={:0.1f}m)"
-msgstr ""
+msgstr "Current atmospheric pressure : {} hPa (ISA={:0.1f}m)"
 
 msgid "Observation time not found."
-msgstr ""
+msgstr "Observation time not found."
 
 msgid "Elevation not found. Assuming it to be zero"
-msgstr ""
+msgstr "Elevation not found. Assuming it to be zero"
 
 msgid "Weather station elevation : {}m (ISA={:7.2f}hPa)"
-msgstr ""
+msgstr "Weather station elevation : {}m (ISA={:7.2f}hPa)"
 
 msgid "Sending timetable to Slack channel {}"
-msgstr ""
+msgstr "Sending timetable to Slack channel {}"
 
 msgid "Sending {} to Slack channel {}"
-msgstr ""
+msgstr "Sending {} to Slack channel {}"
 
 msgid "Sending to Slack failed"
-msgstr ""
+msgstr "Sending to Slack failed"
 
 msgid " POLYNOMIAL CURVE FIT "
-msgstr ""
+msgstr " POLYNOMIAL CURVE FIT "
 
 msgid "Degree : {:2d}/{}, passing through zero {} times"
-msgstr ""
+msgstr "Degree : {:2d}/{}, passing through zero {} times"
 
 msgid "Found a good match"
-msgstr ""
+msgstr "Found a good match"
 
 msgid "End of search"
-msgstr ""
+msgstr "End of search"
 
 msgid "Degree : {}"
-msgstr ""
+msgstr "Degree : {}"
 
 msgid "Coefficients : {}"
-msgstr ""
+msgstr "Coefficients : {}"
 
 msgid "Time vector (x) : {}"
-msgstr ""
+msgstr "Time vector (x) : {}"
 
 msgid "Altitude vector (y) : {}"
-msgstr ""
+msgstr "Altitude vector (y) : {}"
 
 msgid "Pressure vector (z) : {}"
-msgstr ""
+msgstr "Pressure vector (z) : {}"
 
 msgid "altitude(time)"
-msgstr ""
+msgstr "altitude(time)"
 
 msgid "time"
-msgstr ""
+msgstr "time"
 
 msgid "{}[fix]"
-msgstr ""
+msgstr "{}[fix]"
 
 msgid "$\\Delta$altitude, $m$"
-msgstr ""
+msgstr "$\\Delta$altitude, $m$"
 
 msgid "altitude, $m$"
-msgstr ""
+msgstr "altitude, $m$"
 
 msgid "Hourly Forecast"
-msgstr ""
+msgstr "Hourly Forecast"
 
 msgid "$^{th}$"
-msgstr ""
+msgstr "$^{th}$"
 
 msgid "Polynomlal Steps of {}{} degree"
-msgstr ""
+msgstr "Polynomlal Steps of {}{} degree"
 
 msgid "Fix at {}"
-msgstr ""
+msgstr "Fix at {}"
 
 msgid "Atmospheric Pressure"
-msgstr ""
+msgstr "Atmospheric Pressure"
 
 msgid "Altitude out of range (-700 m < altitude < 10000 m)"
-msgstr ""
+msgstr "Altitude out of range (-700 m < altitude < 10000 m)"
 
 msgid "Pressure out of range (260 hPa < pressure < 1100 hPa)"
-msgstr ""
+msgstr "Pressure out of range (260 hPa < pressure < 1100 hPa)"
 
 msgid "Missing current pressure or pressure variation"
-msgstr ""
+msgstr "Missing current pressure or pressure variation"
 
 msgid "Current pressure contradicted by pressure variation"
-msgstr ""
+msgstr "Current pressure contradicted by pressure variation"
 
 msgid ""
 "At {} m above mean sea level, the standardized atmospheric pressure equals "
 "{:.2f} hPa"
 msgstr ""
+"At {} m above mean sea level, the standardized atmospheric pressure equals "
+"{:.2f} hPa"
 
 msgid ""
 "A pressure of {:.2f} hPa corresponds to a standardized altitude of {:.0f} m"
 msgstr ""
+"A pressure of {:.2f} hPa corresponds to a standardized altitude of {:.0f} m"
 
 msgid "Average Correction"
-msgstr ""
+msgstr "Average Correction"
 
 msgid "Timestamp must be unique. {} already set"
-msgstr ""
+msgstr "Timestamp must be unique. {} already set"
 
 msgid "ALT"
-msgstr ""
+msgstr "ALT"
 
 msgid "ALT/hr"
-msgstr ""
+msgstr "ALT/hr"
 
 msgid "H"
-msgstr ""
+msgstr "H"
 
 msgid "PRESSURE"
-msgstr ""
+msgstr "PRESSURE"
