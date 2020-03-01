@@ -129,3 +129,9 @@ See [CONFIG.md](CONFIG.md)
 
 See [COMMAND.md](COMMAND.md)
 
+## Author
+- **Walter Wlodarski** - *Creator* - [Wlodarski](https://github.com/Wlodarski)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
