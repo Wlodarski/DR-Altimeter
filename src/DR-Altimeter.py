@@ -1,5 +1,4 @@
 #! python3
-# TODO: restruct main()
 
 import argparse
 import gettext
@@ -149,7 +148,8 @@ class Program:
         else:
             self.OVERRIDE_URL = self.OVERRIDE_URL_
 
-        self.OVERRIDE_URL_EXISTS = self.OVERRIDE_URL is not None and len(self.OVERRIDE_URL) > 35
+        self.OVERRIDE_URL_EXISTS = self.OVERRIDE_URL is not None and self.OVERRIDE_URL.startswith(
+            'https://www.wunderground.com/hourly/')
 
         self.ANY_HTTPS_PAGE_T = 'https page'
         self.ANY_HTTPS_PAGE = self.cfg.get(self.CS, self.ANY_HTTPS_PAGE_T, fallback='https://blank.org')
@@ -349,24 +349,26 @@ class Program:
         _txt = self.result.display_table()
         logging.info('\n\n' + _txt)
         print(_txt)
-        if args.slack is not None:
-            _title = '{}-{}.txt'.format(self.STATION_NAME, strftime('%Y%m%d-%H%M')).replace(' ', '_')
-            _comment = '{st} ({el}m)\n\n'.format(st=self.STATION_NAME, el=self.ELEVATION)
-            try:
-                printf(_('Sending timetable to Slack channel {}').format(args.slack))
-                _response = self.slack.files_upload(content=_txt,
-                                                    channels=args.slack,
-                                                    title=_title,
-                                                    initial_comment=_comment)
-                assert _response["ok"]
-                printf(_('Sending {} to Slack channel {}').format(program.GRAPH_FILENAME, args.slack))
-                _response = self.slack.files_upload(file=program.GRAPH_FILENAME,
-                                                    channels=args.slack,
-                                                    title=_title,
-                                                    initial_comment=_comment)
-                assert _response["ok"]
-            except AssertionError:
-                printf(self.register_error(_('Sending to Slack failed')))
+
+    def send_to_slack(self):
+        _txt = self.result.display_table()
+        _title = '{}-{}.txt'.format(self.STATION_NAME, strftime('%Y%m%d-%H%M')).replace(' ', '_')
+        _comment = '{st} ({el}m)\n\n'.format(st=self.STATION_NAME, el=self.ELEVATION)
+        try:
+            printf(_('Sending timetable to Slack channel {}').format(args.slack))
+            _response = self.slack.files_upload(content=_txt,
+                                                channels=args.slack,
+                                                title=_title,
+                                                initial_comment=_comment)
+            assert _response["ok"]
+            printf(_('Sending {} to Slack channel {}').format(program.GRAPH_FILENAME, args.slack))
+            _response = self.slack.files_upload(file=program.GRAPH_FILENAME,
+                                                channels=args.slack,
+                                                title=_title,
+                                                initial_comment=_comment)
+            assert _response["ok"]
+        except AssertionError:
+            printf(self.register_error(_('Sending to Slack failed')))
 
     @staticmethod
     def register_info(msg):
@@ -807,6 +809,9 @@ try:
                 dpi=program.GRAPH_DPI,
                 orientation=program.GRAPH_ORIENTATION,
                 papertype=program.GRAPH_PAPERTYPE)
+
+    if args.slack is not None:
+        program.send_to_slack()
 
     if not args.no_key:
         mng = plt.get_current_fig_manager()
