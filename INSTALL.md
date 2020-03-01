@@ -5,6 +5,7 @@
 1. Download and extract the [latest .zip release](https://github.com/Wlodarski/DR-Altimeter/releases/latest) to a folder of your choice:
      - DR-Altimeter.exe
      - Chromedriver.exe <sup>[problems?](INSTALL.md#chromedriverexe)
+     - LICENSE.md and the documentation files (*.md)
    
 2. Run ``DR-Altimeter.exe`` .
    - At first run, config.ini will be created and configured with your current latitude and longitude. You'll see briefly an empty Chrome window. It's normal. It's required to acquire your position.
