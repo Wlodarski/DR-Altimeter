@@ -668,7 +668,7 @@ try:
                 previous_v = v
 
             if v != previous_v:
-                print(t, minutes, ss, minutes - ss)
+                #  print(t, minutes, ss, minutes - ss)  # TODO: bug 4
                 if minutes < 0:  # TODO: bug 4
                     tt = program.forecast.forecast[t]['date'].timedelta(hours=-1)
                     change_time = tt.replace(microsecond=0,
@@ -834,7 +834,10 @@ try:
     topsubplot.step(np.arange(x[0], x[-1], 1 / 60),
                     [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
                     color='red', where='post', label=_('Polynomlal Steps of {}{} degree').format(degree, _('$^{th}$')))
-    topsubplot.scatter(now_minutes / 60, 0, color='red', marker='>', label=_('Fix at {}').format(strftime('%#H:%M')))
+    topsubplot.scatter((now_minutes - ss) / 60, 0,  # TODO: bug 4
+                       color='red',
+                       marker='>',
+                       label=_('Fix at {}').format(strftime('%#H:%M')))
     inset_altitude.plot(x, y, color='red', alpha=0.5)
 
     bottomsubplot.plot(x, z, color='tab:blue', marker='o', markersize=3.5, label=_('Atmospheric Pressure'),
