@@ -264,8 +264,8 @@ class Program:
             self.save_lat_lon(pos=position)
             self.browser.quit()
 
-            #  decreased precision (4 digits instead of 7) to partially preserve anonymity
-            _hourly_forecast_url = self.GEOLOCATED_URL + '{:.4f},{:.4f}'.format(position['latitude'],
+            #  decreased precision (3 digits instead of 7) to partially preserve anonymity
+            _hourly_forecast_url = self.GEOLOCATED_URL + '{:.3f},{:.3f}'.format(position['latitude'],
                                                                                 position['longitude'])
 
         elif self.OVERRIDE_URL_EXISTS:
@@ -280,7 +280,8 @@ class Program:
             printf(_('Latitude: {}').format(self.LATITUDE))
             printf(_('Longitude: {}').format(self.LONGITUDE))
             print()
-            _hourly_forecast_url = self.GEOLOCATED_URL + '{},{}'.format(
+            #  decreased precision (3 digits instead of 7) to partially preserve anonymity
+            _hourly_forecast_url = self.GEOLOCATED_URL + '{:.3f},{:.3f}'.format(
                 self.LATITUDE,
                 self.LONGITUDE)
 
