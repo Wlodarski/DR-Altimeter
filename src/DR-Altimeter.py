@@ -584,6 +584,7 @@ try:
         y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
         z.append(data['pressure'])
 
+    # x[0] = x[0] - 1  # TODO: bug 4 test
     # ----------------------------------------------------------------------
     # POLYNOMIAL CURVE FIT
     # ----------------------------------------------------------------------
@@ -597,7 +598,7 @@ try:
     half_point = len(x) // 2
     for d in range(1, half_point + 1):
         p = np.polyfit(x, y, d)
-        test = round(np.polyval(p, int(datetime.now().strftime('%M')) / 60))
+        test = round(np.polyval(p, int(datetime.now().strftime('%M')) / 60))  # TODO: bug 4 ok
         if test == 0:
             pass_through_zero += 1
         else:
@@ -626,6 +627,8 @@ try:
         print()
         printf(program.register_info(_('Time vector (x) : {}').format(x)))
         print()
+        printf(program.register_info(_('Time labels (x_labels) : {}').format(x_labels)))  # TODO: bug 4
+        print()
         printf(program.register_info(_('Altitude vector (y) : {}').format(y)))
         print()
         printf(program.register_info(_('Pressure vector (z) : {}').format(z)))
@@ -643,10 +646,15 @@ try:
     total_down_err = 0
     previous_v = None
     fix_found = False
-    now_minutes = int(datetime.now().strftime('%M'))
+    now_minutes = int(datetime.now().strftime('%M'))  # TODO: bug 4 ok
     for t in range(0, len(x)):
         steps = []
-        for minutes in range(0, 60):
+        # print(t, x[t])  # TODO: bug 4
+        if t == 0 and x[t] < 0:  # TODO: bug 4
+            ss = -60
+        else:
+            ss = 0
+        for minutes in range(ss, 60):  # TODO: bug 4
             minute_dec = minutes / 60
             t_dec = t + minute_dec
             v = round(np.polyval(poly, t_dec))
@@ -659,9 +667,17 @@ try:
                 previous_v = v
 
             if v != previous_v:
-                change_time = program.forecast.forecast[t]['date'].replace(microsecond=0,
-                                                                           second=0,
-                                                                           minute=minutes)
+                print(t, minutes, ss, minutes - ss)
+                if minutes < 0:  # TODO: bug 4
+                    tt = program.forecast.forecast[t]['date'].timedelta(hours=-1)
+                    change_time = tt.replace(microsecond=0,
+                                             second=0,
+                                             minute=minutes - ss)  # TODO: bug 4
+                else:
+                    change_time = program.forecast.forecast[t]['date'].replace(microsecond=0,
+                                                                               second=0,
+                                                                               minute=minutes)
+
                 steps.append('{}[{:d}]'.format(change_time.strftime('%Hh%M'), int(v)))
                 previous_v = v
 
