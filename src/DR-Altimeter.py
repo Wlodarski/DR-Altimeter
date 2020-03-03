@@ -64,11 +64,14 @@ _ = Translation()
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
 
-clp = CommandLineParser(prog_path=Path(__file__), description=DESCRIPTION, shortname=SHORTNAME, version=VERSION)
-_.set_lang(clp)
-args = clp.args
-clp.link_together(args.latitude, args.longitude,
-                  _('If one is provided, both --latitude and --longitude must be provided'))
+command_line_parser = CommandLineParser(prog_path=Path(__file__),
+                                        description=DESCRIPTION,
+                                        shortname=SHORTNAME,
+                                        version=VERSION)
+_.set_lang(command_line_parser)
+args = command_line_parser.args
+command_line_parser.link_together(args.latitude, args.longitude,
+                                  _('If one is provided, both --latitude and --longitude must be provided'))
 
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
 
