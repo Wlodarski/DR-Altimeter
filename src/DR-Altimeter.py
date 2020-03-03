@@ -660,7 +660,7 @@ try:
             t_dec = t + minute_dec
             v = round(np.polyval(poly, t_dec))
 
-            if not fix_found and minutes == now_minutes:
+            if not fix_found and minutes - ss == now_minutes:  # TODO: bug 4.1
                 fix_found = True
                 steps.append(_('{}[fix]').format(datetime.now().strftime('%Hh%M')))
 
@@ -834,7 +834,7 @@ try:
     topsubplot.step(np.arange(x[0], x[-1], 1 / 60),
                     [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
                     color='red', where='post', label=_('Polynomlal Steps of {}{} degree').format(degree, _('$^{th}$')))
-    topsubplot.scatter((now_minutes - ss) / 60, 0,  # TODO: bug 4
+    topsubplot.scatter(now_minutes / 60, 0,  # TODO: bug 4.1
                        color='red',
                        marker='>',
                        label=_('Fix at {}').format(strftime('%#H:%M')))
