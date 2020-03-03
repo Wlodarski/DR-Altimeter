@@ -24,3 +24,7 @@ class CommandLineParser:
                                  help='include details about the polynomial model')
 
         self.args = self.parser.parse_args()
+
+    def link_together(self, var_a, var_b, errmsg):
+        if (var_a is not None and var_b is None) or (var_a is None and var_b is not None):
+            self.parser.error(errmsg)
