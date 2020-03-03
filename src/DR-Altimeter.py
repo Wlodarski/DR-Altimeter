@@ -58,8 +58,6 @@ from translation import Translation
 from txttable import PredictionTable
 from utils import printf
 
-colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
-
 FULLNAME = 'DR Polynomial Altimeter'
 VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
 _ = Translation()
@@ -69,9 +67,10 @@ SHORTNAME = 'DR-Altimeter'
 clp = CommandLineParser(prog_path=Path(__file__), description=DESCRIPTION, shortname=SHORTNAME, version=VERSION)
 _.set_lang(clp)
 args = clp.args
+clp.link_together(args.latitude, args.longitude,
+                  _('If one is provided, both --latitude and --longitude must be provided'))
 
-if (args.longitude is not None and args.latitude is None) or (args.longitude is None and args.latitude is not None):
-    clp.parser.error(_('If one is provided, both --latitude and --longitude must be provided'))
+colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
 
 
 class Program:
