@@ -1,6 +1,22 @@
-import gettext
+class AtmosphericPressure:
+    """
+        Atmospheric pressure in hectopascals.
+    """
 
-_ = gettext.gettext
+    def __init__(self, hectopascal: float):
+        """
+        :param hectopascal: 260 hPa < pressure < 1100 hPa
+        """
+        if 260 < hectopascal < 1100:
+            self.value = hectopascal
+        else:
+            raise ValueError('Pressure out of range (260 hPa < pressure < 1100 hPa)')
+
+    def __call__(self, *args, **kwargs) -> float:
+        """
+        :return: value in hectopascal
+        """
+        return self.value
 
 
 class InternationalStandardAtmosphere:
@@ -19,30 +35,28 @@ class InternationalStandardAtmosphere:
         self.PERFECT_GAS = 5.255  # dimensionless; Viscosity and compressibility of dry air, behaving like a perfect gas
 
     def pressure(self, altitude: float) -> float:
-        """    
+        """
         :param altitude: altitude in meters
-        :return: pressure (in hPa) found at this altitude 
+        :return: pressure (in hPa) found at this altitude
 
-        Pressure found at an altitude above Mean Sea Level 
+        Pressure found at an altitude above Mean Sea Level
         according to the International Standard Atmosphere (ISA) model
         """
         if -700 < altitude < 10000:
             return self.PRESSURE_MSL * (1 - (altitude / (self.TEMP_MSL / self.TEMP_GRADIANT))) ** self.PERFECT_GAS
         else:
-            raise ValueError(_('Altitude out of range (-700 m < altitude < 10000 m)'))
+            raise ValueError('Altitude out of range (-700 m < altitude < 10000 m')
 
-    def altitude(self, pressure: float) -> float:
+    def altitude(self, pressure: AtmosphericPressure) -> float:
         """
-        :param pressure: pressure in hPa 
+        :param pressure: pressure in hPa
         :return: altitude (in meters) corresponding to this pressure
 
         Altitude above Mean Sea Level whilst experiencing this pressure
         according to the International Standard Atmosphere (ISA) model
         """
-        if 260 < pressure < 1100:
-            return (self.TEMP_MSL / self.TEMP_GRADIANT) * (1 - (pressure / self.PRESSURE_MSL) ** (1 / self.PERFECT_GAS))
-        else:
-            raise ValueError(_('Pressure out of range (260 hPa < pressure < 1100 hPa)'))
+        p = AtmosphericPressure(pressure).value
+        return (self.TEMP_MSL / self.TEMP_GRADIANT) * (1 - (p / self.PRESSURE_MSL) ** (1 / self.PERFECT_GAS))
 
     def delta_altitude(self, p_ref: float, current_p: float = None, delta_p: float = None) -> float:
         """
@@ -53,19 +67,19 @@ class InternationalStandardAtmosphere:
 
         How much meters one climbed or descended when starting at a reference pressure
         according to the International Standard Atmosphere (ISA) model.
-        
+
         Either the current pressure or the pressure variation needs to be provided,
         not both.
         """
         if current_p is None and delta_p is None:
-            raise ValueError(_('Missing current pressure or pressure variation'))
+            raise ValueError('Missing current pressure or pressure variation')
 
         if current_p is not None:
             _dp = p_ref - current_p
             _cp = current_p
 
         if current_p is not None and delta_p is not None and _dp != delta_p:
-            raise ValueError(_('Current pressure contradicted by pressure variation'))
+            raise ValueError('Current pressure contradicted by pressure variation')
 
         if delta_p is not None:
             _cp = p_ref + delta_p
@@ -84,33 +98,3 @@ class InternationalStandardAtmosphere:
         after experiencing a change in atmospheric pressure due to weather
         """
         return -self.delta_altitude(p_ref=p_start, current_p=p_end, delta_p=delta_p)
-
-
-if __name__ == '__main__':
-    isa = InternationalStandardAtmosphere()
-
-    alt = 1200
-    print(_('At {} m above mean sea level, '
-            'the standardized atmospheric pressure equals {:.2f} hPa').format(alt, isa.pressure(altitude=alt)))
-
-    pres = 800.0
-    print(_('A pressure of {:.2f} hPa corresponds '
-            'to a standardized altitude of {:.0f} m').format(pres, isa.altitude(pressure=pres)))
-
-    print()
-    print(_('Average Correction').center(73))
-    print('+/-hPa |', end='')
-    for d in range(0, 11):
-        print('{:5.1f}'.format(d / 10), end=' ')
-    print()
-    print('-------+' + ''.center(65, '-'))
-    for alt in [-500, 0, 500, 1000, 2000, 3000, 4000, 5000]:
-        pref = isa.pressure(altitude=alt)
-        print('{:4}'.format(alt), end=' m |')
-        for d in range(0, 11):
-            pressure_variation = d / 10
-            plus = isa.correction(p_start=pref, delta_p=pressure_variation)
-            minus = isa.correction(p_start=pref, delta_p=-pressure_variation)
-            average = (plus - minus) / 2
-            print('{:5.2f}'.format(average), end=' ')
-        print()
