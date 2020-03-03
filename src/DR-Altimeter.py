@@ -23,17 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
-import argparse
-import gettext
 import logging
-import sys
 import traceback
 from abc import abstractmethod
 from configparser import ConfigParser
 from datetime import datetime, timedelta
-from locale import getdefaultlocale
-from os import system, environ, path, walk
+from os import system, environ
 from pathlib import Path
 from re import search
 from textwrap import fill
@@ -58,7 +53,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from termcolor import colored
 
 from ISA import InternationalStandardAtmosphere
+from commandline import CommandLineParser
 from forecastarray import Forecast
+from translation import Translation
 from txttable import PredictionTable
 
 
@@ -67,44 +64,22 @@ def printf(text: str) -> str:
     return text
 
 
-def _(message): return message  # until a proper gettext _() is defined
-
-
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
+
+translator = Translation()
+_ = translator.gettext
 
 FULLNAME = 'DR Polynomial Altimeter'
 VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
 
-# Command line options. They all override config.ini
-parser = argparse.ArgumentParser(Path(__file__).name,
-                                 description=DESCRIPTION,
-                                 epilog='{}, version {}'.format(SHORTNAME, VERSION))
-parser.add_argument('-n', '--no-key', action='store_true', help='disable "Press any key to continue"')
-parser.add_argument('-s', '--slack', help='Slack channel')
-parser.add_argument('--latitude', help='latitude', type=float)
-parser.add_argument('--longitude', help='longitude', type=float)
-parser.add_argument('--override-url', help='specific weather station URL', type=str)
-bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
-localedir = path.join(bundle_dir, 'locales')
-all_lang = ', '.join(next(walk(localedir))[1])
-parser.add_argument('--lang', help='interface language ({})'.format(all_lang))
-parser.add_argument('-v', '--verbose', action='store_true', help='include details about polynomial model')
-args = parser.parse_args()
-
-# I18N translations, setup of gettext
-current_locale, encoding = getdefaultlocale()
-lang = ''
-if args.lang is not None:
-    lang = args.lang
-chosen_lang = gettext.translation('DR-Altimeter', localedir=localedir, languages=[lang, current_locale], fallback=True)
-chosen_lang.install()
-del _
-_ = chosen_lang.gettext
+clp = CommandLineParser(prog_path=Path(__file__), description=DESCRIPTION, shortname=SHORTNAME, version=VERSION)
+args = clp.args
+_ = translator.set_lang(clp, args)
 
 if (args.longitude is not None and args.latitude is None) or (args.longitude is None and args.latitude is not None):
-    parser.error(_('If one is provided, both --latitude and --longitude must be provided'))
+    clp.parser.error(_('If one is provided, both --latitude and --longitude must be provided'))
 
 
 class Program:
@@ -115,8 +90,6 @@ class Program:
         :param description: short description
         :param shortname: short name, mainly for logs
         """
-
-        global args
 
         self.NAME = fullname
         self.SHORTNAME = shortname
