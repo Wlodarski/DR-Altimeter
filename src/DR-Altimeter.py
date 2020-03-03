@@ -31,7 +31,6 @@ from datetime import datetime, timedelta
 from os import system, environ
 from pathlib import Path
 from re import search
-from textwrap import fill
 from time import strftime
 
 import colorama
@@ -57,12 +56,7 @@ from commandline import CommandLineParser
 from forecastarray import Forecast
 from translation import Translation
 from txttable import PredictionTable
-
-
-def printf(text: str) -> str:
-    print(fill(text, 79))
-    return text
-
+from utils import printf
 
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
 
