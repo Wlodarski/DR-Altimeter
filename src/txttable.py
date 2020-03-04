@@ -32,17 +32,3 @@ class PredictionTable:
 
     def display_table(self):
         return self.table.draw()
-
-
-if __name__ == '__main__':
-    def _(s):
-        return s
-
-    tt = PredictionTable()
-    tt.add_start(hour=9, minute=12, pressure=1017.61, times=['9h00', '9h08~9h12 fix', '9h28', '9h42'])
-    tt.add(hour=10, pressure=1017.101, alt=4.2, alt_h=4.2,
-           times=['10h09', '10h18', '10h27', '10h36', '10h45', '10h54', '10h59'])
-    tt.add(hour=11, pressure=1016.3, alt=10.89999, alt_h=6.6,
-           times=['11h03', '11h05', '11h10', '11h15', '11h21', '11h26', '11h31',
-                  '11h36', '11h41', '11h46', '11h52', '11h57'])
-    print(tt.display_table())
