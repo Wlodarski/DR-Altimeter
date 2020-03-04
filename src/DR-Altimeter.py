@@ -53,10 +53,11 @@ from termcolor import colored
 
 from ISA import InternationalStandardAtmosphere
 from commandline import CommandLineParser
+from forecast_2 import Forecast as Forecast2
 from forecastarray import Forecast
 from translation import Translation
 from txttable import PredictionTable
-from utils import printf
+from utils import printf, nb_date_changes
 
 FULLNAME = 'DR Polynomial Altimeter'
 VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
@@ -96,7 +97,8 @@ class Program:
 
         self.console = Console(title=self.NAME, version=self.VERSION, subtitle=self.DESCRIPTION)
         self.result = PredictionTable()
-        self.forecast = Forecast()
+        self.forecast = Forecast()  # TODO forecast2
+        self.forecast2 = Forecast2()
         self.slack = slack.WebClient(token=environ['SLACK_API_TOKEN'])
 
         # starts logging
@@ -403,7 +405,7 @@ class ChromeBrowser:
         self.options.add_argument('--log-level=3')
         self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
-    def go_to(self, webpage: str, hidden: bool = False, geolocation: bool = False):
+    def go_to(self, webpage: Path, hidden: bool = False, geolocation: bool = False):
         """ Open browser """
         self.options.add_experimental_option('prefs', {'geolocation': geolocation})
         if hidden and not geolocation:  # geolocation only works if not headless
@@ -486,30 +488,23 @@ isa = InternationalStandardAtmosphere()
 try:
     hourly_forecast_url = program.hourly_forecast_url()
 
-    one_hour = timedelta(hours=1)
-    start_time = datetime.now()
-    end_time = start_time + timedelta(hours=program.MIN_HOURS)
+    first_day = datetime.today()
+    last_day = first_day + timedelta(hours=program.MIN_HOURS)
+    nth_days = range(0, 1 + nb_date_changes(first_day, last_day))
+    dates = [first_day.date() + timedelta(days=day) for day in nth_days]
 
-    dates = []
-    hours = []
-    date = start_time + one_hour
-    while date <= end_time:
-        this_day = date.strftime('%Y-%m-%d')
-        hours.append(date.strftime('%H'))
-        if this_day not in dates:
-            dates.append(this_day)
-        date += one_hour
-
-    first = True
+    first_page = True
     for d in dates:
+        date_str = d.strftime('%Y-%m-%d')
+        url = hourly_forecast_url + '/date/' + date_str
         if program.VERBOSE:
-            printf(hourly_forecast_url + '/date/' + d)
-        if first:
-            program.browser.go_to(webpage=hourly_forecast_url + '/date/' + d, hidden=True)
+            printf(url)
+        if first_page:
+            program.browser.go_to(webpage=url, hidden=True)
             program.check_page(title='Hourly Weather Forecast | Weather Underground')
             program.wait_until_page_is_loaded()
             program.switch_to_metric()
-            first = False
+            first_page = False
         else:
             program.click_next()
 
@@ -518,7 +513,9 @@ try:
         if program.ELEVATION is None:
             program.get_station_elevation()
         if program.P_INITIAL is None:
-            program.forecast.add(atm_pressure=program.get_atm_pressure_at_station(), timestamp=program.get_obs_time())
+            program.forecast.add(atm_pressure=program.get_atm_pressure_at_station(),
+                                 timestamp=program.get_obs_time())  # TODO forecast
+            program.forecast2.add(time=program.get_obs_time(), pressure=program.get_atm_pressure_at_station())
             print()
 
         elem = program.browser.driver.find_element(By.ID, 'hourly-forecast-table')
@@ -527,11 +524,14 @@ try:
 
                 # parsing out hour and predicted pressure
                 st = search('^([0-9]+:00 [ap]m).* (.*) hPa$', row)
-                hour = datetime.strptime(d + ' ' + st.group(1), '%Y-%m-%d %I:%M %p')
+                hour = datetime.strptime(date_str + ' ' + st.group(1), '%Y-%m-%d %I:%M %p')
                 pressure = float(st.group(2).replace(',', ''))
-                program.forecast.add(atm_pressure=pressure, timestamp=hour)
+                program.forecast.add(atm_pressure=pressure, timestamp=hour)  # TODO forecast
+                program.forecast2.add(time=hour, pressure=pressure)
 
     program.browser.quit()
+
+    program.forecast2.reorder_chronologically()  # superfluous but done anyway, just in case
 
     start = program.forecast.forecast[0]['date']
     end = program.forecast.forecast[-1]['date']
