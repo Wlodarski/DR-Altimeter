@@ -531,21 +531,16 @@ try:
 
     program.browser.quit()
 
-    # print('x', program.forecast2.times())
-    # print('x_labels', program.forecast2.formatted_times('#%Hh%M'))
-    # print('y', program.forecast2.delta_altitudes(p_ref=program.P_INITIAL))
-    # print('z', program.forecast2.pressures())
-
     program.forecast2.reorder_chronologically()  # superfluous but doing anyway, just in case
-    when = program.forecast2.times()
+    times = program.forecast2.times()
     # print('when', when)
     # start = program.forecast.forecast[0]['date']  # TODO : forecast
-    start = when[0]
+    start = times[0]
     # end = program.forecast.forecast[-1]['date']  # TODO: forecast
-    end = when[-1]
+    end = times[-1]
 
-    starting_full_hour = start.replace(microsecond=0, second=0, minute=0)
-    ending_full_hour = end.replace(microsecond=0, second=0, minute=0)
+    starting_full_hour = start.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
+    ending_full_hour = end.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
 
     # x = []  # delta time
     # x_labels = []  # labels for graph
@@ -564,6 +559,11 @@ try:
     x_labels = program.forecast2.formatted_times('#%H')
     y = program.forecast2.delta_altitudes(p_ref=program.P_INITIAL)
     z = program.forecast2.pressures()
+
+    # print('x', program.forecast2.times())
+    # print('x_labels', program.forecast2.formatted_times('#%Hh%M'))
+    # print('y', program.forecast2.delta_altitudes(p_ref=program.P_INITIAL))
+    # print('z', program.forecast2.pressures())
 
     # x[0] = x[0] - 1  # TODO: bug 4 test
     # ----------------------------------------------------------------------
