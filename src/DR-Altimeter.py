@@ -513,8 +513,8 @@ try:
         if program.ELEVATION is None:
             program.get_station_elevation()
         if program.P_INITIAL is None:
-            program.forecast.add(atm_pressure=program.get_atm_pressure_at_station(),
-                                 timestamp=program.get_obs_time())  # TODO forecast
+            program.forecast.add(atm_pressure=program.get_atm_pressure_at_station(),  # TODO forecast
+                                 timestamp=program.get_obs_time())
             program.forecast2.add(time=program.get_obs_time(), pressure=program.get_atm_pressure_at_station())
             print()
 
@@ -531,26 +531,39 @@ try:
 
     program.browser.quit()
 
-    program.forecast2.reorder_chronologically()  # superfluous but done anyway, just in case
+    # print('x', program.forecast2.times())
+    # print('x_labels', program.forecast2.formatted_times('#%Hh%M'))
+    # print('y', program.forecast2.delta_altitudes(p_ref=program.P_INITIAL))
+    # print('z', program.forecast2.pressures())
 
-    start = program.forecast.forecast[0]['date']
-    end = program.forecast.forecast[-1]['date']
+    program.forecast2.reorder_chronologically()  # superfluous but doing anyway, just in case
+    when = program.forecast2.times()
+    # print('when', when)
+    # start = program.forecast.forecast[0]['date']  # TODO : forecast
+    start = when[0]
+    # end = program.forecast.forecast[-1]['date']  # TODO: forecast
+    end = when[-1]
 
     starting_full_hour = start.replace(microsecond=0, second=0, minute=0)
     ending_full_hour = end.replace(microsecond=0, second=0, minute=0)
 
-    x = []  # delta time
-    x_labels = []  # labels for graph
-    y = []  # delta alt
-    z = []  # forecasted pressure
+    # x = []  # delta time
+    # x_labels = []  # labels for graph
+    # y = []  # delta alt
+    # z = []  # forecasted pressure
+    #
+    # for data in program.forecast.sorted_by('date'):
+    #     difference = data['date'] - starting_full_hour
+    #     decimal_elapse_hours = difference.total_seconds() / 3600
+    #     x.append(decimal_elapse_hours)
+    #     x_labels.append(data['date'].strftime('%#Hh'))
+    #     y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
+    #     z.append(data['pressure'])
 
-    for data in program.forecast.sorted_by('date'):
-        difference = data['date'] - starting_full_hour
-        decimal_elapse_hours = difference.total_seconds() / 3600
-        x.append(decimal_elapse_hours)
-        x_labels.append(data['date'].strftime('%#Hh'))
-        y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
-        z.append(data['pressure'])
+    x = [(x - starting_full_hour).seconds / 3600 for x in program.forecast2.times()]
+    x_labels = program.forecast2.formatted_times('#%H')
+    y = program.forecast2.delta_altitudes(p_ref=program.P_INITIAL)
+    z = program.forecast2.pressures()
 
     # x[0] = x[0] - 1  # TODO: bug 4 test
     # ----------------------------------------------------------------------
