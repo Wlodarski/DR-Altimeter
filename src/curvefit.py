@@ -68,25 +68,16 @@ class PolynomialCurveFit:
                 'altitude': self.y,
                 'error': self.error}
 
-    def continuous_fit_dict(self, ref_hour, margin=10):
+    def curvefit_dict(self, ref_hour, margin=10):
         first = self.x[0]
         last = self.x[-1]
         one_minute = 1 / 60
         before_first = first - margin * one_minute
         after_last = last + margin * one_minute
 
-        return {'time': [dhour2date(ref_hour=ref_hour, dhour=t) for t in
-                         np.arange(before_first, after_last, one_minute)],
-                'dotted line': [polyval(self.poly, v) for v in
-                                np.arange(before_first, after_last, one_minute)]}
-
-    def step_fit_dict(self, ref_hour, margin=10):
-        """
-        Same as _continuous_fit_dict but with rounded altitude, 'steps', added 
-        """
-        c_fit = self.continuous_fit_dict(ref_hour=ref_hour, margin=margin)
+        c_fit = {'time': [dhour2date(ref_hour=ref_hour, dhour=t) for t in
+                          np.arange(before_first, after_last, one_minute)],
+                 'dotted line': [polyval(self.poly, v) for v in
+                                 np.arange(before_first, after_last, one_minute)]}
         c_fit['steps'] = list(map(round, c_fit['dotted line']))
         return c_fit
-
-    def curvefit_dict(self, ref_hour, margin=10):
-        return self.step_fit_dict(ref_hour=ref_hour, margin=margin)
