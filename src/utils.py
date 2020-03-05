@@ -35,3 +35,9 @@ def nb_days_between(first_day: datetime, last_day: datetime) -> int:
     """
     elapsed = last_day - first_day
     return elapsed.days
+
+
+def set_locale_to_user_defaults():
+    import locale
+    current_locale, encoding = locale.getdefaultlocale()
+    locale.setlocale(locale.LC_TIME, current_locale)
