@@ -53,6 +53,7 @@ from termcolor import colored
 
 from ISA import InternationalStandardAtmosphere
 from commandline import CommandLineParser
+from curvefit import PolynomialCurveFit, date2dhour
 from forecast_2 import Forecast as Forecast2
 from forecastarray import Forecast
 from translation import Translation
@@ -60,7 +61,7 @@ from txttable import PredictionTable
 from utils import printf, nb_date_changes
 
 FULLNAME = 'DR Polynomial Altimeter'
-VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
+VERSION = 'v1.0 redone'  # TODO: change to v1.0 when ready to release
 _ = Translation()
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
@@ -542,25 +543,25 @@ try:
     starting_full_hour = start.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
     ending_full_hour = end.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
 
-    # x = []  # delta time
-    # x_labels = []  # labels for graph
-    # y = []  # delta alt
-    # z = []  # forecasted pressure
-    #
-    # for data in program.forecast.sorted_by('date'):
-    #     difference = data['date'] - starting_full_hour
-    #     decimal_elapse_hours = difference.total_seconds() / 3600
-    #     x.append(decimal_elapse_hours)
-    #     x_labels.append(data['date'].strftime('%#Hh'))
-    #     y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
-    #     z.append(data['pressure'])
+    x = []  # delta time
+    x_labels = []  # labels for graph
+    y = []  # delta alt
+    z = []  # forecasted pressure
 
-    x = [(x - starting_full_hour).seconds / 3600 for x in program.forecast2.times()]
-    x_labels = program.forecast2.formatted_times('#%H')
+    for data in program.forecast.sorted_by('date'):
+        difference = data['date'] - starting_full_hour
+        decimal_elapse_hours = difference.total_seconds() / 3600
+        x.append(decimal_elapse_hours)
+        x_labels.append(data['date'].strftime('%#Hh'))
+        y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
+        z.append(data['pressure'])
+
+    x = [date2dhour(starting_full_hour, t) for t in program.forecast2.times()]
+    x_labels = program.forecast2.formatted_times('#%Hh')
     y = program.forecast2.delta_altitudes(p_ref=program.P_INITIAL)
     z = program.forecast2.pressures()
 
-    # print('x', program.forecast2.times())
+    # print('x', date2num(program.forecast2.times()))
     # print('x_labels', program.forecast2.formatted_times('#%Hh%M'))
     # print('y', program.forecast2.delta_altitudes(p_ref=program.P_INITIAL))
     # print('z', program.forecast2.pressures())
@@ -574,47 +575,50 @@ try:
         print(program.register_info(_(' POLYNOMIAL CURVE FIT ').center(79, '=')))
         print()
 
-    # seeks to find a degree that fits the fix
-    pass_through_zero = 0
-    half_point = len(x) // 2
-    for d in range(1, half_point + 1):
-        p = np.polyfit(x, y, d)
-        test = round(np.polyval(p, int(datetime.now().strftime('%M')) / 60))  # TODO: bug 4 ok
-        if test == 0:
-            pass_through_zero += 1
-        else:
-            if pass_through_zero > 0:
-                pass_through_zero += -1
-        if program.VERBOSE:
-            printf(program.register_info(_('Degree : {:2d}/{}, '
-                                           'passing through zero {} times').format(d, half_point, pass_through_zero)))
-        if pass_through_zero == 2:
-            if program.VERBOSE:
-                printf(_('Found a good match'))
-                print()
-            break
-    else:
-        if program.VERBOSE:
-            # d += 1
-            printf(program.register_info(_('End of search')))
-            print()
-    degree = d  # - 1
-    poly = np.polyfit(x, y, degree)
+    # # seeks to find a degree that fits the fix  # TODO: forecast, reinstaurer plus tard
+    # pass_through_zero = 0
+    # half_point = len(x) // 2
+    # for d in range(1, half_point + 1):
+    #     p = np.polyfit(x, y, d)
+    #     test = round(np.polyval(p, int(datetime.now().strftime('%M')) / 60))  # TODO: bug 4 ok
+    #     if test == 0:
+    #         pass_through_zero += 1
+    #     else:
+    #         if pass_through_zero > 0:
+    #             pass_through_zero += -1
+    #     if program.VERBOSE:
+    #         printf(program.register_info(_('Degree : {:2d}/{}, '
+    #                                        'passing through zero {} times').format(d, half_point, pass_through_zero)))
+    #     if pass_through_zero == 2:
+    #         if program.VERBOSE:
+    #             printf(_('Found a good match'))
+    #             print()
+    #         break
+    # else:
+    #     if program.VERBOSE:
+    #         # d += 1
+    #         printf(program.register_info(_('End of search')))
+    #         print()
+    # degree = d  # - 1
+
+    degree = len(x) // 2
+    poly = np.polyfit(x, y, degree)  # TODO curvefit
+    p2 = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
-        printf(program.register_info(_('Degree : {}').format(degree)))
+        printf(program.register_info(_('Degree : {}').format(p2.degree)))
         print()
-        printf(program.register_info(_('Coefficients : {}').format(poly)))
+        printf(program.register_info(_('Coefficients : {}').format(p2.poly)))
         print()
-        printf(program.register_info(_('Time vector (x) : {}').format(x)))
+        printf(program.register_info(_('Time vector (x) : {}').format(p2.x)))
         print()
         printf(program.register_info(_('Time labels (x_labels) : {}').format(x_labels)))  # TODO: bug 4
         print()
-        printf(program.register_info(_('Altitude vector (y) : {}').format(y)))
+        printf(program.register_info(_('Altitude vector (y) : {}').format(p2.y)))
         print()
         printf(program.register_info(_('Pressure vector (z) : {}').format(z)))
         print()
-        print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=poly,
+        print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=p2.poly,
                                                                   f_text=_('altitude(time)'),
                                                                   var_symbol=_('time'),
                                                                   equal_sign='='))))
@@ -818,6 +822,7 @@ try:
                        color='red',
                        marker='>',
                        label=_('Fix at {}').format(strftime('%#H:%M')))
+
     inset_altitude.plot(x, y, color='red', alpha=0.5)
 
     bottomsubplot.plot(x, z, color='tab:blue', marker='o', markersize=3.5, label=_('Atmospheric Pressure'),
