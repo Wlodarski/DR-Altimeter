@@ -543,18 +543,18 @@ try:
     starting_full_hour = start.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
     ending_full_hour = end.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
 
-    x = []  # delta time
-    x_labels = []  # labels for graph
-    y = []  # delta alt
-    z = []  # forecasted pressure
-
-    for data in program.forecast.sorted_by('date'):
-        difference = data['date'] - starting_full_hour
-        decimal_elapse_hours = difference.total_seconds() / 3600
-        x.append(decimal_elapse_hours)
-        x_labels.append(data['date'].strftime('%#Hh'))
-        y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
-        z.append(data['pressure'])
+    # x = []  # delta time
+    # x_labels = []  # labels for graph
+    # y = []  # delta alt
+    # z = []  # forecasted pressure
+    #
+    # for data in program.forecast.sorted_by('date'):
+    #     difference = data['date'] - starting_full_hour
+    #     decimal_elapse_hours = difference.total_seconds() / 3600
+    #     x.append(decimal_elapse_hours)
+    #     x_labels.append(data['date'].strftime('%#Hh'))
+    #     y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
+    #     z.append(data['pressure'])
 
     x = [date2dhour(starting_full_hour, t) for t in program.forecast2.times()]
     x_labels = program.forecast2.formatted_times('#%Hh')
@@ -719,7 +719,7 @@ try:
     elif y[-1] < (y[0] - 10):
         down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
         up_lim = max(y[:nb_hours]) + 1
-        'upper right'
+        loc = 'upper right'
     else:
         down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
         up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
