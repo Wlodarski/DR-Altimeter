@@ -68,6 +68,10 @@ class PolynomialCurveFit:
                 'altitude': self.y,
                 'error': self.error}
 
+    @staticmethod
+    def _int_round(x):
+        return int(round(x))
+
     def curvefit_dict(self, ref_hour, margin=10):
         first = self.x[0]
         last = self.x[-1]
@@ -79,5 +83,20 @@ class PolynomialCurveFit:
                           np.arange(before_first, after_last, one_minute)],
                  'dotted line': [polyval(self.poly, v) for v in
                                  np.arange(before_first, after_last, one_minute)]}
-        c_fit['steps'] = list(map(round, c_fit['dotted line']))
+        c_fit['steps'] = list(map(self._int_round, c_fit['dotted line']))
         return c_fit
+
+    def step_changes(self, ref_hour, margin=0):
+        times = []
+        steps = []
+        cfit = self.curvefit_dict(ref_hour=ref_hour, margin=margin)
+        previous_step = cfit['steps'][0]
+        for t in cfit['time']:
+            i = cfit['time'].index(t)
+            current_step = cfit['steps'][i]
+            if current_step != previous_step:
+                current_time = cfit['time'][i]
+                times.append(current_time)
+                steps.append(current_step)
+            previous_step = current_step
+        return times, steps
