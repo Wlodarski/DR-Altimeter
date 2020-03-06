@@ -72,12 +72,20 @@ class PolynomialCurveFit:
     def _int_round(x):
         return int(round(x))
 
-    def curvefit_dict(self, ref_hour, margin=10):
+    def curvefit_dict(self, ref_hour, margin=None):
         first = self.x[0]
         last = self.x[-1]
         one_minute = 1 / 60
-        before_first = first - margin * one_minute
-        after_last = last + margin * one_minute
+
+        if margin is None:  # minutes to reach full_hour
+
+            before_first = 0
+            after_last = last
+
+        else:  # symetrical margin
+
+            before_first = first - margin * one_minute
+            after_last = last + margin * one_minute
 
         c_fit = {'time': [dhour2date(ref_hour=ref_hour, dhour=t) for t in
                           np.arange(before_first, after_last, one_minute)],
@@ -86,17 +94,24 @@ class PolynomialCurveFit:
         c_fit['steps'] = list(map(self._int_round, c_fit['dotted line']))
         return c_fit
 
-    def step_changes(self, ref_hour, margin=0):
+    def step_changes(self, ref_hour, fix_hour=None):
         times = []
         steps = []
-        cfit = self.curvefit_dict(ref_hour=ref_hour, margin=margin)
+        cfit = self.curvefit_dict(ref_hour=ref_hour)
         previous_step = cfit['steps'][0]
+        if fix_hour is not None:
+            fix_hour = fix_hour.replace(microsecond=0, second=0)
+
         for t in cfit['time']:
             i = cfit['time'].index(t)
+            current_time = cfit['time'][i]
             current_step = cfit['steps'][i]
             if current_step != previous_step:
-                current_time = cfit['time'][i]
                 times.append(current_time)
                 steps.append(current_step)
             previous_step = current_step
+            if current_time == fix_hour:
+                times.append(current_time)
+                steps.append('fix')  # TODO: translation
+
         return times, steps
