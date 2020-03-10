@@ -719,10 +719,10 @@ try:
     elif y[-1] < (y[0] - 10):
         down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
         up_lim = max(y[:nb_hours]) + 1
-        loc = 'upper right'
+        # loc = 'lower left'
     else:
-        down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
-        up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
+        down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 5, just below minimum altitude
+        up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 5, just above maximum altitude
     topsubplot.set_ylim(down_lim, up_lim)
     topsubplot.set_ylabel(_('$\Delta$altitude, $m$'))
     topsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
@@ -775,13 +775,13 @@ try:
 
     # formatting the bottom (pressure) graph
     bottomsubplot.set_ylim(260, 1100)  # pressure limits of Casio v3
-    bottomsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=10))
+    bottomsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
     bottomsubplot.yaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: '{:.0f} hPa'.format(new), old_ticks)) + ['MSL$_{ISA}$'])
-    bottomsubplot.set_ylim(round(min(z) - 5, -1),  # multiple of 10, just below the minimum pressure
-                           round(max(z) + 5, -1)  # multiple of 10, just above maximum pressure
+    bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 10, just below the minimum pressure
+                           round(2 * (max(z) + 2.5), -1) // 2  # multiple of 10, just above maximum pressure
                            )
     bottomsubplot.grid(True, which='major', alpha=0.6)
     bottomsubplot.grid(True, which='minor', alpha=0.3)
