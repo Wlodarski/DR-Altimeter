@@ -540,8 +540,8 @@ try:
     # end = program.forecast.forecast[-1]['date']  # TODO: forecast
     end = times[-1]
 
-    starting_full_hour = start.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
-    ending_full_hour = end.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
+    start_full_hour = start.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
+    end_full_hour = end.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
 
     # x = []  # delta time
     # x_labels = []  # labels for graph
@@ -556,7 +556,7 @@ try:
     #     y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
     #     z.append(data['pressure'])
 
-    x = [date2dhour(starting_full_hour, t) for t in program.forecast2.times()]
+    x = [date2dhour(start_full_hour, t) for t in program.forecast2.times()]
     x_labels = program.forecast2.formatted_times('#%Hh')
     y = program.forecast2.delta_altitudes(p_ref=program.P_INITIAL)
     z = program.forecast2.pressures()
@@ -603,91 +603,137 @@ try:
 
     degree = len(x) // 2
     poly = np.polyfit(x, y, degree)  # TODO curvefit
-    p2 = PolynomialCurveFit(x, y)
+    curvefit = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
-        printf(program.register_info(_('Degree : {}').format(p2.degree)))
+        printf(program.register_info(_('Degree : {}').format(curvefit.degree)))
         print()
-        printf(program.register_info(_('Coefficients : {}').format(p2.poly)))
+        printf(program.register_info(_('Coefficients : {}').format(curvefit.poly)))
         print()
-        printf(program.register_info(_('Time vector (x) : {}').format(p2.x)))
+        printf(program.register_info(_('Time vector (x) : {}').format(curvefit.x)))
         print()
         printf(program.register_info(_('Time labels (x_labels) : {}').format(x_labels)))  # TODO: bug 4
         print()
-        printf(program.register_info(_('Altitude vector (y) : {}').format(p2.y)))
+        printf(program.register_info(_('Altitude vector (y) : {}').format(curvefit.y)))
         print()
         printf(program.register_info(_('Pressure vector (z) : {}').format(z)))
         print()
-        print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=p2.poly,
+        print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=curvefit.poly,
                                                                   f_text=_('altitude(time)'),
                                                                   var_symbol=_('time'),
                                                                   equal_sign='='))))
         print(program.register_info(''.center(79, '-')))
         print()
 
-    lower_err = []
-    upper_err = []
-    total_up_err = 0
-    total_down_err = 0
-    previous_v = None
-    fix_found = False
+    # lower_err = []
+    # upper_err = []
+    # total_up_err = 0
+    # total_down_err = 0
+    # previous_v = None
+    # fix_found = False
     now_minutes = int(datetime.now().strftime('%M'))  # TODO: bug 4 ok
-    for t in range(0, len(x)):
-        steps = []
-        # print(t, x[t])  # TODO: bug 4
-        if t == 0 and x[t] < 0:  # TODO: bug 4
-            ss = -60
-        else:
-            ss = 0
-        for minutes in range(ss, 60):  # TODO: bug 4
-            minute_dec = minutes / 60
-            t_dec = t + minute_dec
-            v = round(np.polyval(poly, t_dec))
+    # for t in range(0, len(x)):
+    #     steps = []
+    #     # print(t, x[t])  # TODO: bug 4
+    #     if t == 0 and x[t] < 0:  # TODO: bug 4
+    #         ss = -60
+    #     else:
+    #         ss = 0
+    #     for minutes in range(ss, 60):  # TODO: bug 4
+    #         minute_dec = minutes / 60
+    #         t_dec = t + minute_dec
+    #         v = round(np.polyval(poly, t_dec))
+    #
+    #         if not fix_found and minutes - ss == now_minutes:  # TODO: bug 4.1
+    #             fix_found = True
+    #             steps.append(_('{}[fix]').format(datetime.now().strftime('%Hh%M')))
+    #
+    #         if previous_v is None:
+    #             previous_v = v
+    #
+    #         if v != previous_v:
+    #             #  print(t, minutes, ss, minutes - ss)  # TODO: bug 4
+    #             if minutes < 0:  # TODO: bug 4
+    #                 tt = program.forecast.forecast[t]['date'].timedelta(hours=-1)
+    #                 change_time = tt.replace(microsecond=0,
+    #                                          second=0,
+    #                                          minute=minutes - ss)  # TODO: bug 4
+    #             else:
+    #                 change_time = program.forecast.forecast[t]['date'].replace(microsecond=0,
+    #                                                                            second=0,
+    #                                                                            minute=minutes)
+    #
+    #             steps.append('{}[{:d}]'.format(change_time.strftime('%Hh%M'), int(v)))
+    #             previous_v = v
+    #
+    #     if t == 0:
+    #         old = 0
+    #         # program.result.add_start(hour=start.strftime('%H'),
+    #         #                          minute=start.strftime('%M'),
+    #         #                          pressure=program.P_INITIAL,
+    #         #                          times=steps)
+    #     else:
+    #         # program.result.add(hour=program.forecast.forecast[t]['date'].strftime('%#H'),
+    #         #                    pressure=program.forecast.forecast[t]['pressure'],
+    #         #                    alt=y[t],
+    #         #                    alt_h=y[t] - old,
+    #         #                    times=steps)
+    #         old = y[t]
+    #
+    #     err = np.polyval(poly, x[t]) - y[t]
+    #     if err > 0:
+    #         total_up_err += err
+    #     else:
+    #         total_down_err += -err
+    #
+    #     lower_err.append(total_down_err)
+    #     upper_err.append(total_up_err)
 
-            if not fix_found and minutes - ss == now_minutes:  # TODO: bug 4.1
-                fix_found = True
-                steps.append(_('{}[fix]').format(datetime.now().strftime('%Hh%M')))
+    # program.display_results()
 
-            if previous_v is None:
-                previous_v = v
+    print('Text output:\n')
+    first = True
+    times_string = ''
+    index = 0
+    previous_hour = start.hour
+    t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=start)
+    for i in range(0, len(s)):
+        step_text = '{}[{}]'.format(t[i].strftime('%#Hh%M'), s[i])
+        this_hour = t[i].hour
 
-            if v != previous_v:
-                #  print(t, minutes, ss, minutes - ss)  # TODO: bug 4
-                if minutes < 0:  # TODO: bug 4
-                    tt = program.forecast.forecast[t]['date'].timedelta(hours=-1)
-                    change_time = tt.replace(microsecond=0,
-                                             second=0,
-                                             minute=minutes - ss)  # TODO: bug 4
-                else:
-                    change_time = program.forecast.forecast[t]['date'].replace(microsecond=0,
-                                                                               second=0,
-                                                                               minute=minutes)
+        if this_hour != previous_hour:
+            if first:
+                program.result.add_start(hour=start.hour,
+                                         minute=start.minute,
+                                         pressure=z[index],
+                                         times=[times_string])
+                first = False
+            else:
+                program.result.add(hour=previous_hour,
+                                   pressure=z[index],
+                                   alt=y[index],
+                                   alt_h=y[index] - y[index - 1],
+                                   times=[times_string])
 
-                steps.append('{}[{:d}]'.format(change_time.strftime('%Hh%M'), int(v)))
-                previous_v = v
-
-        if t == 0:
-            old = 0
-            program.result.add_start(hour=start.strftime('%H'),
-                                     minute=start.strftime('%M'),
-                                     pressure=program.P_INITIAL,
-                                     times=steps)
-        else:
-            program.result.add(hour=program.forecast.forecast[t]['date'].strftime('%#H'),
-                               pressure=program.forecast.forecast[t]['pressure'],
-                               alt=y[t],
-                               alt_h=y[t] - old,
-                               times=steps)
-            old = y[t]
-
-        err = np.polyval(poly, x[t]) - y[t]
-        if err > 0:
-            total_up_err += err
-        else:
-            total_down_err += -err
-
-        lower_err.append(total_down_err)
-        upper_err.append(total_up_err)
+            for ii in range(1, (this_hour - previous_hour) % 24):
+                index += 1
+                previous_hour = (this_hour - 1) % 24
+                program.result.add(hour=previous_hour,
+                                   pressure=z[index],
+                                   alt=y[index],
+                                   alt_h=y[index] - y[index - 1],
+                                   times='')
+            index += 1
+            times_string = ''
+            previous_hour = this_hour
+        if len(times_string) > 0:
+            times_string += ', '
+        times_string += step_text
+    program.result.add(hour=previous_hour,
+                       pressure=z[index],
+                       alt=y[index],
+                       alt_h=y[index] - y[index - 1],
+                       times=[times_string])
 
     program.display_results()
 
@@ -811,7 +857,11 @@ try:
     inset_pressure.spines['right'].set_alpha(0.2)
 
     # adding curves/points to subplots
-    topsubplot.errorbar(x, y, fmt='go', yerr=[lower_err, upper_err], label=_('Hourly Forecast'), markersize=5)
+    topsubplot.errorbar(x, y, fmt='go', yerr=curvefit.prediction_dict(ref_hour=start_full_hour)['error'],
+                        label=_('Hourly Forecast'), markersize=5)
+    # topsubplot.errorbar('time', 'altitude', yerr='error', data=curvefit.prediction_dict(ref_hour=start_full_hour),
+    #                     color='blue', marker='o', linestyle='none', label=_('Hourly Forecast'), markersize=5)
+
     topsubplot.plot(np.arange(x[0], x[-1], 1 / 60),
                     [v for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
                     color='red', linestyle='dotted', alpha=0.5)
