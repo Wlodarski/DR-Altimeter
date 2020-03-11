@@ -34,7 +34,7 @@ class PolynomialCurveFit:
         self.poly = polyfit(self.x, self.y, self.degree)
         self.error = self.error_matrix()
 
-    def best_degree(self):
+    def best_degree(self):  # TODO: see if it can be improved
         return len(self.x) // 2
 
     def error_matrix(self):
