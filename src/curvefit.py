@@ -112,6 +112,6 @@ class PolynomialCurveFit:
             previous_step = current_step
             if current_time == fix_hour:
                 times.append(current_time)
-                steps.append('fix')  # TODO: translation
+                steps.append(_('fix'))
 
         return times, steps
