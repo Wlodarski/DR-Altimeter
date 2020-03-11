@@ -126,8 +126,8 @@ msgstr "altitude(temps)"
 msgid "time"
 msgstr "temps"
 
-msgid "{}[fix]"
-msgstr "{}[point]"
+msgid "fix"
+msgstr "point"
 
 msgid "$\\Delta$altitude, $m$"
 msgstr "$\\Delta$altitude, $m$"
