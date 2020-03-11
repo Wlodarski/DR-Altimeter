@@ -487,6 +487,9 @@ isa = InternationalStandardAtmosphere()
 
 # noinspection PyBroadException
 try:
+    # ----------------------------------------------------------------------
+    # SCRUB HOURLY PREDICTION ON WUNDERGROUND
+    # ----------------------------------------------------------------------
     hourly_forecast_url = program.hourly_forecast_url()
 
     first_day = datetime.today()
@@ -532,41 +535,23 @@ try:
 
     program.browser.quit()
 
-    program.forecast2.reorder_chronologically()  # superfluous but doing anyway, just in case
-    times = program.forecast2.times()
-    # print('when', when)
-    # start = program.forecast.forecast[0]['date']  # TODO : forecast
-    start = times[0]
-    # end = program.forecast.forecast[-1]['date']  # TODO: forecast
-    end = times[-1]
+    # ----------------------------------------------------------------------
+    # TRANSLATE PREDICTED PRESSURE INTO PREDICTED ALTITUDE CHANGES
+    # ----------------------------------------------------------------------
 
+    program.forecast2.reorder_chronologically()  # superfluous but doing anyway, just in case
+
+    times = program.forecast2.times()
+    start = times[0]
+    end = times[-1]
     start_full_hour = start.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
     end_full_hour = end.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
 
-    # x = []  # delta time
-    # x_labels = []  # labels for graph
-    # y = []  # delta alt
-    # z = []  # forecasted pressure
-    #
-    # for data in program.forecast.sorted_by('date'):
-    #     difference = data['date'] - starting_full_hour
-    #     decimal_elapse_hours = difference.total_seconds() / 3600
-    #     x.append(decimal_elapse_hours)
-    #     x_labels.append(data['date'].strftime('%#Hh'))
-    #     y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
-    #     z.append(data['pressure'])
+    x = [date2dhour(start_full_hour, t) for t in program.forecast2.times()]  # time since start
+    x_labels = program.forecast2.formatted_times('#%Hh')  # TODO: remove
+    y = program.forecast2.delta_altitudes(p_ref=program.P_INITIAL)  # altitude change
+    z = program.forecast2.pressures()  # predicted atmospheric pressure
 
-    x = [date2dhour(start_full_hour, t) for t in program.forecast2.times()]
-    x_labels = program.forecast2.formatted_times('#%Hh')
-    y = program.forecast2.delta_altitudes(p_ref=program.P_INITIAL)
-    z = program.forecast2.pressures()
-
-    # print('x', date2num(program.forecast2.times()))
-    # print('x_labels', program.forecast2.formatted_times('#%Hh%M'))
-    # print('y', program.forecast2.delta_altitudes(p_ref=program.P_INITIAL))
-    # print('z', program.forecast2.pressures())
-
-    # x[0] = x[0] - 1  # TODO: bug 4 test
     # ----------------------------------------------------------------------
     # POLYNOMIAL CURVE FIT
     # ----------------------------------------------------------------------
@@ -575,34 +560,7 @@ try:
         print(program.register_info(_(' POLYNOMIAL CURVE FIT ').center(79, '=')))
         print()
 
-    # # seeks to find a degree that fits the fix  # TODO: forecast, reinstaurer plus tard
-    # pass_through_zero = 0
-    # half_point = len(x) // 2
-    # for d in range(1, half_point + 1):
-    #     p = np.polyfit(x, y, d)
-    #     test = round(np.polyval(p, int(datetime.now().strftime('%M')) / 60))  # TODO: bug 4 ok
-    #     if test == 0:
-    #         pass_through_zero += 1
-    #     else:
-    #         if pass_through_zero > 0:
-    #             pass_through_zero += -1
-    #     if program.VERBOSE:
-    #         printf(program.register_info(_('Degree : {:2d}/{}, '
-    #                                        'passing through zero {} times').format(d, half_point, pass_through_zero)))
-    #     if pass_through_zero == 2:
-    #         if program.VERBOSE:
-    #             printf(_('Found a good match'))
-    #             print()
-    #         break
-    # else:
-    #     if program.VERBOSE:
-    #         # d += 1
-    #         printf(program.register_info(_('End of search')))
-    #         print()
-    # degree = d  # - 1
-
-    degree = len(x) // 2
-    poly = np.polyfit(x, y, degree)  # TODO curvefit
+    poly = np.polyfit(x, y, len(x) // 2)  # TODO replace with curvefit
     curvefit = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
@@ -611,8 +569,6 @@ try:
         printf(program.register_info(_('Coefficients : {}').format(curvefit.poly)))
         print()
         printf(program.register_info(_('Time vector (x) : {}').format(curvefit.x)))
-        print()
-        printf(program.register_info(_('Time labels (x_labels) : {}').format(x_labels)))  # TODO: bug 4
         print()
         printf(program.register_info(_('Altitude vector (y) : {}').format(curvefit.y)))
         print()
@@ -625,78 +581,19 @@ try:
         print(program.register_info(''.center(79, '-')))
         print()
 
-    # lower_err = []
-    # upper_err = []
-    # total_up_err = 0
-    # total_down_err = 0
-    # previous_v = None
-    # fix_found = False
-    now_minutes = int(datetime.now().strftime('%M'))  # TODO: bug 4 ok
-    # for t in range(0, len(x)):
-    #     steps = []
-    #     # print(t, x[t])  # TODO: bug 4
-    #     if t == 0 and x[t] < 0:  # TODO: bug 4
-    #         ss = -60
-    #     else:
-    #         ss = 0
-    #     for minutes in range(ss, 60):  # TODO: bug 4
-    #         minute_dec = minutes / 60
-    #         t_dec = t + minute_dec
-    #         v = round(np.polyval(poly, t_dec))
-    #
-    #         if not fix_found and minutes - ss == now_minutes:  # TODO: bug 4.1
-    #             fix_found = True
-    #             steps.append(_('{}[fix]').format(datetime.now().strftime('%Hh%M')))
-    #
-    #         if previous_v is None:
-    #             previous_v = v
-    #
-    #         if v != previous_v:
-    #             #  print(t, minutes, ss, minutes - ss)  # TODO: bug 4
-    #             if minutes < 0:  # TODO: bug 4
-    #                 tt = program.forecast.forecast[t]['date'].timedelta(hours=-1)
-    #                 change_time = tt.replace(microsecond=0,
-    #                                          second=0,
-    #                                          minute=minutes - ss)  # TODO: bug 4
-    #             else:
-    #                 change_time = program.forecast.forecast[t]['date'].replace(microsecond=0,
-    #                                                                            second=0,
-    #                                                                            minute=minutes)
-    #
-    #             steps.append('{}[{:d}]'.format(change_time.strftime('%Hh%M'), int(v)))
-    #             previous_v = v
-    #
-    #     if t == 0:
-    #         old = 0
-    #         # program.result.add_start(hour=start.strftime('%H'),
-    #         #                          minute=start.strftime('%M'),
-    #         #                          pressure=program.P_INITIAL,
-    #         #                          times=steps)
-    #     else:
-    #         # program.result.add(hour=program.forecast.forecast[t]['date'].strftime('%#H'),
-    #         #                    pressure=program.forecast.forecast[t]['pressure'],
-    #         #                    alt=y[t],
-    #         #                    alt_h=y[t] - old,
-    #         #                    times=steps)
-    #         old = y[t]
-    #
-    #     err = np.polyval(poly, x[t]) - y[t]
-    #     if err > 0:
-    #         total_up_err += err
-    #     else:
-    #         total_down_err += -err
-    #
-    #     lower_err.append(total_down_err)
-    #     upper_err.append(total_up_err)
+    now_minutes = int(datetime.now().strftime('%M'))  # TODO: remove, bug 4 ok
 
-    # program.display_results()
+    # ----------------------------------------------------------------------
+    # TEXT OUTPUT
+    # ----------------------------------------------------------------------
 
-    print('Text output:\n')
     first = True
     times_string = ''
     index = 0
     previous_hour = start.hour
+
     t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=start)
+
     for i in range(0, len(s)):
         step_text = '{}[{}]'.format(t[i].strftime('%#Hh%M'), s[i])
         this_hour = t[i].hour
@@ -715,7 +612,7 @@ try:
                                    alt_h=y[index] - y[index - 1],
                                    times=[times_string])
 
-            for ii in range(1, (this_hour - previous_hour) % 24):
+            for hours_with_no_change in range(1, (this_hour - previous_hour) % 24):
                 index += 1
                 previous_hour = (this_hour - 1) % 24
                 program.result.add(hour=previous_hour,
@@ -726,9 +623,12 @@ try:
             index += 1
             times_string = ''
             previous_hour = this_hour
+
         if len(times_string) > 0:
             times_string += ', '
+
         times_string += step_text
+
     program.result.add(hour=previous_hour,
                        pressure=z[index],
                        alt=y[index],
@@ -867,7 +767,8 @@ try:
                     color='red', linestyle='dotted', alpha=0.5)
     topsubplot.step(np.arange(x[0], x[-1], 1 / 60),
                     [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
-                    color='red', where='post', label=_('Polynomlal Steps of {}{} degree').format(degree, _('$^{th}$')))
+                    color='red', where='post',
+                    label=_('Polynomlal Steps of {}{} degree').format(curvefit.degree, _('$^{th}$')))
     topsubplot.scatter(now_minutes / 60, 0,  # TODO: bug 4.1
                        color='red',
                        marker='>',
@@ -897,6 +798,9 @@ try:
         mng.window.state('zoomed')
         plt.show()
 
+# ----------------------------------------------------------------------
+# CLEAN UP
+# ----------------------------------------------------------------------
 except Exception as e:
     logging.error(traceback.format_exc())
     traceback.print_exc()
