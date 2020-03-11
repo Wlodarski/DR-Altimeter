@@ -54,8 +54,7 @@ from termcolor import colored
 from ISA import InternationalStandardAtmosphere
 from commandline import CommandLineParser
 from curvefit import PolynomialCurveFit, date2dhour
-from forecast_2 import Forecast as Forecast2
-from forecastarray import Forecast
+from forecast import Forecast
 from translation import Translation
 from txttable import PredictionTable
 from utils import printf, nb_date_changes
@@ -98,8 +97,7 @@ class Program:
 
         self.console = Console(title=self.NAME, version=self.VERSION, subtitle=self.DESCRIPTION)
         self.result = PredictionTable()
-        self.forecast = Forecast()  # TODO forecast2
-        self.forecast2 = Forecast2()
+        self.forecast = Forecast()
         self.slack = slack.WebClient(token=environ['SLACK_API_TOKEN'])
 
         # starts logging
@@ -517,9 +515,7 @@ try:
         if program.ELEVATION is None:
             program.get_station_elevation()
         if program.P_INITIAL is None:
-            program.forecast.add(atm_pressure=program.get_atm_pressure_at_station(),  # TODO forecast
-                                 timestamp=program.get_obs_time())
-            program.forecast2.add(time=program.get_obs_time(), pressure=program.get_atm_pressure_at_station())
+            program.forecast.add(time=program.get_obs_time(), pressure=program.get_atm_pressure_at_station())
             print()
 
         elem = program.browser.driver.find_element(By.ID, 'hourly-forecast-table')
@@ -530,8 +526,7 @@ try:
                 st = search('^([0-9]+:00 [ap]m).* (.*) hPa$', row)
                 hour = datetime.strptime(date_str + ' ' + st.group(1), '%Y-%m-%d %I:%M %p')
                 pressure = float(st.group(2).replace(',', ''))
-                program.forecast.add(atm_pressure=pressure, timestamp=hour)  # TODO forecast
-                program.forecast2.add(time=hour, pressure=pressure)
+                program.forecast.add(time=hour, pressure=pressure)
 
     program.browser.quit()
 
@@ -539,18 +534,18 @@ try:
     # TRANSLATE PREDICTED PRESSURE INTO PREDICTED ALTITUDE CHANGES
     # ----------------------------------------------------------------------
 
-    program.forecast2.reorder_chronologically()  # superfluous but doing anyway, just in case
+    program.forecast.reorder_chronologically()  # superfluous but doing anyway, just in case
 
-    times = program.forecast2.times()
+    times = program.forecast.times()
     start = times[0]
     end = times[-1]
-    start_full_hour = start.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
-    end_full_hour = end.replace(microsecond=0, second=0, minute=0)  # TODO: forecast
+    start_full_hour = start.replace(microsecond=0, second=0, minute=0)
+    end_full_hour = end.replace(microsecond=0, second=0, minute=0)
 
-    x = [date2dhour(start_full_hour, t) for t in program.forecast2.times()]  # time since start
-    x_labels = program.forecast2.formatted_times('#%Hh')  # TODO: remove
-    y = program.forecast2.delta_altitudes(p_ref=program.P_INITIAL)  # altitude change
-    z = program.forecast2.pressures()  # predicted atmospheric pressure
+    x = [date2dhour(start_full_hour, t) for t in program.forecast.times()]  # time since start
+    x_labels = program.forecast.formatted_times('#%Hh')  # TODO: remove
+    y = program.forecast.delta_altitudes(p_ref=program.P_INITIAL)  # altitude change
+    z = program.forecast.pressures()  # predicted atmospheric pressure
 
     # ----------------------------------------------------------------------
     # POLYNOMIAL CURVE FIT
@@ -643,7 +638,7 @@ try:
 
     register_projection(NoPanXAxes)
 
-    nb_hours = min(program.SHOW_X_HOURS + 1, len(x))
+    visible_hours = min(program.SHOW_X_HOURS + 1, len(x))
 
     # one figure
     fig = plt.figure(dpi=96, figsize=(16, 9), num='{} {}'.format(program.STATION_NAME, strftime('%Y%m%d-%H%M')))
@@ -657,18 +652,18 @@ try:
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection='No Pan X Axes')
 
     # formatting the top (altitude) graph
-    topsubplot.set_xlim(x[0] - 10 / 60, nb_hours)
+    topsubplot.set_xlim(x[0] - 10 / 60, visible_hours)
     loc = 'lower right'
     if y[-1] > (y[0] + 10):
-        down_lim = min(y[:nb_hours]) - 1
-        up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
+        down_lim = min(y[:visible_hours]) - 1
+        up_lim = round(max(y[:visible_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
     elif y[-1] < (y[0] - 10):
-        down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
-        up_lim = max(y[:nb_hours]) + 1
+        down_lim = round(min(y[:visible_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
+        up_lim = max(y[:visible_hours]) + 1
         # loc = 'lower left'
     else:
-        down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 5, just below minimum altitude
-        up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 5, just above maximum altitude
+        down_lim = round(min(y[:visible_hours]) - 5, -1) - 1  # multiple of 5, just below minimum altitude
+        up_lim = round(max(y[:visible_hours]) + 5, -1) + 1  # multiple of 5, just above maximum altitude
     topsubplot.set_ylim(down_lim, up_lim)
     topsubplot.set_ylabel(_('$\Delta$altitude, $m$'))
     topsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
@@ -714,7 +709,7 @@ try:
 
     top_second_x_axis = topsubplot.twiny()
     top_second_x_axis.set_xbound(topsubplot.get_xbound())
-    top_second_x_axis.xaxis.set_ticks(x[:nb_hours])
+    top_second_x_axis.xaxis.set_ticks(x[:visible_hours])
     top_second_x_axis.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
     top_second_x_axis.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
     top_second_x_axis.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))

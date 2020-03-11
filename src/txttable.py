@@ -2,8 +2,6 @@ class PredictionTable:
     def __init__(self):
         from texttable import Texttable
 
-        def _(s): return s  # TODO remove
-
         self.table = Texttable()
         self.table.set_deco(Texttable.HEADER | Texttable.HLINES)
         self.table.set_cols_dtype(['t', 't', 't', 't', 't'])
