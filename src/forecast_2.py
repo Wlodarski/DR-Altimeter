@@ -16,7 +16,7 @@ class Forecast:
     def get(self, key: str):
         return [_point[key] for _point in self.values]
 
-    def pressures(self) -> float:
+    def pressures(self):
         return [_i.value for _i in self.get('pressure')]
 
     def altitudes(self) -> float:
