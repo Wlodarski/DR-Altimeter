@@ -351,13 +351,15 @@ class Program:
             printf(_('Sending timetable to Slack channel {}').format(args.slack))
             _response = self.slack.files_upload(content=_txt,
                                                 channels=args.slack,
-                                                title=_title + '.txt',
+                                                title=_title,
+                                                filename=_title + '.txt',
                                                 initial_comment=_comment)
             assert _response["ok"]
             printf(_('Sending {} to Slack channel {}').format(program.GRAPH_FILENAME, args.slack))
             _response = self.slack.files_upload(file=program.GRAPH_FILENAME,
                                                 channels=args.slack,
-                                                title=_title + '.' + program.GRAPH_FILENAME.split('.')[-1],
+                                                title=_title,
+                                                filename=_title + '.' + program.GRAPH_FILENAME.split('.')[-1],
                                                 initial_comment=_comment)
             assert _response["ok"]
         except AssertionError:
