@@ -345,19 +345,19 @@ class Program:
 
     def send_to_slack(self):
         _txt = self.result.display_table()
-        _title = '{}-{}.txt'.format(self.STATION_NAME, strftime('%Y%m%d-%H%M')).replace(' ', '_')
+        _title = '{}-{}'.format(self.STATION_NAME, strftime('%Y%m%d-%H%M')).replace(' ', '_')
         _comment = '{st} ({el}m)\n\n'.format(st=self.STATION_NAME, el=self.ELEVATION)
         try:
             printf(_('Sending timetable to Slack channel {}').format(args.slack))
             _response = self.slack.files_upload(content=_txt,
                                                 channels=args.slack,
-                                                title=_title,
+                                                title=_title + '.txt',
                                                 initial_comment=_comment)
             assert _response["ok"]
             printf(_('Sending {} to Slack channel {}').format(program.GRAPH_FILENAME, args.slack))
             _response = self.slack.files_upload(file=program.GRAPH_FILENAME,
                                                 channels=args.slack,
-                                                title=_title,
+                                                title=_title + '.' + program.GRAPH_FILENAME.split('.')[-1],
                                                 initial_comment=_comment)
             assert _response["ok"]
         except AssertionError:
@@ -721,8 +721,8 @@ try:
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: '{:.0f} hPa'.format(new), old_ticks)) + ['MSL$_{ISA}$'])
-    bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 10, just below the minimum pressure
-                           round(2 * (max(z) + 2.5), -1) // 2  # multiple of 10, just above maximum pressure
+    bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
+                           round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
                            )
     bottomsubplot.grid(True, which='major', alpha=0.6)
     bottomsubplot.grid(True, which='minor', alpha=0.3)
