@@ -1,13 +1,24 @@
 # import matplotlib.pyplot as plt
 # import matplotlib.ticker as ticker
 # import numpy as np
-# from matplotlib.axes import Axes
 # from matplotlib.gridspec import GridSpec
 # from matplotlib.patches import Rectangle
 # from matplotlib.projections import register_projection
 # from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from abc import abstractmethod
+
 import matplotlib.dates as mdates
+from matplotlib.axes import Axes
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+
+
+class NoPanXAxes(Axes):
+    """Defintion of a Matplotlib Projection that forbids any perpendiculat (up/down) pan"""
+    name = 'No Pan X Axes'
+
+    @abstractmethod
+    def drag_pan(self, button, key, _x, _y):
+        Axes.drag_pan(self, button, 'x', _x, _y)  # pretend key=='x'
 
 
 class MyMatplotlibTools:

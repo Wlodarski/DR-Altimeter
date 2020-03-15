@@ -25,7 +25,6 @@ SOFTWARE.
 
 import logging
 import traceback
-from abc import abstractmethod
 from configparser import ConfigParser
 from datetime import datetime, timedelta
 from os import system, environ
@@ -55,9 +54,10 @@ from ISA import InternationalStandardAtmosphere
 from commandline import CommandLineParser
 from curvefit import PolynomialCurveFit, date2dhour
 from forecast import Forecast
+from graph import NoPanXAxes, MyMatplotlibTools
 from translation import Translation
 from txttable import PredictionTable
-from utils import printf, nb_date_changes
+from utils import printf, nb_date_changes, pretty_polyid
 
 FULLNAME = 'DR Polynomial Altimeter'
 VERSION = 'v1.0 redone'  # TODO: change to v1.0 when ready to release
@@ -450,34 +450,6 @@ class LinkedRectangles:
         self.aa[1].figure.canvas.draw_idle()
 
 
-class NoPanXAxes(Axes):
-    """Defintion of a Matplotlib Projection that forbids any perpendiculat (up/down) pan"""
-    name = 'No Pan X Axes'
-
-    @abstractmethod
-    def drag_pan(self, button, key, _x, _y):
-        Axes.drag_pan(self, button, 'x', _x, _y)  # pretend key=='x'
-
-
-def pretty_polyid(polynomial: object, f_text: str = 'f', var_symbol: str = 'x', equal_sign: str = '=') -> str:
-    """
-    :param polynomial: numpy.ndarray
-    :param f_text: function text
-    :param var_symbol: variable symbol
-    :param equal_sign: equal sign, ex) '>='
-    :return: formula on two lines
-
-    Pretty print remplacement for poly1d
-
-    """
-    import re
-    from numpy import poly1d as ugly
-
-    formula_up, formula_down = re.split('\n', str(ugly(polynomial, variable=var_symbol)), maxsplit=1)
-    spaces = ''.rjust(len(f_text + ' ' + equal_sign), ' ')
-    return '{s} {u}\n{f} {e} {d}'.format(u=formula_up, d=formula_down, f=f_text, s=spaces, e=equal_sign)
-
-
 # =====================================================================
 #  MAIN
 # =====================================================================
@@ -638,9 +610,10 @@ try:
     # GRAPH
     # --------------------------------------------------------------------------
 
-    register_projection(NoPanXAxes)
-
     visible_hours = min(program.SHOW_X_HOURS + 1, len(x))
+
+    mtools = MyMatplotlibTools()
+    register_projection(NoPanXAxes)
 
     # one figure
     fig = plt.figure(dpi=96, figsize=(16, 9), num='{} {}'.format(program.STATION_NAME, strftime('%Y%m%d-%H%M')))
