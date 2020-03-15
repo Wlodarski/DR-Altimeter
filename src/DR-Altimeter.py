@@ -598,11 +598,21 @@ try:
 
         times_string += step_text
 
-    program.result.add(hour=previous_hour,
+    # last curvefit prediction
+    program.result.add(hour=this_hour,
                        pressure=z[index],
                        alt=y[index],
                        alt_h=y[index] - y[index - 1],
                        times=[times_string])
+
+    # last atm. pressure from Wunderground
+    index += 1
+    this_hour = (previous_hour + 1) % 24
+    program.result.add(hour=this_hour,
+                       pressure=z[index],
+                       alt=y[index],
+                       alt_h=y[index] - y[index - 1],
+                       times='')
 
     program.display_results()
 
