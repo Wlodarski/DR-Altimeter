@@ -583,8 +583,7 @@ try:
 
             for hours_with_no_change in range(1, (this_hour - previous_hour) % 24):
                 index += 1
-                previous_hour = (this_hour - 1) % 24
-                program.result.add(hour=previous_hour,
+                program.result.add(hour=(previous_hour + hours_with_no_change) % 24,
                                    pressure=z[index],
                                    alt=y[index],
                                    alt_h=y[index] - y[index - 1],
