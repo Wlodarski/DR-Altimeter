@@ -94,6 +94,9 @@ class MyMatplotlibTools:
 
     @staticmethod
     def format_date_ticks(ax):
+        # bug solved by patching .../site-packages/matplotlib/axis.py
+        # ref: https://github.com/matplotlib/matplotlib/issues/15621
+
         ax.xaxis.set_major_locator(mdates.HourLocator())
         ax.xaxis.set_minor_locator(mdates.MinuteLocator(byminute=range(0, 60, 10)))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%#Hh'))
@@ -101,8 +104,6 @@ class MyMatplotlibTools:
         ax.yaxis.set_minor_locator(MultipleLocator(base=1))
         ax.yaxis.set_major_formatter(FormatStrFormatter('%.0f m'))
 
-        # bug solved by patching .../site-packages/matplotlib/axis.py
-        # ref: https://github.com/matplotlib/matplotlib/issues/15621
         sax = ax.secondary_xaxis('top')
         sax.xaxis.set_major_locator(mdates.HourLocator())
         sax.xaxis.set_minor_locator(mdates.MinuteLocator(byminute=range(0, 60, 10)))
