@@ -23,32 +23,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
-import argparse
-import gettext
 import logging
-import sys
 import traceback
-from abc import abstractmethod
 from configparser import ConfigParser
 from datetime import datetime, timedelta
-from locale import getdefaultlocale
-from os import system, environ, path, walk
+from os import system, environ
 from pathlib import Path
 from re import search
-from textwrap import fill
 from time import strftime
 
 import colorama
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-import numpy as np
 import slack
-from matplotlib.axes import Axes
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import Rectangle
 from matplotlib.projections import register_projection
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.chrome.options import Options
@@ -58,53 +47,30 @@ from selenium.webdriver.support.ui import WebDriverWait
 from termcolor import colored
 
 from ISA import InternationalStandardAtmosphere
-from forecastarray import Forecast
+from commandline import CommandLineParser
+from curvefit import PolynomialCurveFit, date2dhour
+from forecast import Forecast
+from graph import NoPanXAxes, MyMatplotlibTools
+from translation import Translation
 from txttable import PredictionTable
-
-
-def printf(text: str) -> str:
-    print(fill(text, 79))
-    return text
-
-
-def _(message): return message  # until a proper gettext _() is defined
-
-
-colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
+from utils import printf, nb_date_changes, pretty_polyid
 
 FULLNAME = 'DR Polynomial Altimeter'
-VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
+VERSION = 'v1.0 redone'  # TODO: change to v1.0 when ready to release
+_ = Translation()
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
 
-# Command line options. They all override config.ini
-parser = argparse.ArgumentParser(Path(__file__).name,
-                                 description=DESCRIPTION,
-                                 epilog='{}, version {}'.format(SHORTNAME, VERSION))
-parser.add_argument('-n', '--no-key', action='store_true', help='disable "Press any key to continue"')
-parser.add_argument('-s', '--slack', help='Slack channel')
-parser.add_argument('--latitude', help='latitude', type=float)
-parser.add_argument('--longitude', help='longitude', type=float)
-parser.add_argument('--override-url', help='specific weather station URL', type=str)
-bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))  # for pyinstaller
-localedir = path.join(bundle_dir, 'locales')
-all_lang = ', '.join(next(walk(localedir))[1])
-parser.add_argument('--lang', help='interface language ({})'.format(all_lang))
-parser.add_argument('-v', '--verbose', action='store_true', help='include details about polynomial model')
-args = parser.parse_args()
+command_line_parser = CommandLineParser(prog_path=Path(__file__),
+                                        description=DESCRIPTION,
+                                        shortname=SHORTNAME,
+                                        version=VERSION)
+_.set_lang(command_line_parser)
+args = command_line_parser.args
+command_line_parser.link_together(args.latitude, args.longitude,
+                                  _('If one is provided, both --latitude and --longitude must be provided'))
 
-# I18N translations, setup of gettext
-current_locale, encoding = getdefaultlocale()
-lang = ''
-if args.lang is not None:
-    lang = args.lang
-chosen_lang = gettext.translation('DR-Altimeter', localedir=localedir, languages=[lang, current_locale], fallback=True)
-chosen_lang.install()
-del _
-_ = chosen_lang.gettext
-
-if (args.longitude is not None and args.latitude is None) or (args.longitude is None and args.latitude is not None):
-    parser.error(_('If one is provided, both --latitude and --longitude must be provided'))
+colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
 
 
 class Program:
@@ -115,8 +81,6 @@ class Program:
         :param description: short description
         :param shortname: short name, mainly for logs
         """
-
-        global args
 
         self.NAME = fullname
         self.SHORTNAME = shortname
@@ -377,19 +341,21 @@ class Program:
 
     def send_to_slack(self):
         _txt = self.result.display_table()
-        _title = '{}-{}.txt'.format(self.STATION_NAME, strftime('%Y%m%d-%H%M')).replace(' ', '_')
+        _title = '{}-{}'.format(self.STATION_NAME, strftime('%Y%m%d-%H%M')).replace(' ', '_')
         _comment = '{st} ({el}m)\n\n'.format(st=self.STATION_NAME, el=self.ELEVATION)
         try:
             printf(_('Sending timetable to Slack channel {}').format(args.slack))
             _response = self.slack.files_upload(content=_txt,
                                                 channels=args.slack,
                                                 title=_title,
+                                                filename=_title + '.txt',
                                                 initial_comment=_comment)
             assert _response["ok"]
             printf(_('Sending {} to Slack channel {}').format(program.GRAPH_FILENAME, args.slack))
             _response = self.slack.files_upload(file=program.GRAPH_FILENAME,
                                                 channels=args.slack,
                                                 title=_title,
+                                                filename=_title + '.' + program.GRAPH_FILENAME.split('.')[-1],
                                                 initial_comment=_comment)
             assert _response["ok"]
         except AssertionError:
@@ -436,7 +402,7 @@ class ChromeBrowser:
         self.options.add_argument('--log-level=3')
         self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
-    def go_to(self, webpage: str, hidden: bool = False, geolocation: bool = False):
+    def go_to(self, webpage: Path, hidden: bool = False, geolocation: bool = False):
         """ Open browser """
         self.options.add_experimental_option('prefs', {'geolocation': geolocation})
         if hidden and not geolocation:  # geolocation only works if not headless
@@ -464,50 +430,6 @@ class ChromeBrowser:
         return _position
 
 
-class LinkedRectangles:
-    """
-    links two rectangles to two axes. Any zoom/pan propagates to the two rectangles
-    """
-
-    def __init__(self, ax1: Axes, r1: Rectangle, ax2: Axes, r2: Rectangle):
-        self.r = [r1, r2]
-        self.aa = [ax1, ax2]
-
-    def update(self, *_):
-        self.r[0].set_bounds(self.aa[0].viewLim.bounds)
-        self.r[1].set_bounds(self.aa[1].viewLim.bounds)
-        self.aa[0].figure.canvas.draw_idle()
-        self.aa[1].figure.canvas.draw_idle()
-
-
-class NoPanXAxes(Axes):
-    """Defintion of a Matplotlib Projection that forbids any perpendiculat (up/down) pan"""
-    name = 'No Pan X Axes'
-
-    @abstractmethod
-    def drag_pan(self, button, key, _x, _y):
-        Axes.drag_pan(self, button, 'x', _x, _y)  # pretend key=='x'
-
-
-def pretty_polyid(polynomial: object, f_text: str = 'f', var_symbol: str = 'x', equal_sign: str = '=') -> str:
-    """
-    :param polynomial: numpy.ndarray
-    :param f_text: function text
-    :param var_symbol: variable symbol
-    :param equal_sign: equal sign, ex) '>='
-    :return: formula on two lines
-
-    Pretty print remplacement for poly1d
-
-    """
-    import re
-    from numpy import poly1d as ugly
-
-    formula_up, formula_down = re.split('\n', str(ugly(polynomial, variable=var_symbol)), maxsplit=1)
-    spaces = ''.rjust(len(f_text + ' ' + equal_sign), ' ')
-    return '{s} {u}\n{f} {e} {d}'.format(u=formula_up, d=formula_down, f=f_text, s=spaces, e=equal_sign)
-
-
 # =====================================================================
 #  MAIN
 # =====================================================================
@@ -517,32 +439,28 @@ isa = InternationalStandardAtmosphere()
 
 # noinspection PyBroadException
 try:
+    # ----------------------------------------------------------------------
+    # SCRUB HOURLY PREDICTION ON WUNDERGROUND
+    # ----------------------------------------------------------------------
     hourly_forecast_url = program.hourly_forecast_url()
 
-    one_hour = timedelta(hours=1)
-    start_time = datetime.now()
-    end_time = start_time + timedelta(hours=program.MIN_HOURS)
+    first_day = datetime.today()
+    last_day = first_day + timedelta(hours=program.MIN_HOURS)
+    nth_days = range(0, 1 + nb_date_changes(first_day, last_day))
+    dates = [first_day.date() + timedelta(days=day) for day in nth_days]
 
-    dates = []
-    hours = []
-    date = start_time + one_hour
-    while date <= end_time:
-        this_day = date.strftime('%Y-%m-%d')
-        hours.append(date.strftime('%H'))
-        if this_day not in dates:
-            dates.append(this_day)
-        date += one_hour
-
-    first = True
+    first_page = True
     for d in dates:
+        date_str = d.strftime('%Y-%m-%d')
+        url = hourly_forecast_url + '/date/' + date_str
         if program.VERBOSE:
-            printf(hourly_forecast_url + '/date/' + d)
-        if first:
-            program.browser.go_to(webpage=hourly_forecast_url + '/date/' + d, hidden=True)
+            printf(url)
+        if first_page:
+            program.browser.go_to(webpage=url, hidden=True)
             program.check_page(title='Hourly Weather Forecast | Weather Underground')
             program.wait_until_page_is_loaded()
             program.switch_to_metric()
-            first = False
+            first_page = False
         else:
             program.click_next()
 
@@ -551,7 +469,7 @@ try:
         if program.ELEVATION is None:
             program.get_station_elevation()
         if program.P_INITIAL is None:
-            program.forecast.add(atm_pressure=program.get_atm_pressure_at_station(), timestamp=program.get_obs_time())
+            program.forecast.add(time=program.get_obs_time(), pressure=program.get_atm_pressure_at_station())
             print()
 
         elem = program.browser.driver.find_element(By.ID, 'hourly-forecast-table')
@@ -560,32 +478,30 @@ try:
 
                 # parsing out hour and predicted pressure
                 st = search('^([0-9]+:00 [ap]m).* (.*) hPa$', row)
-                hour = datetime.strptime(d + ' ' + st.group(1), '%Y-%m-%d %I:%M %p')
+                hour = datetime.strptime(date_str + ' ' + st.group(1), '%Y-%m-%d %I:%M %p')
                 pressure = float(st.group(2).replace(',', ''))
-                program.forecast.add(atm_pressure=pressure, timestamp=hour)
+                program.forecast.add(time=hour, pressure=pressure)
 
     program.browser.quit()
 
-    start = program.forecast.forecast[0]['date']
-    end = program.forecast.forecast[-1]['date']
+    # ----------------------------------------------------------------------
+    # TRANSLATE PREDICTED PRESSURE INTO PREDICTED ALTITUDE CHANGES
+    # ----------------------------------------------------------------------
 
-    starting_full_hour = start.replace(microsecond=0, second=0, minute=0)
-    ending_full_hour = end.replace(microsecond=0, second=0, minute=0)
+    program.forecast.reorder_chronologically()  # superfluous but doing anyway, just in case
 
-    x = []  # delta time
-    x_labels = []  # labels for graph
-    y = []  # delta alt
-    z = []  # forecasted pressure
+    fix_hour = datetime.now()  # fix hour set at this specific execution time : after scrub is done
 
-    for data in program.forecast.sorted_by('date'):
-        difference = data['date'] - starting_full_hour
-        decimal_elapse_hours = difference.total_seconds() / 3600
-        x.append(decimal_elapse_hours)
-        x_labels.append(data['date'].strftime('%#Hh'))
-        y.append(isa.delta_altitude(p_ref=program.P_INITIAL, current_p=data['pressure']))
-        z.append(data['pressure'])
+    times = program.forecast.times()
+    start = times[0]
+    end = times[-1]
+    start_full_hour = start.replace(microsecond=0, second=0, minute=0)
+    end_full_hour = end.replace(microsecond=0, second=0, minute=0)
 
-    # x[0] = x[0] - 1  # TODO: bug 4 test
+    x = [date2dhour(start_full_hour, t) for t in program.forecast.times()]  # time since start
+    y = program.forecast.delta_altitudes(p_ref=program.P_INITIAL)  # altitude change
+    z = program.forecast.pressures()  # predicted atmospheric pressure
+
     # ----------------------------------------------------------------------
     # POLYNOMIAL CURVE FIT
     # ----------------------------------------------------------------------
@@ -594,116 +510,86 @@ try:
         print(program.register_info(_(' POLYNOMIAL CURVE FIT ').center(79, '=')))
         print()
 
-    # seeks to find a degree that fits the fix
-    pass_through_zero = 0
-    half_point = len(x) // 2
-    for d in range(1, half_point + 1):
-        p = np.polyfit(x, y, d)
-        test = round(np.polyval(p, int(datetime.now().strftime('%M')) / 60))  # TODO: bug 4 ok
-        if test == 0:
-            pass_through_zero += 1
-        else:
-            if pass_through_zero > 0:
-                pass_through_zero += -1
-        if program.VERBOSE:
-            printf(program.register_info(_('Degree : {:2d}/{}, '
-                                           'passing through zero {} times').format(d, half_point, pass_through_zero)))
-        if pass_through_zero == 2:
-            if program.VERBOSE:
-                printf(_('Found a good match'))
-                print()
-            break
-    else:
-        if program.VERBOSE:
-            # d += 1
-            printf(program.register_info(_('End of search')))
-            print()
-    degree = d  # - 1
-    poly = np.polyfit(x, y, degree)
+    curvefit = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
-        printf(program.register_info(_('Degree : {}').format(degree)))
+        printf(program.register_info(_('Degree : {}').format(curvefit.degree)))
         print()
-        printf(program.register_info(_('Coefficients : {}').format(poly)))
+        printf(program.register_info(_('Coefficients : {}').format(curvefit.poly)))
         print()
-        printf(program.register_info(_('Time vector (x) : {}').format(x)))
+        printf(program.register_info(_('Time vector (x) : {}').format(curvefit.x)))
         print()
-        printf(program.register_info(_('Time labels (x_labels) : {}').format(x_labels)))  # TODO: bug 4
-        print()
-        printf(program.register_info(_('Altitude vector (y) : {}').format(y)))
+        printf(program.register_info(_('Altitude vector (y) : {}').format(curvefit.y)))
         print()
         printf(program.register_info(_('Pressure vector (z) : {}').format(z)))
         print()
-        print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=poly,
+        print(program.register_info('\n{}\n'.format(pretty_polyid(polynomial=curvefit.poly,
                                                                   f_text=_('altitude(time)'),
                                                                   var_symbol=_('time'),
                                                                   equal_sign='='))))
         print(program.register_info(''.center(79, '-')))
         print()
 
-    lower_err = []
-    upper_err = []
-    total_up_err = 0
-    total_down_err = 0
-    previous_v = None
-    fix_found = False
-    now_minutes = int(datetime.now().strftime('%M'))  # TODO: bug 4 ok
-    for t in range(0, len(x)):
-        steps = []
-        # print(t, x[t])  # TODO: bug 4
-        if t == 0 and x[t] < 0:  # TODO: bug 4
-            ss = -60
-        else:
-            ss = 0
-        for minutes in range(ss, 60):  # TODO: bug 4
-            minute_dec = minutes / 60
-            t_dec = t + minute_dec
-            v = round(np.polyval(poly, t_dec))
+    # ----------------------------------------------------------------------
+    # TEXT OUTPUT
+    # ----------------------------------------------------------------------
 
-            if not fix_found and minutes - ss == now_minutes:  # TODO: bug 4.1
-                fix_found = True
-                steps.append(_('{}[fix]').format(datetime.now().strftime('%Hh%M')))
+    first = True
+    times_string = ''
+    index = 0
+    previous_hour = start.hour
 
-            if previous_v is None:
-                previous_v = v
+    t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour)
 
-            if v != previous_v:
-                #  print(t, minutes, ss, minutes - ss)  # TODO: bug 4
-                if minutes < 0:  # TODO: bug 4
-                    tt = program.forecast.forecast[t]['date'].timedelta(hours=-1)
-                    change_time = tt.replace(microsecond=0,
-                                             second=0,
-                                             minute=minutes - ss)  # TODO: bug 4
-                else:
-                    change_time = program.forecast.forecast[t]['date'].replace(microsecond=0,
-                                                                               second=0,
-                                                                               minute=minutes)
+    for i in range(0, len(s)):
+        step_text = '{}[{}]'.format(t[i].strftime('%#Hh%M'), s[i])
+        this_hour = t[i].hour
 
-                steps.append('{}[{:d}]'.format(change_time.strftime('%Hh%M'), int(v)))
-                previous_v = v
+        if this_hour != previous_hour:
+            if first:
+                program.result.add_start(hour=start.hour,
+                                         minute=start.minute,
+                                         pressure=z[index],
+                                         times=[times_string])
+                first = False
+            else:
+                program.result.add(hour=previous_hour,
+                                   pressure=z[index],
+                                   alt=y[index],
+                                   alt_h=y[index] - y[index - 1],
+                                   times=[times_string])
 
-        if t == 0:
-            old = 0
-            program.result.add_start(hour=start.strftime('%H'),
-                                     minute=start.strftime('%M'),
-                                     pressure=program.P_INITIAL,
-                                     times=steps)
-        else:
-            program.result.add(hour=program.forecast.forecast[t]['date'].strftime('%#H'),
-                               pressure=program.forecast.forecast[t]['pressure'],
-                               alt=y[t],
-                               alt_h=y[t] - old,
-                               times=steps)
-            old = y[t]
+            for hours_with_no_change in range(1, (this_hour - previous_hour) % 24):
+                index += 1
+                program.result.add(hour=(previous_hour + hours_with_no_change) % 24,
+                                   pressure=z[index],
+                                   alt=y[index],
+                                   alt_h=y[index] - y[index - 1],
+                                   times='')
+            index += 1
+            times_string = ''
+            previous_hour = this_hour
 
-        err = np.polyval(poly, x[t]) - y[t]
-        if err > 0:
-            total_up_err += err
-        else:
-            total_down_err += -err
+        if len(times_string) > 0:
+            times_string += ', '
 
-        lower_err.append(total_down_err)
-        upper_err.append(total_up_err)
+        times_string += step_text
+
+    # last curvefit prediction
+    program.result.add(hour=this_hour,
+                       pressure=z[index],
+                       alt=y[index],
+                       alt_h=y[index] - y[index - 1],
+                       times=[times_string])
+
+    # last atm. pressure from Wunderground
+    index += 1
+    this_hour = (previous_hour + 1) % 24
+    program.result.add(hour=this_hour,
+                       pressure=z[index],
+                       alt=y[index],
+                       alt_h=y[index] - y[index - 1],
+                       times='')
 
     program.display_results()
 
@@ -711,138 +597,80 @@ try:
     # GRAPH
     # --------------------------------------------------------------------------
 
+    visible_hours = min(program.SHOW_X_HOURS + 1, len(x))
+    visible_full_hour = start_full_hour + timedelta(hours=visible_hours)
+
+    mtools = MyMatplotlibTools()
     register_projection(NoPanXAxes)
 
-    nb_hours = min(program.SHOW_X_HOURS + 1, len(x))
-
     # one figure
-    fig = plt.figure(dpi=96, figsize=(16, 9), num='{} {}'.format(program.STATION_NAME, strftime('%Y%m%d-%H%M')))
+    fig = plt.figure(dpi=96, figsize=(16, 9),
+                     num='{} {}'.format(program.STATION_NAME, fix_hour.strftime('%Y%m%d-%H%M')))
     plt.figtext(0.95, 0.01,
                 '{} {}'.format(program.NAME, program.VERSION), horizontalalignment='right',
                 alpha=0.8, fontsize='x-small')
 
     # two subplots on a grid system
     gs = GridSpec(figure=fig, ncols=1, nrows=2, height_ratios=[3, 1], hspace=0.1, bottom=0.07)
-    topsubplot = fig.add_subplot(gs[0], title='{} ― {}'.format(program.STATION_NAME, strftime('%Y.%m.%d %H:%M')))
+    topsubplot = fig.add_subplot(gs[0],
+                                 title='{} ― {}'.format(program.STATION_NAME, fix_hour.strftime('%Y.%m.%d %H:%M')))
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection='No Pan X Axes')
 
     # formatting the top (altitude) graph
-    topsubplot.set_xlim(x[0] - 10 / 60, nb_hours)
+    topsubplot.set_xlim(start_full_hour, visible_full_hour)
+    mtools.set_ylimits(topsubplot, y, visible_hours)
+    top_second_x_axis = mtools.format_date_ticks(topsubplot)
+    top_second_y_axis = mtools.format_altitude_tick(topsubplot, shift=program.ELEVATION)
+    mtools.set_grid(topsubplot)
     loc = 'lower right'
-    if y[-1] > (y[0] + 10):
-        down_lim = min(y[:nb_hours]) - 1
-        up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
-    elif y[-1] < (y[0] - 10):
-        down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
-        up_lim = max(y[:nb_hours]) + 1
-        'upper right'
-    else:
-        down_lim = round(min(y[:nb_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
-        up_lim = round(max(y[:nb_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
-    topsubplot.set_ylim(down_lim, up_lim)
-    topsubplot.set_ylabel(_('$\Delta$altitude, $m$'))
-    topsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
-    topsubplot.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
-    topsubplot.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))
-    topsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
-    topsubplot.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.0f m'))
-    topsubplot.yaxis.set_minor_locator(ticker.AutoMinorLocator(n=5))
-    topsubplot.grid(True, which='major', alpha=0.6)
-    topsubplot.grid(True, which='minor', alpha=0.3)
-
-    top_second_y_axis = topsubplot.secondary_yaxis("right",
-                                                   functions=(lambda b: program.ELEVATION + b,
-                                                              lambda b: b - program.ELEVATION))
-    top_second_y_axis.set_ylabel(_('altitude, $m$'))
-
-    top_second_y_axis.grid(True)
-    # bug solved by patching .../site-packages/matplotlib/axis.py
-    # ref: https://github.com/matplotlib/matplotlib/issues/15621
-    top_second_y_axis.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
-    top_second_y_axis.yaxis.set_minor_locator(ticker.AutoMinorLocator(n=1))
-
-    inset_altitude = inset_axes(topsubplot,
-                                width='10%', height='{}%'.format(10 * gs.get_height_ratios()[1]),
-                                bbox_transform=topsubplot.transAxes,  # relative axes coordinates
-                                bbox_to_anchor=(0.0, 0.0, 1, 1),  # relative axes coordinates
-                                loc=loc)
-    rects = LinkedRectangles(topsubplot,
-                             Rectangle((0, 0), 0, 0, facecolor='None', edgecolor='red', linewidth=0.5),
-                             bottomsubplot,
-                             Rectangle((0, 0), 0, 0, facecolor='None', edgecolor='tab:blue', linewidth=0.5))
-    rects.r[0].set_bounds(*topsubplot.viewLim.bounds)
-
-    inset_altitude.add_patch(rects.r[0])
-    inset_altitude.tick_params(axis='both', which='both',
-                               bottom=False, top=False, left=False, right=False,
-                               labelbottom=False, labeltop=False, labelleft=False, labelright=False)
-    inset_altitude.patch.set_alpha(0.8)
-    inset_altitude.spines['bottom'].set_alpha(0.5)
-    inset_altitude.spines['top'].set_alpha(0.5)
-    inset_altitude.spines['left'].set_alpha(0.5)
-    inset_altitude.spines['right'].set_alpha(0.5)
-
-    top_second_x_axis = topsubplot.twiny()
-    top_second_x_axis.set_xbound(topsubplot.get_xbound())
-    top_second_x_axis.xaxis.set_ticks(x[:nb_hours])
-    top_second_x_axis.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
-    top_second_x_axis.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
-    top_second_x_axis.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))
+    inset_altitude, rects = mtools.create_inset(topsubplot, bottomsubplot, gs, loc)
 
     # formatting the bottom (pressure) graph
     bottomsubplot.set_ylim(260, 1100)  # pressure limits of Casio v3
-    bottomsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=10))
+    bottomsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
     bottomsubplot.yaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: '{:.0f} hPa'.format(new), old_ticks)) + ['MSL$_{ISA}$'])
-    bottomsubplot.set_ylim(round(min(z) - 5, -1),  # multiple of 10, just below the minimum pressure
-                           round(max(z) + 5, -1)  # multiple of 10, just above maximum pressure
-                           )
-    bottomsubplot.grid(True, which='major', alpha=0.6)
-    bottomsubplot.grid(True, which='minor', alpha=0.3)
-    bottomsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
-    # bottomsubplot.set_ylabel('')
-    inset_pressure = inset_axes(bottomsubplot,
-                                width='10%', height='{}%'.format(10 * gs.get_height_ratios()[0]),
-                                bbox_transform=bottomsubplot.transAxes,  # relative axes coordinates
-                                bbox_to_anchor=(0.0, 0.0, 1, 1),  # relative axes coordinates
-                                loc=loc)
-    rects.r[1].set_bounds(*bottomsubplot.viewLim.bounds)
+    # bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
+    #                        round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
+    #                        )
+    mtools.set_ylimits(bottomsubplot, z, visible_hours)
 
-    bottomsubplot.callbacks.connect('lim_changed', rects.update)
-    bottomsubplot.callbacks.connect('ylim_changed', rects.update)
-    topsubplot.callbacks.connect('xlim_changed', rects.update)
-    topsubplot.callbacks.connect('ylim_changed', rects.update)
-
-    inset_pressure.add_patch(rects.r[1])
-    inset_pressure.tick_params(axis='both', which='both',
-                               bottom=False, top=False, left=False, right=False,
-                               labelbottom=False, labeltop=False, labelleft=False, labelright=False)
-
-    inset_pressure.patch.set_alpha(0.5)
-    inset_pressure.spines['bottom'].set_alpha(0.2)
-    inset_pressure.spines['top'].set_alpha(0.2)
-    inset_pressure.spines['left'].set_alpha(0.2)
-    inset_pressure.spines['right'].set_alpha(0.2)
+    mtools.set_grid(bottomsubplot)
+    inset_pressure = mtools.add_inset(topsubplot, bottomsubplot, rects, gs, loc)
 
     # adding curves/points to subplots
-    topsubplot.errorbar(x, y, fmt='go', yerr=[lower_err, upper_err], label=_('Hourly Forecast'), markersize=5)
-    topsubplot.plot(np.arange(x[0], x[-1], 1 / 60),
-                    [v for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
-                    color='red', linestyle='dotted', alpha=0.5)
-    topsubplot.step(np.arange(x[0], x[-1], 1 / 60),
-                    [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
-                    color='red', where='post', label=_('Polynomlal Steps of {}{} degree').format(degree, _('$^{th}$')))
-    topsubplot.scatter(now_minutes / 60, 0,  # TODO: bug 4.1
-                       color='red',
-                       marker='>',
-                       label=_('Fix at {}').format(strftime('%#H:%M')))
-    inset_altitude.plot(x, y, color='red', alpha=0.5)
+    topsubplot.errorbar('time', 'altitude', yerr='error', data=curvefit.prediction_dict(ref_hour=start_full_hour),
+                        color='green', marker='o', linestyle='none', markersize=5,
+                        label=_('Hourly Forecast'),
+                        zorder=10)
 
-    bottomsubplot.plot(x, z, color='tab:blue', marker='o', markersize=3.5, label=_('Atmospheric Pressure'),
-                       linestyle='--')
-    inset_pressure.plot(x, z, color='tab:blue', alpha=0.5)
+    topsubplot.plot('time', 'dotted line', data=curvefit.curvefit_dict(start_full_hour, margin=15),
+                    color='red', marker='', linestyle='dotted',
+                    label='_nolegend_',
+                    zorder=8)
+
+    topsubplot.step('time', 'steps', data=curvefit.curvefit_dict(start_full_hour, margin=0), where='post',
+                    color='red', marker='', linestyle='solid',
+                    label=_('Polynomlal Steps of {}{} degree').format(curvefit.degree, _('$^{th}$')),
+                    zorder=9)
+
+    topsubplot.scatter(fix_hour, 0,
+                       color='tab:blue', marker='>',
+                       label=_('Fix at {}').format(fix_hour.strftime('%#H:%M')),
+                       zorder=11)
+
+    inset_altitude.plot(program.forecast.times(), program.forecast.altitudes(),
+                        color='red', alpha=0.5)
+
+    bottomsubplot.plot(program.forecast.times(), program.forecast.pressures(),
+                       color='tab:blue', marker='o', markersize=3.5, linestyle='--',
+                       label=_('Atmospheric Pressure')
+                       )
+
+    inset_pressure.plot(program.forecast.times(), program.forecast.pressures(),
+                        color='tab:blue', alpha=0.5)
 
     # post-processing subplots
     topsubplot.legend()
@@ -862,6 +690,9 @@ try:
         mng.window.state('zoomed')
         plt.show()
 
+# ----------------------------------------------------------------------
+# CLEAN UP
+# ----------------------------------------------------------------------
 except Exception as e:
     logging.error(traceback.format_exc())
     traceback.print_exc()
