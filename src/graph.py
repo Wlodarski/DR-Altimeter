@@ -62,16 +62,20 @@ class MyMatplotlibTools:
     @staticmethod
     def viewport_lim(vector, end_index, start_index=0, corner1=None, corner2=None):
         corner = corner1
+
+        # padding proportional to the variation of altitude
+        padding = max(abs(vector[end_index] - vector[start_index]) // 10, 1)
+
         if vector[-1] > (vector[start_index] + 10):
-            down_lim = min(vector[:end_index]) - 1
-            up_lim = round(max(vector[:end_index]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
+            down_lim = min(vector[:end_index]) - padding
+            up_lim = round(max(vector[:end_index]) + 5, -1) + padding  # multiple of 10, just above maximum altitude
         elif vector[-1] < (vector[start_index] - 10):
-            down_lim = round(min(vector[:end_index]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
-            up_lim = max(vector[:end_index]) + 1
+            down_lim = round(min(vector[:end_index]) - 5, -1) - padding  # multiple of 10, just below minimum altitude
+            up_lim = max(vector[:end_index]) + padding
             corner = corner2
         else:
-            down_lim = round(min(vector[:end_index]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
-            up_lim = round(max(vector[:end_index]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
+            down_lim = round(min(vector[:end_index]) - 5, -1) - padding  # multiple of 10, just below minimum altitude
+            up_lim = round(max(vector[:end_index]) + 5, -1) + padding  # multiple of 10, just above maximum altitude
 
         if corner is not None:
             return down_lim, up_lim, corner
