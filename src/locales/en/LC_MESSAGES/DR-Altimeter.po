@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2020-03-17 12:53-0400\n"
-"PO-Revision-Date: 2020-03-17 13:00-0400\n"
+"PO-Revision-Date: 2020-03-17 13:52-0400\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,130 +18,130 @@ msgstr ""
 "Language: en\n"
 
 msgid "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
-msgstr ""
+msgstr "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
 
 msgid "If one is provided, both --latitude and --longitude must be provided"
-msgstr ""
+msgstr "If one is provided, both --latitude and --longitude must be provided"
 
 msgid "Regenerating {}"
-msgstr ""
+msgstr "Regenerating {}"
 
 msgid "Latitude : {:.7f}"
-msgstr ""
+msgstr "Latitude : {:.7f}"
 
 msgid "Longitude : {:.7f}"
-msgstr ""
+msgstr "Longitude : {:.7f}"
 
 msgid "Accuracy : {}m"
-msgstr ""
+msgstr "Accuracy : {}m"
 
 msgid "Using override URL"
-msgstr ""
+msgstr "Using override URL"
 
 msgid "Using Lat/Lon found in {}"
-msgstr ""
+msgstr "Using Lat/Lon found in {}"
 
 msgid "Latitude: {}"
-msgstr ""
+msgstr "Latitude: {}"
 
 msgid "Longitude: {}"
-msgstr ""
+msgstr "Longitude: {}"
 
 msgid "Page with wrong title"
-msgstr ""
+msgstr "Page with wrong title"
 
 msgid "Connected to Wunderground"
-msgstr ""
+msgstr "Connected to Wunderground"
 
 msgid "Page is ready"
-msgstr ""
+msgstr "Page is ready"
 
 msgid "Page took too much time to load"
-msgstr ""
+msgstr "Page took too much time to load"
 
 msgid "Switching to metric"
-msgstr ""
+msgstr "Switching to metric"
 
 msgid "Unable to switch to metric"
-msgstr ""
+msgstr "Unable to switch to metric"
 
 msgid "Station name not found"
-msgstr ""
+msgstr "Station name not found"
 
 msgid "UNKNOWN"
-msgstr ""
+msgstr "UNKNOWN"
 
 msgid "Current atmospheric pressure : {} hPa (ISA={:0.1f}m)"
-msgstr ""
+msgstr "Current atmospheric pressure : {} hPa (ISA={:0.1f}m)"
 
 msgid "Observation time not found."
-msgstr ""
+msgstr "Observation time not found."
 
 msgid "Elevation not found. Assuming it to be zero"
-msgstr ""
+msgstr "Elevation not found. Assuming it to be zero"
 
 msgid "Weather station elevation : {}m (ISA={:7.2f}hPa)"
-msgstr ""
+msgstr "Weather station elevation : {}m (ISA={:7.2f}hPa)"
 
 msgid "Sending timetable to Slack channel {}"
-msgstr ""
+msgstr "Sending timetable to Slack channel {}"
 
 msgid "Sending {} to Slack channel {}"
-msgstr ""
+msgstr "Sending {} to Slack channel {}"
 
 msgid "Sending to Slack failed"
-msgstr ""
+msgstr "Sending to Slack failed"
 
 msgid " POLYNOMIAL CURVE FIT "
-msgstr ""
+msgstr " POLYNOMIAL CURVE FIT "
 
 msgid "Degree : {}"
-msgstr ""
+msgstr "Degree : {}"
 
 msgid "Coefficients : {}"
-msgstr ""
+msgstr "Coefficients : {}"
 
 msgid "Time vector (x) : {}"
-msgstr ""
+msgstr "Time vector (x) : {}"
 
 msgid "Altitude vector (y) : {}"
-msgstr ""
+msgstr "Altitude vector (y) : {}"
 
 msgid "Pressure vector (z) : {}"
-msgstr ""
+msgstr "Pressure vector (z) : {}"
 
 msgid "altitude(time)"
-msgstr ""
+msgstr "altitude(time)"
 
 msgid "time"
-msgstr ""
+msgstr "time"
 
 msgid "Hourly Forecast"
-msgstr ""
+msgstr "Hourly Forecast"
 
 msgid "$^{th}$"
-msgstr ""
+msgstr "$^{th}$"
 
 msgid "Polynomlal Steps of {}{} degree"
-msgstr ""
+msgstr "Polynomlal Steps of {}{} degree"
 
 msgid "Fix at {}"
-msgstr ""
+msgstr "Fix at {}"
 
 msgid "Atmospheric Pressure"
-msgstr ""
+msgstr "Atmospheric Pressure"
 
 msgid "fix"
-msgstr ""
+msgstr "fix"
 
 msgid "ALT"
-msgstr ""
+msgstr "ALT"
 
 msgid "ALT/hr"
-msgstr ""
+msgstr "ALT/hr"
 
 msgid "H"
-msgstr ""
+msgstr "H"
 
 msgid "PRESSURE"
-msgstr ""
+msgstr "PRESSURE"
