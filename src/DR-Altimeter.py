@@ -634,7 +634,7 @@ try:
     bottomsubplot.set_yticklabels(list(map(lambda new: '{:.0f} hPa'.format(new), old_ticks)) + ['MSL$_{ISA}$'])
     # bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
     #                        round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
-    #                        )
+    #                        )  # TODO check if still needed then possibly remove
     mtools.set_ylimits(bottomsubplot, z, visible_hours)
 
     mtools.set_grid(bottomsubplot)
