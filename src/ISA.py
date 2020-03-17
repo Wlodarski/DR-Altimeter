@@ -98,3 +98,33 @@ class InternationalStandardAtmosphere:
         after experiencing a change in atmospheric pressure due to weather
         """
         return -self.delta_altitude(p_ref=p_start, current_p=p_end, delta_p=delta_p)
+
+
+if __name__ == '__main__':
+    isa = InternationalStandardAtmosphere()
+
+    alt = 1200
+    print('At {} m above mean sea level, '
+          'the standardized atmospheric pressure equals {:.2f} hPa'.format(alt, isa.pressure(altitude=alt)))
+
+    pres = 800.0
+    print('A pressure of {:.2f} hPa corresponds '
+          'to a standardized altitude of {:.0f} m'.format(pres, isa.altitude(pressure=pres)))
+
+    print()
+    print('Average Correction'.center(73))
+    print('+/-hPa |', end='')
+    for d in range(0, 11):
+        print('{:5.1f}'.format(d / 10), end=' ')
+    print()
+    print('-------+' + ''.center(65, '-'))
+    for alt in [-500, 0, 500, 1000, 2000, 3000, 4000, 5000]:
+        pref = isa.pressure(altitude=alt)
+        print('{:4}'.format(alt), end=' m |')
+        for d in range(0, 11):
+            pressure_variation = d / 10
+            plus = isa.correction(p_start=pref, delta_p=pressure_variation)
+            minus = isa.correction(p_start=pref, delta_p=-pressure_variation)
+            average = (plus - minus) / 2
+            print('{:5.2f}'.format(average), end=' ')
+        print()
