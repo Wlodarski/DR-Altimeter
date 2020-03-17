@@ -510,6 +510,8 @@ try:
 
     program.forecast.reorder_chronologically()  # superfluous but doing anyway, just in case
 
+    fix_hour = datetime.now()  # fix hour set at this specific execution time : after scrub is done
+
     times = program.forecast.times()
     start = times[0]
     end = times[-1]
@@ -550,8 +552,6 @@ try:
         print(program.register_info(''.center(79, '-')))
         print()
 
-    now_minutes = int(datetime.now().strftime('%M'))  # TODO: remove, bug 4 ok
-
     # ----------------------------------------------------------------------
     # TEXT OUTPUT
     # ----------------------------------------------------------------------
@@ -561,7 +561,7 @@ try:
     index = 0
     previous_hour = start.hour
 
-    t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=start)
+    t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour)
 
     for i in range(0, len(s)):
         step_text = '{}[{}]'.format(t[i].strftime('%#Hh%M'), s[i])
@@ -625,14 +625,16 @@ try:
     register_projection(NoPanXAxes)
 
     # one figure
-    fig = plt.figure(dpi=96, figsize=(16, 9), num='{} {}'.format(program.STATION_NAME, strftime('%Y%m%d-%H%M')))
+    fig = plt.figure(dpi=96, figsize=(16, 9),
+                     num='{} {}'.format(program.STATION_NAME, fix_hour.strftime('%Y%m%d-%H%M')))
     plt.figtext(0.95, 0.01,
                 '{} {}'.format(program.NAME, program.VERSION), horizontalalignment='right',
                 alpha=0.8, fontsize='x-small')
 
     # two subplots on a grid system
     gs = GridSpec(figure=fig, ncols=1, nrows=2, height_ratios=[3, 1], hspace=0.1, bottom=0.07)
-    topsubplot = fig.add_subplot(gs[0], title='{} ― {}'.format(program.STATION_NAME, strftime('%Y.%m.%d %H:%M')))
+    topsubplot = fig.add_subplot(gs[0],
+                                 title='{} ― {}'.format(program.STATION_NAME, fix_hour.strftime('%Y.%m.%d %H:%M')))
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection='No Pan X Axes')
 
     # formatting the top (altitude) graph
@@ -748,10 +750,10 @@ try:
                     [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
                     color='red', where='post',
                     label=_('Polynomlal Steps of {}{} degree').format(curvefit.degree, _('$^{th}$')))
-    topsubplot.scatter(now_minutes / 60, 0,  # TODO: bug 4.1
+    topsubplot.scatter(fix_hour.minute / 60, 0,
                        color='red',
                        marker='>',
-                       label=_('Fix at {}').format(strftime('%#H:%M')))
+                       label=_('Fix at {}').format(fix_hour.strftime('%#H:%M')))
 
     inset_altitude.plot(x, y, color='red', alpha=0.5)
 
