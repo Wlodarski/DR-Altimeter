@@ -37,11 +37,8 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 import slack
-from matplotlib.axes import Axes
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import Rectangle
 from matplotlib.projections import register_projection
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.chrome.options import Options
@@ -434,22 +431,6 @@ class ChromeBrowser:
         return _position
 
 
-class LinkedRectangles:
-    """
-    links two rectangles to two axes. Any zoom/pan propagates to the two rectangles
-    """
-
-    def __init__(self, ax1: Axes, r1: Rectangle, ax2: Axes, r2: Rectangle):
-        self.r = [r1, r2]
-        self.aa = [ax1, ax2]
-
-    def update(self, *_):
-        self.r[0].set_bounds(self.aa[0].viewLim.bounds)
-        self.r[1].set_bounds(self.aa[1].viewLim.bounds)
-        self.aa[0].figure.canvas.draw_idle()
-        self.aa[1].figure.canvas.draw_idle()
-
-
 # =====================================================================
 #  MAIN
 # =====================================================================
@@ -652,51 +633,30 @@ try:
         up_lim = round(max(y[:visible_hours]) + 5, -1) + 1  # multiple of 5, just above maximum altitude
     topsubplot.set_ylim(down_lim, up_lim)
     topsubplot.set_ylabel(_('$\Delta$altitude, $m$'))
-    topsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
+    topsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))  # TODO remove IndexFormatter
     topsubplot.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
     topsubplot.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))
     topsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
     topsubplot.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.0f m'))
     topsubplot.yaxis.set_minor_locator(ticker.AutoMinorLocator(n=5))
-    topsubplot.grid(True, which='major', alpha=0.6)
-    topsubplot.grid(True, which='minor', alpha=0.3)
 
     top_second_y_axis = topsubplot.secondary_yaxis("right",
                                                    functions=(lambda b: program.ELEVATION + b,
                                                               lambda b: b - program.ELEVATION))
     top_second_y_axis.set_ylabel(_('altitude, $m$'))
 
-    top_second_y_axis.grid(True)
     # bug solved by patching .../site-packages/matplotlib/axis.py
     # ref: https://github.com/matplotlib/matplotlib/issues/15621
     top_second_y_axis.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
     top_second_y_axis.yaxis.set_minor_locator(ticker.AutoMinorLocator(n=1))
 
-    inset_altitude = inset_axes(topsubplot,
-                                width='10%', height='{}%'.format(10 * gs.get_height_ratios()[1]),
-                                bbox_transform=topsubplot.transAxes,  # relative axes coordinates
-                                bbox_to_anchor=(0.0, 0.0, 1, 1),  # relative axes coordinates
-                                loc=loc)
-    rects = LinkedRectangles(topsubplot,
-                             Rectangle((0, 0), 0, 0, facecolor='None', edgecolor='red', linewidth=0.5),
-                             bottomsubplot,
-                             Rectangle((0, 0), 0, 0, facecolor='None', edgecolor='tab:blue', linewidth=0.5))
-    rects.r[0].set_bounds(*topsubplot.viewLim.bounds)
-
-    inset_altitude.add_patch(rects.r[0])
-    inset_altitude.tick_params(axis='both', which='both',
-                               bottom=False, top=False, left=False, right=False,
-                               labelbottom=False, labeltop=False, labelleft=False, labelright=False)
-    inset_altitude.patch.set_alpha(0.8)
-    inset_altitude.spines['bottom'].set_alpha(0.5)
-    inset_altitude.spines['top'].set_alpha(0.5)
-    inset_altitude.spines['left'].set_alpha(0.5)
-    inset_altitude.spines['right'].set_alpha(0.5)
+    mtools.set_grid(topsubplot)
+    inset_altitude, rects = mtools.create_inset(topsubplot, bottomsubplot, gs, loc)
 
     top_second_x_axis = topsubplot.twiny()
     top_second_x_axis.set_xbound(topsubplot.get_xbound())
     top_second_x_axis.xaxis.set_ticks(x[:visible_hours])
-    top_second_x_axis.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
+    top_second_x_axis.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))  # TODO remove IndexFormatter
     top_second_x_axis.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
     top_second_x_axis.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))
 
@@ -710,32 +670,11 @@ try:
     bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
                            round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
                            )
-    bottomsubplot.grid(True, which='major', alpha=0.6)
-    bottomsubplot.grid(True, which='minor', alpha=0.3)
-    bottomsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))
-    # bottomsubplot.set_ylabel('')
-    inset_pressure = inset_axes(bottomsubplot,
-                                width='10%', height='{}%'.format(10 * gs.get_height_ratios()[0]),
-                                bbox_transform=bottomsubplot.transAxes,  # relative axes coordinates
-                                bbox_to_anchor=(0.0, 0.0, 1, 1),  # relative axes coordinates
-                                loc=loc)
-    rects.r[1].set_bounds(*bottomsubplot.viewLim.bounds)
 
-    bottomsubplot.callbacks.connect('lim_changed', rects.update)
-    bottomsubplot.callbacks.connect('ylim_changed', rects.update)
-    topsubplot.callbacks.connect('xlim_changed', rects.update)
-    topsubplot.callbacks.connect('ylim_changed', rects.update)
+    bottomsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))  # TODO remove IndexFormatter
 
-    inset_pressure.add_patch(rects.r[1])
-    inset_pressure.tick_params(axis='both', which='both',
-                               bottom=False, top=False, left=False, right=False,
-                               labelbottom=False, labeltop=False, labelleft=False, labelright=False)
-
-    inset_pressure.patch.set_alpha(0.5)
-    inset_pressure.spines['bottom'].set_alpha(0.2)
-    inset_pressure.spines['top'].set_alpha(0.2)
-    inset_pressure.spines['left'].set_alpha(0.2)
-    inset_pressure.spines['right'].set_alpha(0.2)
+    mtools.set_grid(bottomsubplot)
+    inset_pressure = mtools.add_inset(topsubplot, bottomsubplot, rects, gs, loc)
 
     # adding curves/points to subplots
     topsubplot.errorbar(x, y, fmt='go', yerr=curvefit.prediction_dict(ref_hour=start_full_hour)['error'],
