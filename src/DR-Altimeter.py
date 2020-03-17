@@ -35,7 +35,6 @@ from time import strftime
 import colorama
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-import numpy as np
 import slack
 from matplotlib.gridspec import GridSpec
 from matplotlib.projections import register_projection
@@ -500,7 +499,6 @@ try:
     end_full_hour = end.replace(microsecond=0, second=0, minute=0)
 
     x = [date2dhour(start_full_hour, t) for t in program.forecast.times()]  # time since start
-    x_labels = program.forecast.formatted_times('#%Hh')  # TODO: remove
     y = program.forecast.delta_altitudes(p_ref=program.P_INITIAL)  # altitude change
     z = program.forecast.pressures()  # predicted atmospheric pressure
 
@@ -512,7 +510,6 @@ try:
         print(program.register_info(_(' POLYNOMIAL CURVE FIT ').center(79, '=')))
         print()
 
-    poly = np.polyfit(x, y, len(x) // 2)  # TODO replace with curvefit
     curvefit = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
@@ -601,6 +598,7 @@ try:
     # --------------------------------------------------------------------------
 
     visible_hours = min(program.SHOW_X_HOURS + 1, len(x))
+    visible_full_hour = start_full_hour + timedelta(hours=visible_hours)
 
     mtools = MyMatplotlibTools()
     register_projection(NoPanXAxes)
@@ -619,46 +617,13 @@ try:
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection='No Pan X Axes')
 
     # formatting the top (altitude) graph
-    topsubplot.set_xlim(x[0] - 10 / 60, visible_hours)
-    loc = 'lower right'
-    if y[-1] > (y[0] + 10):
-        down_lim = min(y[:visible_hours]) - 1
-        up_lim = round(max(y[:visible_hours]) + 5, -1) + 1  # multiple of 10, just above maximum altitude
-    elif y[-1] < (y[0] - 10):
-        down_lim = round(min(y[:visible_hours]) - 5, -1) - 1  # multiple of 10, just below minimum altitude
-        up_lim = max(y[:visible_hours]) + 1
-        # loc = 'lower left'
-    else:
-        down_lim = round(min(y[:visible_hours]) - 5, -1) - 1  # multiple of 5, just below minimum altitude
-        up_lim = round(max(y[:visible_hours]) + 5, -1) + 1  # multiple of 5, just above maximum altitude
-    topsubplot.set_ylim(down_lim, up_lim)
-    topsubplot.set_ylabel(_('$\Delta$altitude, $m$'))
-    topsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))  # TODO remove IndexFormatter
-    topsubplot.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
-    topsubplot.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))
-    topsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
-    topsubplot.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.0f m'))
-    topsubplot.yaxis.set_minor_locator(ticker.AutoMinorLocator(n=5))
-
-    top_second_y_axis = topsubplot.secondary_yaxis("right",
-                                                   functions=(lambda b: program.ELEVATION + b,
-                                                              lambda b: b - program.ELEVATION))
-    top_second_y_axis.set_ylabel(_('altitude, $m$'))
-
-    # bug solved by patching .../site-packages/matplotlib/axis.py
-    # ref: https://github.com/matplotlib/matplotlib/issues/15621
-    top_second_y_axis.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
-    top_second_y_axis.yaxis.set_minor_locator(ticker.AutoMinorLocator(n=1))
-
+    topsubplot.set_xlim(start_full_hour, visible_full_hour)
+    mtools.set_ylimits(topsubplot, y, visible_hours)
+    top_second_x_axis = mtools.format_date_ticks(topsubplot)
+    top_second_y_axis = mtools.format_altitude_tick(topsubplot, shift=program.ELEVATION)
     mtools.set_grid(topsubplot)
+    loc = 'lower right'
     inset_altitude, rects = mtools.create_inset(topsubplot, bottomsubplot, gs, loc)
-
-    top_second_x_axis = topsubplot.twiny()
-    top_second_x_axis.set_xbound(topsubplot.get_xbound())
-    top_second_x_axis.xaxis.set_ticks(x[:visible_hours])
-    top_second_x_axis.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))  # TODO remove IndexFormatter
-    top_second_x_axis.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
-    top_second_x_axis.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))
 
     # formatting the bottom (pressure) graph
     bottomsubplot.set_ylim(260, 1100)  # pressure limits of Casio v3
@@ -667,38 +632,45 @@ try:
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: '{:.0f} hPa'.format(new), old_ticks)) + ['MSL$_{ISA}$'])
-    bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
-                           round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
-                           )
-
-    bottomsubplot.xaxis.set_major_formatter(ticker.IndexFormatter(x_labels))  # TODO remove IndexFormatter
+    # bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
+    #                        round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
+    #                        )
+    mtools.set_ylimits(bottomsubplot, z, visible_hours)
 
     mtools.set_grid(bottomsubplot)
     inset_pressure = mtools.add_inset(topsubplot, bottomsubplot, rects, gs, loc)
 
     # adding curves/points to subplots
-    topsubplot.errorbar(x, y, fmt='go', yerr=curvefit.prediction_dict(ref_hour=start_full_hour)['error'],
-                        label=_('Hourly Forecast'), markersize=5)
-    # topsubplot.errorbar('time', 'altitude', yerr='error', data=curvefit.prediction_dict(ref_hour=start_full_hour),
-    #                     color='blue', marker='o', linestyle='none', label=_('Hourly Forecast'), markersize=5)
+    topsubplot.errorbar('time', 'altitude', yerr='error', data=curvefit.prediction_dict(ref_hour=start_full_hour),
+                        color='green', marker='o', linestyle='none', markersize=5,
+                        label=_('Hourly Forecast'),
+                        zorder=10)
 
-    topsubplot.plot(np.arange(x[0], x[-1], 1 / 60),
-                    [v for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
-                    color='red', linestyle='dotted', alpha=0.5)
-    topsubplot.step(np.arange(x[0], x[-1], 1 / 60),
-                    [round(v) for v in np.polyval(poly, np.arange(x[0], x[-1], 1 / 60))],
-                    color='red', where='post',
-                    label=_('Polynomlal Steps of {}{} degree').format(curvefit.degree, _('$^{th}$')))
-    topsubplot.scatter(fix_hour.minute / 60, 0,
-                       color='red',
-                       marker='>',
-                       label=_('Fix at {}').format(fix_hour.strftime('%#H:%M')))
+    topsubplot.plot('time', 'dotted line', data=curvefit.curvefit_dict(start_full_hour, margin=15),
+                    color='red', marker='', linestyle='dotted',
+                    label='_nolegend_',
+                    zorder=8)
 
-    inset_altitude.plot(x, y, color='red', alpha=0.5)
+    topsubplot.step('time', 'steps', data=curvefit.curvefit_dict(start_full_hour, margin=0), where='post',
+                    color='red', marker='', linestyle='solid',
+                    label=_('Polynomlal Steps of {}{} degree').format(curvefit.degree, _('$^{th}$')),
+                    zorder=9)
 
-    bottomsubplot.plot(x, z, color='tab:blue', marker='o', markersize=3.5, label=_('Atmospheric Pressure'),
-                       linestyle='--')
-    inset_pressure.plot(x, z, color='tab:blue', alpha=0.5)
+    topsubplot.scatter(fix_hour, 0,
+                       color='tab:blue', marker='>',
+                       label=_('Fix at {}').format(fix_hour.strftime('%#H:%M')),
+                       zorder=11)
+
+    inset_altitude.plot(program.forecast.times(), program.forecast.altitudes(),
+                        color='red', alpha=0.5)
+
+    bottomsubplot.plot(program.forecast.times(), program.forecast.pressures(),
+                       color='tab:blue', marker='o', markersize=3.5, linestyle='--',
+                       label=_('Atmospheric Pressure')
+                       )
+
+    inset_pressure.plot(program.forecast.times(), program.forecast.pressures(),
+                        color='tab:blue', alpha=0.5)
 
     # post-processing subplots
     topsubplot.legend()
