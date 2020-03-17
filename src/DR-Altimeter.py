@@ -56,7 +56,7 @@ from txttable import PredictionTable
 from utils import printf, nb_date_changes, pretty_polyid
 
 FULLNAME = 'DR Polynomial Altimeter'
-VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
+VERSION = 'v1.0'  # TODO: change when ready to release
 _ = Translation()
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
@@ -632,10 +632,9 @@ try:
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: '{:.0f} hPa'.format(new), old_ticks)) + ['MSL$_{ISA}$'])
-    # bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
-    #                        round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
-    #                        )  # TODO check if still needed then possibly remove
-    mtools.set_ylimits(bottomsubplot, z, visible_hours)
+    bottomsubplot.set_ylim(round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
+                           round(2 * (max(z) + 2.5), -1) // 2  # multiple of 5, just above maximum pressure
+                           )
 
     mtools.set_grid(bottomsubplot)
     inset_pressure = mtools.add_inset(topsubplot, bottomsubplot, rects, gs, loc)
