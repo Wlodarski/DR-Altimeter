@@ -56,7 +56,7 @@ from txttable import PredictionTable
 from utils import printf, nb_date_changes, pretty_polyid
 
 FULLNAME = 'DR Polynomial Altimeter'
-VERSION = 'v1.0 redone'  # TODO: change to v1.0 when ready to release
+VERSION = 'v1.0 beta'  # TODO: change to v1.0 when ready to release
 _ = Translation()
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = 'DR-Altimeter'
