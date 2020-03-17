@@ -15,7 +15,7 @@ class CommandLineParser:
         self.parser.add_argument('--longitude', help='longitude', type=float)
         self.parser.add_argument('--override-url', help='specific weather station URL', type=str)
 
-        self.bundle_dir = getattr(sys, '_MEIPASS', prog_path.parent)  # for pyinstalle
+        self.bundle_dir = Path(getattr(sys, '_MEIPASS', prog_path.parent))  # for pyinstalle
         self.localedir = self.bundle_dir.joinpath('locales')
         self.all_lang = [d.name for d in self.localedir.iterdir() if d.is_dir()]
 
