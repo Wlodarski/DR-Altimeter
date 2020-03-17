@@ -2,14 +2,14 @@
 # import matplotlib.ticker as ticker
 # import numpy as np
 # from matplotlib.gridspec import GridSpec
-# from matplotlib.patches import Rectangle
-# from matplotlib.projections import register_projection
-# from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from abc import abstractmethod
 
 import matplotlib.dates as mdates
 from matplotlib.axes import Axes
+from matplotlib.patches import Rectangle
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+# from matplotlib.projections import register_projection
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 
 class NoPanXAxes(Axes):
@@ -19,6 +19,22 @@ class NoPanXAxes(Axes):
     @abstractmethod
     def drag_pan(self, button, key, _x, _y):
         Axes.drag_pan(self, button, 'x', _x, _y)  # pretend key=='x'
+
+
+class LinkedRectangles:
+    """
+    links two rectangles to two axes. Any zoom/pan propagates to the two rectangles
+    """
+
+    def __init__(self, ax1: Axes, r1: Rectangle, ax2: Axes, r2: Rectangle):
+        self.r = [r1, r2]
+        self.aa = [ax1, ax2]
+
+    def update(self, *_):
+        self.r[0].set_bounds(self.aa[0].viewLim.bounds)
+        self.r[1].set_bounds(self.aa[1].viewLim.bounds)
+        self.aa[0].figure.canvas.draw_idle()
+        self.aa[1].figure.canvas.draw_idle()
 
 
 class MyMatplotlibTools:
@@ -78,3 +94,55 @@ class MyMatplotlibTools:
         say.yaxis.set_major_formatter(FormatStrFormatter('%.0f m'))
 
         return say
+
+    @staticmethod
+    def create_inset(top, bottom, gridsys, lloc):
+        inset = inset_axes(top,
+                           width='10%', height='{}%'.format(10 * gridsys.get_height_ratios()[1]),
+                           bbox_transform=top.transAxes,  # relative axes coordinates
+                           bbox_to_anchor=(0.0, 0.0, 1, 1),  # relative axes coordinates
+                           loc=lloc)
+        rect = LinkedRectangles(top,
+                                Rectangle((0, 0), 0, 0, facecolor='None', edgecolor='red', linewidth=0.5),
+                                bottom,
+                                Rectangle((0, 0), 0, 0, facecolor='None', edgecolor='tab:blue', linewidth=0.5))
+        rect.r[0].set_bounds(*top.viewLim.bounds)
+
+        inset.add_patch(rect.r[0])
+        inset.tick_params(axis='both', which='both',
+                          bottom=False, top=False, left=False, right=False,
+                          labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+        inset.patch.set_alpha(0.8)
+        inset.spines['bottom'].set_alpha(0.5)
+        inset.spines['top'].set_alpha(0.5)
+        inset.spines['left'].set_alpha(0.5)
+        inset.spines['right'].set_alpha(0.5)
+
+        return inset, rect
+
+    @staticmethod
+    def add_inset(top, bottom, rect, gridsys, lloc):
+        inset = inset_axes(bottom,
+                           width='10%', height='{}%'.format(10 * gridsys.get_height_ratios()[0]),
+                           bbox_transform=bottom.transAxes,  # relative axes coordinates
+                           bbox_to_anchor=(0.0, 0.0, 1, 1),  # relative axes coordinates
+                           loc=lloc)
+        rect.r[1].set_bounds(*bottom.viewLim.bounds)
+
+        bottom.callbacks.connect('lim_changed', rect.update)
+        bottom.callbacks.connect('ylim_changed', rect.update)
+        top.callbacks.connect('xlim_changed', rect.update)
+        top.callbacks.connect('ylim_changed', rect.update)
+
+        inset.add_patch(rect.r[1])
+        inset.tick_params(axis='both', which='both',
+                          bottom=False, top=False, left=False, right=False,
+                          labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+
+        inset.patch.set_alpha(0.5)
+        inset.spines['bottom'].set_alpha(0.2)
+        inset.spines['top'].set_alpha(0.2)
+        inset.spines['left'].set_alpha(0.2)
+        inset.spines['right'].set_alpha(0.2)
+
+        return inset
