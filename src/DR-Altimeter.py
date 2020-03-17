@@ -629,10 +629,15 @@ try:
 
     # formatting the bottom (pressure) graph
     bottomsubplot.set_ylim(260, 1100)  # pressure limits of Casio v3
-    if max(z) - min(z) > 15:
+
+    scale = (max(z) - min(z)) // 5
+    if scale > 5:
+        base = 20
+    elif scale > 2:
         base = 10
     else:
         base = 5
+
     bottomsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=base))
     bottomsubplot.yaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     old_ticks = bottomsubplot.get_yticks()
