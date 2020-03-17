@@ -667,12 +667,12 @@ try:
                     zorder=9)
 
     topsubplot.scatter(fix_hour, 0,
-                       color='tab:blue', marker='>',
+                       color='black', marker=9,
                        label=_('Fix at {}').format(fix_hour.strftime('%#H:%M')),
                        zorder=11)
 
     inset_altitude.plot(program.forecast.times(), program.forecast.altitudes(),
-                        color='red', alpha=0.5)
+                        color='red', alpha=0.95)
 
     bottomsubplot.plot(program.forecast.times(), program.forecast.pressures(),
                        color='tab:blue', marker='o', markersize=3.5, linestyle='--',
@@ -680,7 +680,7 @@ try:
                        )
 
     inset_pressure.plot(program.forecast.times(), program.forecast.pressures(),
-                        color='tab:blue', alpha=0.5)
+                        color='tab:blue', alpha=0.95)
 
     # post-processing subplots
     topsubplot.legend()
