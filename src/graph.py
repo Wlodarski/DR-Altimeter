@@ -1,14 +1,9 @@
-# import matplotlib.pyplot as plt
-# import matplotlib.ticker as ticker
-# import numpy as np
-# from matplotlib.gridspec import GridSpec
 from abc import abstractmethod
 
 import matplotlib.dates as mdates
 from matplotlib.axes import Axes
 from matplotlib.patches import Rectangle
-from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-# from matplotlib.projections import register_projection
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter, NullFormatter
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 
@@ -79,6 +74,8 @@ class MyMatplotlibTools:
         ax.yaxis.set_minor_locator(MultipleLocator(base=1))
         ax.yaxis.set_major_formatter(FormatStrFormatter('%.0f m'))
 
+        # bug solved by patching .../site-packages/matplotlib/axis.py
+        # ref: https://github.com/matplotlib/matplotlib/issues/15621
         sax = ax.secondary_xaxis('top')
         sax.xaxis.set_major_locator(mdates.HourLocator())
         sax.xaxis.set_minor_locator(mdates.MinuteLocator(byminute=range(0, 60, 10)))
@@ -109,6 +106,7 @@ class MyMatplotlibTools:
         rect.r[0].set_bounds(*top.viewLim.bounds)
 
         inset.add_patch(rect.r[0])
+        inset.xaxis.set_major_formatter(NullFormatter())
         inset.tick_params(axis='both', which='both',
                           bottom=False, top=False, left=False, right=False,
                           labelbottom=False, labeltop=False, labelleft=False, labelright=False)
@@ -135,6 +133,7 @@ class MyMatplotlibTools:
         top.callbacks.connect('ylim_changed', rect.update)
 
         inset.add_patch(rect.r[1])
+        inset.xaxis.set_major_formatter(NullFormatter())
         inset.tick_params(axis='both', which='both',
                           bottom=False, top=False, left=False, right=False,
                           labelbottom=False, labeltop=False, labelleft=False, labelright=False)
