@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-02-26 22:04-0500\n"
-"PO-Revision-Date: 2020-02-27 12:55-0500\n"
+"POT-Creation-Date: 2020-03-17 12:53-0400\n"
+"PO-Revision-Date: 2020-03-17 12:59-0400\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,8 +18,7 @@ msgstr ""
 "Language: fr\n"
 
 msgid "Altitude 'Dead Reckoning' for Casio Triple Sensor v.3"
-msgstr ""
-"Altitude à l'estime pour montres Casio équipées du « Triple Sensor v.3 »"
+msgstr "Altitude à l'estime pour montres Casio équipées du « Triple Sensor v.3 »"
 
 msgid "If one is provided, both --latitude and --longitude must be provided"
 msgstr "--latitude et --longitude doivent être fourni simultanément"
@@ -96,15 +95,6 @@ msgstr "Échec des envois sur Slack"
 msgid " POLYNOMIAL CURVE FIT "
 msgstr " COURBE AJUSTÉE POLYNOMIALE "
 
-msgid "Degree : {:2d}/{}, passing through zero {} times"
-msgstr "Ordre : {:2d}/{}, passage par zéro {} fois"
-
-msgid "Found a good match"
-msgstr "Bonne adéquation trouvée"
-
-msgid "End of search"
-msgstr "Fin de la recherche"
-
 msgid "Degree : {}"
 msgstr "Ordre : {}"
 
@@ -126,15 +116,6 @@ msgstr "altitude(temps)"
 msgid "time"
 msgstr "temps"
 
-msgid "fix"
-msgstr "point"
-
-msgid "$\\Delta$altitude, $m$"
-msgstr "$\\Delta$altitude, $m$"
-
-msgid "altitude, $m$"
-msgstr "altitude, $m$"
-
 msgid "Hourly Forecast"
 msgstr "Prévision horaire"
 
@@ -150,35 +131,8 @@ msgstr "Point réalisé à {}"
 msgid "Atmospheric Pressure"
 msgstr "Pression atmosphérique"
 
-msgid "Altitude out of range (-700 m < altitude < 10000 m)"
-msgstr "Altitude hors limites (-700 m < altitude < 10000 m)"
-
-msgid "Pressure out of range (260 hPa < pressure < 1100 hPa)"
-msgstr "Pression hors limites (260 hPa < pression < 1100 hPa)"
-
-msgid "Missing current pressure or pressure variation"
-msgstr "Pression actuelle ou variation de pression manquante"
-
-msgid "Current pressure contradicted by pressure variation"
-msgstr "Pression actuelle en conflit avec la variation de pression"
-
-msgid ""
-"At {} m above mean sea level, the standardized atmospheric pressure equals "
-"{:.2f} hPa"
-msgstr ""
-"À {} m au dessus du niveau moyen des océans, la pression atmosphérique "
-"standard est de {:.2f} hPa"
-
-msgid ""
-"A pressure of {:.2f} hPa corresponds to a standardized altitude of {:.0f} m"
-msgstr ""
-"Une pression de {:.2f} hPa correspond à une altitude standard de {:.0f} m"
-
-msgid "Average Correction"
-msgstr "Correction moyenne"
-
-msgid "Timestamp must be unique. {} already set"
-msgstr "L'horodatage doit être unique. {} déjà enregistré"
+msgid "fix"
+msgstr "point"
 
 msgid "ALT"
 msgstr "ALT"
