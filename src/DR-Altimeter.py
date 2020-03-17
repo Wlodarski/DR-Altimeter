@@ -619,15 +619,21 @@ try:
     # formatting the top (altitude) graph
     topsubplot.set_xlim(start_full_hour, visible_full_hour)
     mtools.set_ylimits(topsubplot, y, visible_hours)
+    topsubplot.set_ylabel(_('$\Delta$altitude, $m$'))
     top_second_x_axis = mtools.format_date_ticks(topsubplot)
     top_second_y_axis = mtools.format_altitude_tick(topsubplot, shift=program.ELEVATION)
+    top_second_y_axis.set_ylabel(_('altitude, $m$'))
     mtools.set_grid(topsubplot)
     loc = 'lower right'
     inset_altitude, rects = mtools.create_inset(topsubplot, bottomsubplot, gs, loc)
 
     # formatting the bottom (pressure) graph
     bottomsubplot.set_ylim(260, 1100)  # pressure limits of Casio v3
-    bottomsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=5))
+    if max(z) - min(z) > 15:
+        base = 10
+    else:
+        base = 5
+    bottomsubplot.yaxis.set_major_locator(ticker.MultipleLocator(base=base))
     bottomsubplot.yaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
