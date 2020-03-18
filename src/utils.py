@@ -37,7 +37,8 @@ def printf(text: str) -> str:
 
 
 def nb_date_changes(first_day: datetime, last_day: datetime) -> int:
-    """ Number of calendar day changes between the two dates
+    """ 
+    Number of calendar day changes between the two dates
     
     :param first_day: datetime
     :param last_day: datetime
@@ -62,24 +63,33 @@ def nb_days_between(first_day: datetime, last_day: datetime) -> int:
 
 def set_locale_to_user_defaults():
     import locale
+
     current_locale, encoding = locale.getdefaultlocale()
     locale.setlocale(locale.LC_TIME, current_locale)
 
 
-def pretty_polyid(polynomial: object, f_text: str = 'f', var_symbol: str = 'x', equal_sign: str = '=') -> str:
+def pretty_polyid(
+        polynomial: object, f_text: str = "f", var_symbol: str = "x", equal_sign: str = "="
+) -> str:
     """
+    Pretty print remplacement for poly1d
+    
+    
     :param polynomial: numpy.ndarray
     :param f_text: function text
     :param var_symbol: variable symbol
     :param equal_sign: equal sign, ex) '>='
     :return: formula on two lines
 
-    Pretty print remplacement for poly1d
 
     """
     import re
     from numpy import poly1d as ugly
 
-    formula_up, formula_down = re.split('\n', str(ugly(polynomial, variable=var_symbol)), maxsplit=1)
-    spaces = ''.rjust(len(f_text + ' ' + equal_sign), ' ')
-    return '{s} {u}\n{f} {e} {d}'.format(u=formula_up, d=formula_down, f=f_text, s=spaces, e=equal_sign)
+    formula_up, formula_down = re.split(
+        "\n", str(ugly(polynomial, variable=var_symbol)), maxsplit=1
+    )
+    spaces = "".rjust(len(f_text + " " + equal_sign), " ")
+    return "{s} {u}\n{f} {e} {d}".format(
+        u=formula_up, d=formula_down, f=f_text, s=spaces, e=equal_sign
+    )

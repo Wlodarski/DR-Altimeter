@@ -87,9 +87,11 @@ class PolynomialCurveFit:
         |           'altitude': [y],
         |           'error': [(error_up, error_down)]}
         """
-        return {'time': [dhour2date(ref_hour=ref_hour, dhour=t) for t in self.x],
-                'altitude': self.y,
-                'error': self.error}
+        return {
+            "time": [dhour2date(ref_hour=ref_hour, dhour=t) for t in self.x],
+            "altitude": self.y,
+            "error": self.error,
+        }
 
     @staticmethod
     def _int_round(x):
@@ -110,31 +112,31 @@ class PolynomialCurveFit:
             before_first = first - margin * one_minute
             after_last = last + margin * one_minute
 
-        c_fit = {'time': [dhour2date(ref_hour=ref_hour, dhour=t) for t in
-                          np.arange(before_first, after_last, one_minute)],
-                 'dotted line': [polyval(self.poly, v) for v in
-                                 np.arange(before_first, after_last, one_minute)]}
-        c_fit['steps'] = list(map(self._int_round, c_fit['dotted line']))
+        c_fit = {
+            "time": [dhour2date(ref_hour=ref_hour, dhour=t) for t in np.arange(before_first, after_last, one_minute)],
+            "dotted line": [polyval(self.poly, v) for v in np.arange(before_first, after_last, one_minute)],
+        }
+        c_fit["steps"] = list(map(self._int_round, c_fit["dotted line"]))
         return c_fit
 
     def step_changes(self, ref_hour, fix_hour=None):
         times = []
         steps = []
         cfit = self.curvefit_dict(ref_hour=ref_hour)
-        previous_step = cfit['steps'][0]
+        previous_step = cfit["steps"][0]
         if fix_hour is not None:
             fix_hour = fix_hour.replace(microsecond=0, second=0)
 
-        for t in cfit['time']:
-            i = cfit['time'].index(t)
-            current_time = cfit['time'][i]
-            current_step = cfit['steps'][i]
+        for t in cfit["time"]:
+            i = cfit["time"].index(t)
+            current_time = cfit["time"][i]
+            current_step = cfit["steps"][i]
             if current_step != previous_step:
                 times.append(current_time)
                 steps.append(current_step)
             previous_step = current_step
             if current_time == fix_hour:
                 times.append(current_time)
-                steps.append(_('fix'))
+                steps.append(_("fix"))
 
         return times, steps
