@@ -703,7 +703,8 @@ try:
     )
 
     # formatting the top (altitude) graph
-    topsubplot.set_xlim(start_full_hour, visible_full_hour)
+    margin = 15
+    topsubplot.set_xlim(start - timedelta(minutes=margin + 5), visible_full_hour)
     mtools.set_ylimits(topsubplot, y, visible_hours)
     topsubplot.set_ylabel(_("$\Delta$altitude, $m$"))
     top_second_x_axis = mtools.format_date_ticks(topsubplot)
@@ -751,7 +752,7 @@ try:
 
     topsubplot.plot(
         # fmt: off
-        "time", "dotted line", data=curvefit.curvefit_dict(start_full_hour, margin=15),
+        "time", "dotted line", data=curvefit.curvefit_dict(start_full_hour, margin=margin),
         color="red", marker="", linestyle="dotted",
         label="_nolegend_",
         zorder=8,
