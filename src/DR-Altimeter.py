@@ -704,7 +704,7 @@ try:
 
     # formatting the top (altitude) graph
     margin = 15
-    topsubplot.set_xlim(start - timedelta(minutes=margin + 5), visible_full_hour)
+    topsubplot.set_xlim(start - timedelta(minutes=margin + 5), visible_full_hour + timedelta(minutes=margin + 5))
     mtools.set_ylimits(topsubplot, y, visible_hours)
     topsubplot.set_ylabel(_("$\Delta$altitude, $m$"))
     top_second_x_axis = mtools.format_date_ticks(topsubplot)
