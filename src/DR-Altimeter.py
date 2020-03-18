@@ -63,17 +63,12 @@ DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = "DR-Altimeter"
 
 command_line_parser = CommandLineParser(
-    prog_path=Path(__file__),
-    description=DESCRIPTION,
-    shortname=SHORTNAME,
-    version=VERSION,
+    prog_path=Path(__file__), description=DESCRIPTION, shortname=SHORTNAME, version=VERSION,
 )
 _.set_lang(command_line_parser)
 args = command_line_parser.args
 command_line_parser.link_together(
-    args.latitude,
-    args.longitude,
-    _("If one is provided, both --latitude and --longitude must be provided"),
+    args.latitude, args.longitude, _("If one is provided, both --latitude and --longitude must be provided"),
 )
 
 colorama.init()  # otherwise termcolor won't be fully included at compilation by pyinstaller
@@ -97,9 +92,7 @@ class Program:
         self.ELEVATION = None
         self.P_INITIAL = None
 
-        self.console = Console(
-            title=self.NAME, version=self.VERSION, subtitle=self.DESCRIPTION
-        )
+        self.console = Console(title=self.NAME, version=self.VERSION, subtitle=self.DESCRIPTION)
         self.result = PredictionTable()
         self.forecast = Forecast()
         self.slack = slack.WebClient(token=environ["SLACK_API_TOKEN"])
@@ -145,9 +138,8 @@ class Program:
         else:
             self.OVERRIDE_URL = self.OVERRIDE_URL_
 
-        self.OVERRIDE_URL_EXISTS = (
-            self.OVERRIDE_URL is not None
-            and self.OVERRIDE_URL.startswith("https://www.wunderground.com/hourly/")
+        self.OVERRIDE_URL_EXISTS = self.OVERRIDE_URL is not None and self.OVERRIDE_URL.startswith(
+            "https://www.wunderground.com/hourly/"
         )
 
         self.ANY_HTTPS_PAGE_T = "https page"
@@ -155,9 +147,7 @@ class Program:
 
         self.GEOLOCATED_URL_T = "wunderground hourly url"
         self.GEOLOCATED_URL = self.cfg.get(
-            self.CS,
-            self.GEOLOCATED_URL_T,
-            fallback="https://www.wunderground.com/hourly/ca/location/",
+            self.CS, self.GEOLOCATED_URL_T, fallback="https://www.wunderground.com/hourly/ca/location/",
         )
 
         self.GRAPH_FILENAME_T = "autosave png-pdf-eps filename"
@@ -177,15 +167,10 @@ class Program:
         self.VERBOSE = self.VERBOSE_ or args.verbose
 
         self.SHOW_X_HOURS_T = "display x hours"
-        self.SHOW_X_HOURS = max(
-            int(self.cfg.get(self.CS, self.SHOW_X_HOURS_T, fallback="6")), 1
-        )
+        self.SHOW_X_HOURS = max(int(self.cfg.get(self.CS, self.SHOW_X_HOURS_T, fallback="6")), 1)
 
         self.MIN_HOURS_T = "minimum hours"
-        self.MIN_HOURS = max(
-            int(self.cfg.get(self.CS, self.MIN_HOURS_T, fallback="8")),
-            self.SHOW_X_HOURS,
-        )
+        self.MIN_HOURS = max(int(self.cfg.get(self.CS, self.MIN_HOURS_T, fallback="8")), self.SHOW_X_HOURS, )
 
         self.save_ini()  # save immediately to renew all required values
 
@@ -242,9 +227,7 @@ class Program:
         print()
 
     def hourly_forecast_url(self):
-        if self.GEOLOCATION_ALWAYS_ON or (
-                    self.MISSING_LATLONG and not self.OVERRIDE_URL_EXISTS
-        ):
+        if self.GEOLOCATION_ALWAYS_ON or (self.MISSING_LATLONG and not self.OVERRIDE_URL_EXISTS):
 
             self.browser.go_to(webpage=self.ANY_HTTPS_PAGE, geolocation=True)
             position = self.browser.get_lat_lon()
@@ -269,9 +252,7 @@ class Program:
             printf(_("Longitude: {}").format(self.LONGITUDE))
             print()
             #  decreased precision (3 digits instead of 7) to partially preserve anonymity
-            _hourly_forecast_url = self.GEOLOCATED_URL + "{:.3f},{:.3f}".format(
-                self.LATITUDE, self.LONGITUDE
-            )
+            _hourly_forecast_url = self.GEOLOCATED_URL + "{:.3f},{:.3f}".format(self.LATITUDE, self.LONGITUDE)
 
         else:  # if everything fails, an example url
             _hourly_forecast_url = "https://www.wunderground.com/hourly/ca/montreal/IMONTR15"
@@ -349,10 +330,7 @@ class Program:
 
     def get_obs_time(self):
         _elem = self.browser.driver.find_element(By.XPATH, '//*[@id="app-root-state"]')
-        _st = search(
-            "obsTimeLocal&q;:&q;(....-..-.. ..:..:..)&q;",
-            _elem.get_attribute("innerHTML"),
-        )
+        _st = search("obsTimeLocal&q;:&q;(....-..-.. ..:..:..)&q;", _elem.get_attribute("innerHTML"), )
         if _st is not None:
             return datetime.strptime(_st.group(1), "%Y-%m-%d %H:%M:%S")
         else:
@@ -362,21 +340,18 @@ class Program:
     def get_station_elevation(self):
         try:
             _elem = self.browser.driver.find_element(
-                By.XPATH,
-                '//*[@id="inner-content"]/div[2]'
-                "/lib-city-header/div[1]/div/span/span/strong",
+                By.XPATH, '//*[@id="inner-content"]/div[2]' "/lib-city-header/div[1]/div/span/span/strong",
             )
             self.ELEVATION = int(_elem.text)
         except NoSuchElementException:
-            printf(
-                self.register_error(_("Elevation not found. Assuming it to be zero"))
-            )
+            printf(self.register_error(_("Elevation not found. Assuming it to be zero")))
             self.ELEVATION = 0
-        printf(self.register_info(
-            _("Weather station elevation : " "{}m (ISA={:7.2f}hPa)").format(
-                self.ELEVATION, isa.pressure(altitude=self.ELEVATION)
+        printf(
+            self.register_info(
+                _("Weather station elevation : " "{}m (ISA={:7.2f}hPa)").format(
+                    self.ELEVATION, isa.pressure(altitude=self.ELEVATION)
+                )
             )
-        )
         )
 
     def display_results(self):
@@ -391,11 +366,7 @@ class Program:
         try:
             printf(_("Sending timetable to Slack channel {}").format(args.slack))
             _response = self.slack.files_upload(
-                content=_txt,
-                channels=args.slack,
-                title=_title,
-                filename=_title + ".txt",
-                initial_comment=_comment,
+                content=_txt, channels=args.slack, title=_title, filename=_title + ".txt", initial_comment=_comment,
             )
             assert _response["ok"]
             printf(_("Sending {} to Slack channel {}").format(program.GRAPH_FILENAME, args.slack))
@@ -434,12 +405,7 @@ class Console:
 
         system("title {name} {version}".format(name=self.title, version=self.version))
 
-        printf(
-            colored(
-                "{name} {version}".format(name=self.title, version=self.version),
-                attrs=["bold"],
-            )
-        )
+        printf(colored("{name} {version}".format(name=self.title, version=self.version), attrs=["bold"], ))
         printf(self.subtitle)
         print()
 
@@ -476,8 +442,7 @@ class ChromeBrowser:
         # Since getCurrentPosition is an asynchroneous Javascript function
         # Python waits until done() is called with the results passed as parameters
         _position = self.driver.execute_async_script(
-            "var done = arguments[0]; "
-            "navigator.geolocation.getCurrentPosition(function (pos){done(pos.coords);});"
+            "var done = arguments[0]; " "navigator.geolocation.getCurrentPosition(function (pos){done(pos.coords);});"
         )
         self.close_window()
 
@@ -581,10 +546,7 @@ try:
             program.register_info(
                 "\n{}\n".format(
                     pretty_polyid(
-                        polynomial=curvefit.poly,
-                        f_text=_("altitude(time)"),
-                        var_symbol=_("time"),
-                        equal_sign="=",
+                        polynomial=curvefit.poly, f_text=_("altitude(time)"), var_symbol=_("time"), equal_sign="=",
                     )
                 )
             )
@@ -610,10 +572,7 @@ try:
         if this_hour != previous_hour:
             if first:
                 program.result.add_start(
-                    hour=start.hour,
-                    minute=start.minute,
-                    pressure=z[index],
-                    times=[times_string],
+                    hour=start.hour, minute=start.minute, pressure=z[index], times=[times_string],
                 )
                 first = False
             else:
@@ -645,22 +604,14 @@ try:
 
     # last curvefit prediction
     program.result.add(
-        hour=this_hour,
-        pressure=z[index],
-        alt=y[index],
-        alt_h=y[index] - y[index - 1],
-        times=[times_string],
+        hour=this_hour, pressure=z[index], alt=y[index], alt_h=y[index] - y[index - 1], times=[times_string],
     )
 
     # last atm. pressure from Wunderground
     index += 1
     this_hour = (previous_hour + 1) % 24
     program.result.add(
-        hour=this_hour,
-        pressure=z[index],
-        alt=y[index],
-        alt_h=y[index] - y[index - 1],
-        times="",
+        hour=this_hour, pressure=z[index], alt=y[index], alt_h=y[index] - y[index - 1], times="",
     )
 
     program.display_results()
@@ -677,9 +628,7 @@ try:
 
     # one figure
     fig = plt.figure(
-        dpi=96,
-        figsize=(16, 9),
-        num="{} {}".format(program.STATION_NAME, fix_hour.strftime("%Y%m%d-%H%M")),
+        dpi=96, figsize=(16, 9), num="{} {}".format(program.STATION_NAME, fix_hour.strftime("%Y%m%d-%H%M")),
     )
     plt.figtext(
         0.95,
@@ -693,14 +642,9 @@ try:
     # two subplots on a grid system
     gs = GridSpec(figure=fig, ncols=1, nrows=2, height_ratios=[3, 1], hspace=0.1, bottom=0.07)
     topsubplot = fig.add_subplot(
-        gs[0],
-        title="{} ― {}".format(program.STATION_NAME, fix_hour.strftime("%Y.%m.%d %H:%M")),
+        gs[0], title="{} ― {}".format(program.STATION_NAME, fix_hour.strftime("%Y.%m.%d %H:%M")),
     )
-    bottomsubplot = fig.add_subplot(
-        gs[1],
-        sharex=topsubplot,
-        projection="No Pan X Axes"
-    )
+    bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection="No Pan X Axes")
 
     # formatting the top (altitude) graph
     margin = 15

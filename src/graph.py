@@ -118,9 +118,7 @@ class MyMatplotlibTools:
 
     @staticmethod
     def format_altitude_tick(ax, shift):
-        say = ax.secondary_yaxis(
-            "right", functions=(lambda a: shift + a, lambda a: a - shift)
-        )
+        say = ax.secondary_yaxis("right", functions=(lambda a: shift + a, lambda a: a - shift))
         say.yaxis.set_major_locator(MultipleLocator(base=5))
         say.yaxis.set_major_formatter(FormatStrFormatter("%.0f m"))
 

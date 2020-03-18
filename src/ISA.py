@@ -89,9 +89,7 @@ class InternationalStandardAtmosphere:
         return (self.TEMP_MSL / self.TEMP_GRADIANT) * (1 - (p / self.PRESSURE_MSL) ** (1 / self.PERFECT_GAS))
         # fmt: on
 
-    def delta_altitude(
-            self, p_ref: float, current_p: float = None, delta_p: float = None
-    ) -> float:
+    def delta_altitude(self, p_ref: float, current_p: float = None, delta_p: float = None) -> float:
         """
         :param p_ref: reference pressure in hPa
         :param current_p: current pressure in hPa
@@ -119,9 +117,7 @@ class InternationalStandardAtmosphere:
 
         return self.altitude(pressure=_cp) - self.altitude(pressure=p_ref)
 
-    def correction(
-            self, p_start: float = 1013.25, p_end: float = None, delta_p: float = None
-    ) -> float:
+    def correction(self, p_start: float = 1013.25, p_end: float = None, delta_p: float = None) -> float:
         """
         :param p_start: starting pressure in hPa, defaults to mean sea level pressure
         :param p_end: ending pressure in hPa
@@ -141,17 +137,13 @@ if __name__ == "__main__":
     alt = 1200
     print(
         "At {} m above mean sea level, "
-        "the standardized atmospheric pressure equals {:.2f} hPa".format(
-            alt, isa.pressure(altitude=alt)
-        )
+        "the standardized atmospheric pressure equals {:.2f} hPa".format(alt, isa.pressure(altitude=alt))
     )
 
     pres = 800.0
     print(
         "A pressure of {:.2f} hPa corresponds "
-        "to a standardized altitude of {:.0f} m".format(
-            pres, isa.altitude(pressure=pres)
-        )
+        "to a standardized altitude of {:.0f} m".format(pres, isa.altitude(pressure=pres))
     )
 
     print()
