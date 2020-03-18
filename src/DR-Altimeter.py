@@ -210,6 +210,7 @@ class Program:
         self.browser = ChromeBrowser()
 
     def save_ini(self):
+        # fmt: off
         self.cfg.set(self.CS, self.VERBOSE_T, str(int(self.VERBOSE_)))
         self.cfg.set(self.CS, self.TIMEOUT_T, str(self.TIMEOUT))
         self.cfg.set(self.CS, self.TIMEOUT_LONG_T, str(self.TIMEOUT_LONG))
@@ -224,6 +225,7 @@ class Program:
         self.cfg.set(self.CS, self.GRAPH_DPI_T, str(self.GRAPH_DPI))
         self.cfg.set(self.CS, self.GRAPH_ORIENTATION_T, self.GRAPH_ORIENTATION)
         self.cfg.set(self.CS, self.GRAPH_PAPERTYPE_T, self.GRAPH_PAPERTYPE)
+        # fmt: on
 
         with open(self.CONFIG_FILENAME, "w") as configfile:
             self.cfg.write(configfile)
@@ -728,8 +730,10 @@ try:
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: "{:.0f} hPa".format(new), old_ticks)) + ["MSL$_{ISA}$"])
     bottomsubplot.set_ylim(
+        # fmt: off
         round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
         round(2 * (max(z) + 2.5), -1) // 2,  # multiple of 5, just above maximum pressure
+        # fmt: on
     )
 
     mtools.set_grid(bottomsubplot)
@@ -737,48 +741,62 @@ try:
 
     # adding curves/points to subplots
     topsubplot.errorbar(
+        # fmt: off
         "time", "altitude", yerr="error", data=curvefit.prediction_dict(ref_hour=start_full_hour),
         color="green", marker="o", linestyle="none", markersize=5,
         label=_("Hourly Forecast"),
         zorder=10,
+        # fmt: on
     )
 
     topsubplot.plot(
+        # fmt: off
         "time", "dotted line", data=curvefit.curvefit_dict(start_full_hour, margin=15),
         color="red", marker="", linestyle="dotted",
         label="_nolegend_",
         zorder=8,
+        # fmt: on
     )
 
     topsubplot.step(
+        # fmt: off
         "time", "steps", data=curvefit.curvefit_dict(start_full_hour, margin=0),
         where="post",
         color="red", marker="", linestyle="solid",
         label=_("Polynomlal Steps of {}{} degree").format(curvefit.degree, _("$^{th}$")),
         zorder=9,
+        # fmt: on
     )
 
     topsubplot.scatter(
+        # fmt: off
         fix_hour, 0,
         color="black", marker=9,
         label=_("Fix at {}").format(fix_hour.strftime("%#H:%M")),
         zorder=11,
+        # fmt: on
     )
 
     inset_altitude.plot(
+        # fmt: off
         times, y,
         color="red", alpha=0.95
+        # fmt: on
     )
 
     bottomsubplot.plot(
+        # fmt: off
         times, z,
         color="tab:blue", marker="o", markersize=3.5, linestyle="--",
         label=_("Atmospheric Pressure"),
+        # fmt: on
     )
 
     inset_pressure.plot(
+        # fmt: off
         times, z,
         color="tab:blue", alpha=0.95,
+        # fmt: on
     )
 
     # post-processing subplots
