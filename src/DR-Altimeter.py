@@ -766,17 +766,18 @@ try:
     )
 
     inset_altitude.plot(
-        program.forecast.times(), program.forecast.altitudes(), color="red", alpha=0.95
+        times, y,
+        color="red", alpha=0.95
     )
 
     bottomsubplot.plot(
-        program.forecast.times(), program.forecast.pressures(),
+        times, z,
         color="tab:blue", marker="o", markersize=3.5, linestyle="--",
         label=_("Atmospheric Pressure"),
     )
 
     inset_pressure.plot(
-        program.forecast.times(), program.forecast.pressures(),
+        times, z,
         color="tab:blue", alpha=0.95,
     )
 
