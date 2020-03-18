@@ -54,11 +54,12 @@ class InternationalStandardAtmosphere:
     """
 
     def __init__(self):
-
+        # fmt: off
         self.TEMP_MSL = 288.15  # Kelvin; Temperature at Mean Sea Level
         self.PRESSURE_MSL = 1013.25  # hPa; Pressure at Mean Sea Level
         self.TEMP_GRADIANT = 6.5 / 1000  # Kelvin per meter; Rate at which temperature decreases with altitude
         self.PERFECT_GAS = 5.255  # dimensionless; Viscosity and compressibility of dry air, behaving like a perfect gas
+        # fmt: on
 
     def pressure(self, altitude: float) -> float:
         """
@@ -69,7 +70,9 @@ class InternationalStandardAtmosphere:
         according to the International Standard Atmosphere (ISA) model
         """
         if -700 < altitude < 10000:
+            # fmt: off
             return self.PRESSURE_MSL * (1 - (altitude / (self.TEMP_MSL / self.TEMP_GRADIANT))) ** self.PERFECT_GAS
+            # fmt: on
         else:
             raise ValueError("Altitude out of range (-700 m < altitude < 10000 m")
 
@@ -82,7 +85,9 @@ class InternationalStandardAtmosphere:
         according to the International Standard Atmosphere (ISA) model
         """
         p = AtmosphericPressure(pressure).value
+        # fmt: off
         return (self.TEMP_MSL / self.TEMP_GRADIANT) * (1 - (p / self.PRESSURE_MSL) ** (1 / self.PERFECT_GAS))
+        # fmt: on
 
     def delta_altitude(
             self, p_ref: float, current_p: float = None, delta_p: float = None
