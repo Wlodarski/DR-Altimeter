@@ -709,7 +709,7 @@ try:
         # fmt: off
         fix_hour, 0,
         color="black", marker=9,
-        label=_(no_leading_zeros(_("Fix at {}").format(fix_hour.strftime('#%H:%M')))),
+        label=_("Fix at {}").format(no_leading_zeros(fix_hour.strftime('#%H:%M'))),
         zorder=11,
         # fmt: on
     )
