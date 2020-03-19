@@ -52,15 +52,6 @@ class Forecast:
     def times(self):
         return self.get("time")
 
-    # Not used anymore, since switched to date-based logic  # TODO remove eventually
-    #  @staticmethod
-    # def cross_platform(s, c="#"):
-    #     return s.replace(c + "0", c).replace(c, "")
-    #
-    #
-    # def formatted_times(self, fmt, c="#") -> str:
-    #     return [self.cross_platform(i.strftime(fmt), c) for i in self.times()]
-
     def sorted_by(self, key, reverse=False) -> bytearray:
         return sorted(self.values, key=lambda _i: _i[key], reverse=reverse)
 
