@@ -59,8 +59,28 @@ class PolynomialCurveFit:
         self.poly = polyfit(self.x, self.y, self.degree)
         self.error = self.error_matrix()
 
-    def best_degree(self):  # TODO: see if it can be improved
-        return len(self.x) // 2
+    # def best_degree(self):
+    #     return len(self.x) // 2
+
+    def best_degree(self) -> int:
+        """
+        Finds the polynomial degree with the best fit by removing one point of data
+        :return: degree with least square error
+        """
+        error_for_each_degree = []
+        for tested_degree in range(0, (4 * len(self.x)) // 7):  # 4/7 = slightly larger than half point
+            squared_error = 0
+            for index_removed in range(0, len(self.x)):
+                training_x = self.x.copy()
+                training_y = self.y.copy()
+                del training_x[index_removed]
+                del training_y[index_removed]
+                # RankWarning should never be triggered with a 4/7 ceiling
+                # warnings.simplefilter('ignore', np.RankWarning)
+                poly = polyfit(training_x, training_y, tested_degree)
+                squared_error += (self.y[index_removed] - polyval(poly, self.x[index_removed])) ** 2
+            error_for_each_degree.append(np.sqrt(squared_error))
+        return np.argmin(error_for_each_degree)
 
     def error_matrix(self):
         """
