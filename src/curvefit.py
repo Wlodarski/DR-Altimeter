@@ -129,10 +129,7 @@ class PolynomialCurveFit:
         if fix_hour is not None:
             fix_hour = fix_hour.replace(microsecond=0, second=0)
 
-        for t in cfit["time"]:
-            i = cfit["time"].index(t)
-            current_time = cfit["time"][i]
-            current_step = cfit["steps"][i]
+        for current_time, current_step in zip(cfit["time"], cfit["steps"]):
             if current_step != previous_step:
                 times.append(current_time)
                 steps.append(current_step)
