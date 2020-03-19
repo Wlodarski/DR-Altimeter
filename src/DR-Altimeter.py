@@ -113,7 +113,7 @@ class Program:
         self.cfg.read(self.CONFIG_FILENAME)
 
         if self.CS not in self.cfg.sections():
-            print80(_(f"Regenerating {self.CONFIG_FILENAME}"))
+            print80(_("Regenerating {}").format(self.CONFIG_FILENAME))
             print()
             self.cfg.add_section(self.CS)
 
@@ -219,9 +219,9 @@ class Program:
         self.cfg.set(self.CS, self.LONGITUDE_T, str(pos["longitude"]))
         self.save_ini()
 
-        print80(_(f"Latitude : {pos['latitude']:.7f}"))
-        print80(_(f"Longitude : {pos['longitude']:.7f}"))
-        print80(_(f"Accuracy : {pos['accuracy']}m"))
+        print80(_("Latitude : {:.7f}").format(pos["latitude"]))
+        print80(_("Longitude : {:.7f}").format(pos["longitude"]))
+        print80(_("Accuracy : {}m").format(pos["accuracy"]))
         logging.info(f"{pos['latitude']:.7f} {pos['longitude']:.7f} ±{pos['accuracy']}m")
         print()
 
@@ -244,9 +244,9 @@ class Program:
         elif not self.MISSING_LATLONG:
 
             if args.latitude is None:
-                print80(_(f"Using Lat/Lon found in {self.CONFIG_FILENAME}"))
-            print80(_(f"Latitude: {self.LATITUDE}"))
-            print80(_(f"Longitude: {self.LONGITUDE}"))
+                print80(_("Using Lat/Lon found in {}").format(self.CONFIG_FILENAME))
+            print80(_("Latitude: {}").format(self.LATITUDE))
+            print80(_("Longitude: {}").format(self.LONGITUDE))
             print()
             #  decreased precision (3 digits instead of 7) to partially preserve anonymity
             _hourly_forecast_url = self.GEOLOCATED_URL + f"{self.LATITUDE:.3f},{self.LONGITUDE:.3f}"
@@ -318,10 +318,8 @@ class Program:
         self.P_INITIAL = float(_elem.text)
         print80(
             self.register_info(
-                _(
-                    f"Current atmospheric pressure : "
-                    f"{self.P_INITIAL} hPa "
-                    f"(ISA={isa.altitude(pressure=self.P_INITIAL):0.1f}m)"
+                _("Current atmospheric pressure : {} hPa (ISA={:0.1f}m)").format(
+                    self.P_INITIAL, isa.altitude(pressure=self.P_INITIAL)
                 )
             )
         )
@@ -347,10 +345,8 @@ class Program:
             self.ELEVATION = 0
         print80(
             self.register_info(
-                _(
-                    f"Weather station elevation : "
-                    f"{self.ELEVATION}m "
-                    f"(ISA={isa.pressure(altitude=self.ELEVATION):7.2f}hPa)"
+                _("Weather station elevation : {}m (ISA={:7.2f}hPa)").format(
+                    self.ELEVATION, isa.pressure(altitude=self.ELEVATION)
                 )
             )
         )
@@ -365,12 +361,12 @@ class Program:
         _title = f"{self.STATION_NAME}-{_fix_hour:%Y%m%d-%H%M}".replace(" ", "_")
         _comment = f"{self.STATION_NAME} ({self.ELEVATION}m)\n\n"
         try:
-            print80(_(f"Sending timetable to Slack channel {args.slack}"))
+            print80(_("Sending timetable to Slack channel {}").format(args.slack))
             _response = self.slack.files_upload(
                 content=_txt, channels=args.slack, title=_title, filename=_title + ".txt", initial_comment=_comment,
             )
             assert _response["ok"]
-            print80(_(f"Sending {program.GRAPH_FILENAME} to Slack channel {args.slack}"))
+            print80(_("Sending {} to Slack channel {}").format(program.GRAPH_FILENAME, args.slack))
             _response = self.slack.files_upload(
                 file=program.GRAPH_FILENAME,
                 channels=args.slack,
@@ -536,15 +532,15 @@ try:
         formula = pretty_polyid(
             polynomial=curvefit.poly, f_text=_("altitude(time)"), var_symbol=_("time"), equal_sign="=",
         )
-        print80(program.register_info(_(f"Degree : {curvefit.degree}")))
+        print80(program.register_info(_("Degree : {}").format(curvefit.degree)))
         print()
-        print80(program.register_info(_(f"Coefficients : {curvefit.poly}")))
+        print80(program.register_info(_("Coefficients : {}").format(curvefit.poly)))
         print()
-        print80(program.register_info(_(f"Time vector (x) : {curvefit.x}")))
+        print80(program.register_info(_("Time vector (x) : {}").format(curvefit.x)))
         print()
-        print80(program.register_info(_(f"Altitude vector (y) : {curvefit.y}")))
+        print80(program.register_info(_("Altitude vector (y) : {}").format(curvefit.y)))
         print()
-        print80(program.register_info(_(f"Pressure vector (z) : {z}")))
+        print80(program.register_info(_("Pressure vector (z) : {}").format(z)))
         print()
         print(program.register_info(f"\n{formula}\n"))
         print(program.register_info("".center(79, "-")))
@@ -704,7 +700,7 @@ try:
         "time", "steps", data=curvefit.curvefit_dict(start_full_hour, margin=0),
         where="post",
         color="red", marker="", linestyle="solid",
-        label=_(f"Polynomlal Steps of {curvefit.degree}{_('$^{th}$')} degree"),
+        label=_("Polynomlal Steps of {}{} degree").format(curvefit.degree, _("$^{th}$")),
         zorder=9,
         # fmt: on
     )
@@ -713,7 +709,7 @@ try:
         # fmt: off
         fix_hour, 0,
         color="black", marker=9,
-        label=_(no_leading_zeros(f"Fix at {fix_hour:#%H:%M}")),
+        label=_(no_leading_zeros(_("Fix at {}").format(fix_hour.strftime('#%H:%M')))),
         zorder=11,
         # fmt: on
     )
