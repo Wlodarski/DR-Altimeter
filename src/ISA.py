@@ -150,16 +150,17 @@ if __name__ == "__main__":
     print("Average Correction".center(73))
     print("+/-hPa |", end="")
     for d in range(0, 11):
-        print("{:5.1f}".format(d / 10), end=" ")
+        pressure_variation = d / 10
+        print(f"{pressure_variation:5.1f}", end=" ")
     print()
     print("-------+" + "".center(65, "-"))
     for alt in [-500, 0, 500, 1000, 2000, 3000, 4000, 5000]:
         pref = isa.pressure(altitude=alt)
-        print("{:4}".format(alt), end=" m |")
+        print(f"{alt:4}", end=" m |")
         for d in range(0, 11):
             pressure_variation = d / 10
             plus = isa.correction(p_start=pref, delta_p=pressure_variation)
             minus = isa.correction(p_start=pref, delta_p=-pressure_variation)
             average = (plus - minus) / 2
-            print("{:5.2f}".format(average), end=" ")
+            print(f"{average:5.2f}", end=" ")
         print()
