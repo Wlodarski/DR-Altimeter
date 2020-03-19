@@ -136,14 +136,14 @@ if __name__ == "__main__":
 
     alt = 1200
     print(
-        "At {} m above mean sea level, "
-        "the standardized atmospheric pressure equals {:.2f} hPa".format(alt, isa.pressure(altitude=alt))
+        f"At {alt} m above mean sea level, "
+        f"the standardized atmospheric pressure equals {isa.pressure(altitude=alt):.2f} hPa"
     )
 
     pres = 800.0
     print(
-        "A pressure of {:.2f} hPa corresponds "
-        "to a standardized altitude of {:.0f} m".format(pres, isa.altitude(pressure=pres))
+        f"A pressure of {pres:.2f} hPa corresponds "
+        f"to a standardized altitude of {isa.altitude(pressure=pres):.0f} m"
     )
 
     print()
