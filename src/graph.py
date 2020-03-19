@@ -31,6 +31,16 @@ from matplotlib.patches import Rectangle
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter, NullFormatter
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
+from utils import cross_platform_leading_zeros_removal as no_leading_zeros
+
+
+class MyDateFormatter(mdates.DateFormatter):
+    def __init__(self, fmt: str, tz=None):
+        mdates.DateFormatter.__init__(self, fmt, tz)
+
+    def __call__(self, x, pos=0):
+        return no_leading_zeros(mdates.DateFormatter.__call__(self, x, pos))
+
 
 class NoPanXAxes(Axes):
     """
@@ -104,7 +114,7 @@ class MyMatplotlibTools:
 
         ax.xaxis.set_major_locator(mdates.HourLocator())
         ax.xaxis.set_minor_locator(mdates.MinuteLocator(byminute=range(0, 60, 10)))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%#Hh"))
+        ax.xaxis.set_major_formatter(MyDateFormatter("#%Hh"))
         ax.yaxis.set_major_locator(MultipleLocator(base=5))
         ax.yaxis.set_minor_locator(MultipleLocator(base=1))
         ax.yaxis.set_major_formatter(FormatStrFormatter("%.0f m"))
@@ -112,7 +122,7 @@ class MyMatplotlibTools:
         sax = ax.secondary_xaxis("top")
         sax.xaxis.set_major_locator(mdates.HourLocator())
         sax.xaxis.set_minor_locator(mdates.MinuteLocator(byminute=range(0, 60, 10)))
-        sax.xaxis.set_major_formatter(mdates.DateFormatter("%#Hh"))
+        sax.xaxis.set_major_formatter(MyDateFormatter("#%Hh"))
 
         return sax
 

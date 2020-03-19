@@ -91,11 +91,18 @@ def pretty_polyid(polynomial: object, f_text: str = "f", var_symbol: str = "x", 
     return f"{spaces} {formula_up}\n{f_text} {equal_sign} {formula_down}"
 
 
-def cross_platform(s, c="#"):
+def cross_platform_leading_zeros_removal(s, c="#"):
     """
-    Removes leading zeros. For instance, #05h12 becomes 5h12
+    
+    | Removes leading zeros. For instance, #05h12 becomes 5h12. 
+    |
+    | Required because strftime %#H (Windows) and %-H (Linux) are platform dependant 
+    |
+       
     :param s: string
-    :param c: character that precedes possible leading zeros 
+    :param c: character that signals possible leading zeros 
     :return: string without any leading zeros
+    
+    
     """
     return s.replace(c + "0", c).replace(c, "")

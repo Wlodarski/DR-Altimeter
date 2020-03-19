@@ -52,7 +52,7 @@ from forecast import Forecast
 from graph import NoPanXAxes, MyMatplotlibTools
 from translation import Translation
 from txttable import PredictionTable
-from utils import printf, nb_date_changes, pretty_polyid
+from utils import printf, nb_date_changes, pretty_polyid, cross_platform_leading_zeros_removal as no_leading_zeros
 
 _ = Translation()
 
@@ -562,7 +562,7 @@ try:
     t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour)
 
     for i in range(0, len(s)):
-        step_text = f"{t[i]:%#Hh%M}[{s[i]}]"  # TODO platform independant strftime
+        step_text = no_leading_zeros(f"{t[i]:#%Hh%M}[{s[i]}]")
         this_hour = t[i].hour
 
         if this_hour != previous_hour:
@@ -713,7 +713,7 @@ try:
         # fmt: off
         fix_hour, 0,
         color="black", marker=9,
-        label=_(f"Fix at {fix_hour:%#H:%M}"),
+        label=_(no_leading_zeros(f"Fix at {fix_hour:#%H:%M}")),
         zorder=11,
         # fmt: on
     )
