@@ -52,7 +52,7 @@ from forecast import Forecast
 from graph import NoPanXAxes, MyMatplotlibTools
 from translation import Translation
 from txttable import PredictionTable
-from utils import printf, nb_date_changes, pretty_polyid, cross_platform_leading_zeros_removal as no_leading_zeros
+from utils import print80, nb_date_changes, pretty_polyid, cross_platform_leading_zeros_removal as no_leading_zeros
 
 _ = Translation()
 
@@ -113,7 +113,7 @@ class Program:
         self.cfg.read(self.CONFIG_FILENAME)
 
         if self.CS not in self.cfg.sections():
-            printf(_(f"Regenerating {self.CONFIG_FILENAME}"))
+            print80(_(f"Regenerating {self.CONFIG_FILENAME}"))
             print()
             self.cfg.add_section(self.CS)
 
@@ -219,9 +219,9 @@ class Program:
         self.cfg.set(self.CS, self.LONGITUDE_T, str(pos["longitude"]))
         self.save_ini()
 
-        printf(_(f"Latitude : {pos['latitude']:.7f}"))
-        printf(_(f"Longitude : {pos['longitude']:.7f}"))
-        printf(_(f"Accuracy : {pos['accuracy']}m"))
+        print80(_(f"Latitude : {pos['latitude']:.7f}"))
+        print80(_(f"Longitude : {pos['longitude']:.7f}"))
+        print80(_(f"Accuracy : {pos['accuracy']}m"))
         logging.info(f"{pos['latitude']:.7f} {pos['longitude']:.7f} ±{pos['accuracy']}m")
         print()
 
@@ -238,15 +238,15 @@ class Program:
 
         elif self.OVERRIDE_URL_EXISTS:
 
-            printf(_("Using override URL"))
+            print80(_("Using override URL"))
             _hourly_forecast_url = self.OVERRIDE_URL
 
         elif not self.MISSING_LATLONG:
 
             if args.latitude is None:
-                printf(_(f"Using Lat/Lon found in {self.CONFIG_FILENAME}"))
-            printf(_(f"Latitude: {self.LATITUDE}"))
-            printf(_(f"Longitude: {self.LONGITUDE}"))
+                print80(_(f"Using Lat/Lon found in {self.CONFIG_FILENAME}"))
+            print80(_(f"Latitude: {self.LATITUDE}"))
+            print80(_(f"Longitude: {self.LONGITUDE}"))
             print()
             #  decreased precision (3 digits instead of 7) to partially preserve anonymity
             _hourly_forecast_url = self.GEOLOCATED_URL + f"{self.LATITUDE:.3f},{self.LONGITUDE:.3f}"
@@ -263,19 +263,19 @@ class Program:
         except AssertionError:
             raise NameError(_("Page with wrong title"))
 
-        printf(_("Connected to Wunderground"))
+        print80(_("Connected to Wunderground"))
 
     def wait_until_page_is_loaded(self):
         try:
             WebDriverWait(self.browser.driver, self.TIMEOUT).until(
                 ec.presence_of_element_located((By.ID, "hourly-forecast-table"))
             )
-            printf(_("Page is ready"))
+            print80(_("Page is ready"))
         except TimeoutException:
             raise TimeoutException(_("Page took too much time to load"))
 
     def switch_to_metric(self):
-        printf(_("Switching to metric"))
+        print80(_("Switching to metric"))
         self.browser.driver.find_element_by_id("wuSettings").click()
         self.browser.driver.find_element_by_css_selector("[title^='Switch to Metric'").click()
         try:
@@ -296,7 +296,7 @@ class Program:
             _st = search("^-?[0-9]* (.*)$", _elem.text)
             self.STATION_NAME = _st.group(1).strip()
         except NoSuchElementException:
-            printf(self.register_error(_("Station name not found")))
+            print80(self.register_error(_("Station name not found")))
         if self.STATION_NAME is None or self.STATION_NAME == "STATION":
             try:
                 _elem = self.browser.driver.find_element_by_xpath(
@@ -307,7 +307,7 @@ class Program:
                 self.STATION_NAME = _("UNKNOWN")
         logging.info(self.STATION_NAME)
         print()
-        printf(colored(self.STATION_NAME, attrs=["bold"]))
+        print80(colored(self.STATION_NAME, attrs=["bold"]))
 
     def get_atm_pressure_at_station(self):
         _elem = self.browser.driver.find_element_by_xpath(
@@ -316,7 +316,7 @@ class Program:
             "div[2]/div/div[1]/div[2]/lib-display-unit/span/span[1]"
         )
         self.P_INITIAL = float(_elem.text)
-        printf(
+        print80(
             self.register_info(
                 _(
                     f"Current atmospheric pressure : "
@@ -333,7 +333,7 @@ class Program:
         if _st is not None:
             return datetime.strptime(_st.group(1), "%Y-%m-%d %H:%M:%S")
         else:
-            printf(self.register_error(_("Observation time not found.")))
+            print80(self.register_error(_("Observation time not found.")))
             return datetime.now()
 
     def get_station_elevation(self):
@@ -343,9 +343,9 @@ class Program:
             )
             self.ELEVATION = int(_elem.text)
         except NoSuchElementException:
-            printf(self.register_error(_("Elevation not found. Assuming it to be zero")))
+            print80(self.register_error(_("Elevation not found. Assuming it to be zero")))
             self.ELEVATION = 0
-        printf(
+        print80(
             self.register_info(
                 _(
                     f"Weather station elevation : "
@@ -365,12 +365,12 @@ class Program:
         _title = f"{self.STATION_NAME}-{_fix_hour:%Y%m%d-%H%M}".replace(" ", "_")
         _comment = f"{self.STATION_NAME} ({self.ELEVATION}m)\n\n"
         try:
-            printf(_(f"Sending timetable to Slack channel {args.slack}"))
+            print80(_(f"Sending timetable to Slack channel {args.slack}"))
             _response = self.slack.files_upload(
                 content=_txt, channels=args.slack, title=_title, filename=_title + ".txt", initial_comment=_comment,
             )
             assert _response["ok"]
-            printf(_(f"Sending {program.GRAPH_FILENAME} to Slack channel {args.slack}"))
+            print80(_(f"Sending {program.GRAPH_FILENAME} to Slack channel {args.slack}"))
             _response = self.slack.files_upload(
                 file=program.GRAPH_FILENAME,
                 channels=args.slack,
@@ -380,7 +380,7 @@ class Program:
             )
             assert _response["ok"]
         except AssertionError:
-            printf(self.register_error(_("Sending to Slack failed")))
+            print80(self.register_error(_("Sending to Slack failed")))
 
     @staticmethod
     def register_info(msg):
@@ -406,8 +406,8 @@ class Console:
 
         system(f"title {self.title} {self.version}")
 
-        printf(colored(f"{self.title} {self.version}", attrs=["bold"], ))
-        printf(self.subtitle)
+        print80(colored(f"{self.title} {self.version}", attrs=["bold"], ))
+        print80(self.subtitle)
         print()
 
 
@@ -474,7 +474,7 @@ try:
         date_str = d.strftime("%Y-%m-%d")
         url = hourly_forecast_url + "/date/" + date_str
         if program.VERBOSE:
-            printf(url)
+            print80(url)
         if first_page:
             program.browser.go_to(webpage=url, hidden=True)
             program.check_page(title="Hourly Weather Forecast | Weather Underground")
@@ -536,15 +536,15 @@ try:
         formula = pretty_polyid(
             polynomial=curvefit.poly, f_text=_("altitude(time)"), var_symbol=_("time"), equal_sign="=",
         )
-        printf(program.register_info(_(f"Degree : {curvefit.degree}")))
+        print80(program.register_info(_(f"Degree : {curvefit.degree}")))
         print()
-        printf(program.register_info(_(f"Coefficients : {curvefit.poly}")))
+        print80(program.register_info(_(f"Coefficients : {curvefit.poly}")))
         print()
-        printf(program.register_info(_(f"Time vector (x) : {curvefit.x}")))
+        print80(program.register_info(_(f"Time vector (x) : {curvefit.x}")))
         print()
-        printf(program.register_info(_(f"Altitude vector (y) : {curvefit.y}")))
+        print80(program.register_info(_(f"Altitude vector (y) : {curvefit.y}")))
         print()
-        printf(program.register_info(_(f"Pressure vector (z) : {z}")))
+        print80(program.register_info(_(f"Pressure vector (z) : {z}")))
         print()
         print(program.register_info(f"\n{formula}\n"))
         print(program.register_info("".center(79, "-")))

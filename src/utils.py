@@ -27,7 +27,7 @@ from datetime import datetime
 from textwrap import fill
 
 
-def printf(text: str) -> str:
+def print80(text: str) -> str:
     """
     Print for a 80 characters wide display
     
