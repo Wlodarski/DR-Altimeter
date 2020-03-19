@@ -317,10 +317,15 @@ class Program:
             "div[2]/div/div[1]/div[2]/lib-display-unit/span/span[1]"
         )
         self.P_INITIAL = float(_elem.text)
-        printf(self.register_info(_(f"Current atmospheric pressure : "
-                                    f"{self.P_INITIAL} hPa "
-                                    f"(ISA={isa.altitude(pressure=self.P_INITIAL):0.1f}m)")
-                                  ))
+        printf(
+            self.register_info(
+                _(
+                    f"Current atmospheric pressure : "
+                    f"{self.P_INITIAL} hPa "
+                    f"(ISA={isa.altitude(pressure=self.P_INITIAL):0.1f}m)"
+                )
+            )
+        )
         return self.P_INITIAL
 
     def get_obs_time(self):
@@ -342,10 +347,14 @@ class Program:
             printf(self.register_error(_("Elevation not found. Assuming it to be zero")))
             self.ELEVATION = 0
         printf(
-            self.register_info(_(f"Weather station elevation : "
-                                 f"{self.ELEVATION}m "
-                                 f"(ISA={isa.pressure(altitude=self.ELEVATION):7.2f}hPa)")
-                               ))
+            self.register_info(
+                _(
+                    f"Weather station elevation : "
+                    f"{self.ELEVATION}m "
+                    f"(ISA={isa.pressure(altitude=self.ELEVATION):7.2f}hPa)"
+                )
+            )
+        )
 
     def display_results(self):
         _txt = self.result.display_table()
@@ -525,10 +534,9 @@ try:
     curvefit = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
-        formula = pretty_polyid(polynomial=curvefit.poly,
-                                f_text=_("altitude(time)"),
-                                var_symbol=_("time"),
-                                equal_sign="=", )
+        formula = pretty_polyid(
+            polynomial=curvefit.poly, f_text=_("altitude(time)"), var_symbol=_("time"), equal_sign="=",
+        )
         printf(program.register_info(_(f"Degree : {curvefit.degree}")))
         print()
         printf(program.register_info(_(f"Coefficients : {curvefit.poly}")))
@@ -617,22 +625,22 @@ try:
 
     # one figure
     fig = plt.figure(
-        dpi=96, figsize=(16, 9), num=f"{program.STATION_NAME} {fix_hour.strftime('%Y%m%d-%H%M')}",
+        # fmt: off
+        dpi=96, figsize=(16, 9),
+        num=f"{program.STATION_NAME} {fix_hour.strftime('%Y%m%d-%H%M')}",
+        # fmt: on
     )
     plt.figtext(
-        0.95,
-        0.01,
+        # fmt: off
+        0.95, 0.01,
         f"{program.NAME} {program.VERSION}",
-        horizontalalignment="right",
-        alpha=0.8,
-        fontsize="x-small",
+        horizontalalignment="right", alpha=0.8, fontsize="x-small",
+        # fmt: on
     )
 
     # two subplots on a grid system
     gs = GridSpec(figure=fig, ncols=1, nrows=2, height_ratios=[3, 1], hspace=0.1, bottom=0.07)
-    topsubplot = fig.add_subplot(
-        gs[0], title=f"{program.STATION_NAME} ― {fix_hour.strftime('%Y.%m.%d %H:%M')}",
-    )
+    topsubplot = fig.add_subplot(gs[0], title=f"{program.STATION_NAME} ― {fix_hour.strftime('%Y.%m.%d %H:%M')}", )
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection="No Pan X Axes")
 
     # formatting the top (altitude) graph
@@ -663,10 +671,10 @@ try:
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
     bottomsubplot.set_yticklabels(list(map(lambda new: f"{new:.0f} hPa", old_ticks)) + ["MSL$_{ISA}$"])
-    bottomsubplot.set_ylim(
+    bottomsubplot.set_ylim(  # multiple of 5, just below the minimum pressure and just above maximum pressure
         # fmt: off
-        round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
-        round(2 * (max(z) + 2.5), -1) // 2,  # multiple of 5, just above maximum pressure
+        round(2 * (max(z) + 2.5), -1) // 2,
+        round(2 * (min(z) - 2.5), -1) // 2,
         # fmt: on
     )
 
