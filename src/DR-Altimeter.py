@@ -317,13 +317,10 @@ class Program:
             "div[2]/div/div[1]/div[2]/lib-display-unit/span/span[1]"
         )
         self.P_INITIAL = float(_elem.text)
-        printf(
-            self.register_info(
-                _("Current atmospheric pressure : " "{} hPa (ISA={:0.1f}m)").format(
-                    self.P_INITIAL, isa.altitude(pressure=self.P_INITIAL)
-                )
-            )
-        )
+        printf(self.register_info(_(f"Current atmospheric pressure : "
+                                    f"{self.P_INITIAL} hPa "
+                                    f"(ISA={isa.altitude(pressure=self.P_INITIAL):0.1f}m)")
+                                  ))
         return self.P_INITIAL
 
     def get_obs_time(self):
@@ -345,12 +342,10 @@ class Program:
             printf(self.register_error(_("Elevation not found. Assuming it to be zero")))
             self.ELEVATION = 0
         printf(
-            self.register_info(
-                _("Weather station elevation : {}m (ISA={:7.2f}hPa)").format(
-                    self.ELEVATION, isa.pressure(altitude=self.ELEVATION)
-                )
-            )
-        )
+            self.register_info(_(f"Weather station elevation : "
+                                 f"{self.ELEVATION}m "
+                                 f"(ISA={isa.pressure(altitude=self.ELEVATION):7.2f}hPa)")
+                               ))
 
     def display_results(self):
         _txt = self.result.display_table()
@@ -403,7 +398,7 @@ class Console:
 
         system(f"title {self.title} {self.version}")
 
-        printf(colored("{name} {version}".format(name=self.title, version=self.version), attrs=["bold"], ))
+        printf(colored(f"{self.title} {self.version}", attrs=["bold"], ))
         printf(self.subtitle)
         print()
 
@@ -530,6 +525,10 @@ try:
     curvefit = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
+        formula = pretty_polyid(polynomial=curvefit.poly,
+                                f_text=_("altitude(time)"),
+                                var_symbol=_("time"),
+                                equal_sign="=", )
         printf(program.register_info(_(f"Degree : {curvefit.degree}")))
         print()
         printf(program.register_info(_(f"Coefficients : {curvefit.poly}")))
@@ -540,15 +539,7 @@ try:
         print()
         printf(program.register_info(_(f"Pressure vector (z) : {z}")))
         print()
-        print(
-            program.register_info(
-                "\n{}\n".format(
-                    pretty_polyid(
-                        polynomial=curvefit.poly, f_text=_("altitude(time)"), var_symbol=_("time"), equal_sign="=",
-                    )
-                )
-            )
-        )
+        print(program.register_info(f"\n{formula}\n"))
         print(program.register_info("".center(79, "-")))
         print()
 
