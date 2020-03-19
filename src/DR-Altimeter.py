@@ -114,7 +114,7 @@ class Program:
         self.cfg.read(self.CONFIG_FILENAME)
 
         if self.CS not in self.cfg.sections():
-            printf(_("Regenerating {}").format(self.CONFIG_FILENAME))
+            printf(_(f"Regenerating {self.CONFIG_FILENAME}"))
             print()
             self.cfg.add_section(self.CS)
 
@@ -220,10 +220,10 @@ class Program:
         self.cfg.set(self.CS, self.LONGITUDE_T, str(pos["longitude"]))
         self.save_ini()
 
-        printf(_("Latitude : {:.7f}").format(pos["latitude"]))
-        printf(_("Longitude : {:.7f}").format(pos["longitude"]))
-        printf(_("Accuracy : {}m").format(pos["accuracy"]))
-        logging.info("{:.7f} {:.7f} ±{}m".format(pos["latitude"], pos["longitude"], pos["accuracy"]))
+        printf(_(f"Latitude : {pos['latitude']:.7f}"))
+        printf(_(f"Longitude : {pos['longitude']:.7f}"))
+        printf(_(f"Accuracy : {pos['accuracy']}m"))
+        logging.info(f"{pos['latitude']:.7f} {pos['longitude']:.7f} ±{pos['accuracy']}m")
         print()
 
     def hourly_forecast_url(self):
@@ -235,9 +235,7 @@ class Program:
             self.browser.quit()
 
             #  decreased precision (3 digits instead of 7) to partially preserve anonymity
-            _hourly_forecast_url = self.GEOLOCATED_URL + "{:.3f},{:.3f}".format(
-                position["latitude"], position["longitude"]
-            )
+            _hourly_forecast_url = self.GEOLOCATED_URL + f"{position['latitude']:.3f},{position['longitude']:.3f}"
 
         elif self.OVERRIDE_URL_EXISTS:
 
@@ -247,12 +245,12 @@ class Program:
         elif not self.MISSING_LATLONG:
 
             if args.latitude is None:
-                printf(_("Using Lat/Lon found in {}").format(self.CONFIG_FILENAME))
-            printf(_("Latitude: {}").format(self.LATITUDE))
-            printf(_("Longitude: {}").format(self.LONGITUDE))
+                printf(_(f"Using Lat/Lon found in {self.CONFIG_FILENAME}"))
+            printf(_(f"Latitude: {self.LATITUDE}"))
+            printf(_(f"Longitude: {self.LONGITUDE}"))
             print()
             #  decreased precision (3 digits instead of 7) to partially preserve anonymity
-            _hourly_forecast_url = self.GEOLOCATED_URL + "{:.3f},{:.3f}".format(self.LATITUDE, self.LONGITUDE)
+            _hourly_forecast_url = self.GEOLOCATED_URL + f"{self.LATITUDE:.3f},{self.LONGITUDE:.3f}"
 
         else:  # if everything fails, an example url
             _hourly_forecast_url = "https://www.wunderground.com/hourly/ca/montreal/IMONTR15"
