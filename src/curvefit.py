@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import warnings
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -69,18 +70,25 @@ class PolynomialCurveFit:
         """
         error_for_each_degree = []
         for tested_degree in range(0, (4 * len(self.x)) // 7):  # 4/7 = slightly larger than half point
+            # RankWarning should never be triggered with a 4/7 ceiling
+            # Hence the warning is not currently supressed
+            #
+            # code to supress warning, for future reference:
+            #       warnings.simplefilter('ignore', np.RankWarning)
+            #
             squared_error = 0
             for index_removed in range(0, len(self.x)):
                 training_x = self.x.copy()
                 training_y = self.y.copy()
                 del training_x[index_removed]
                 del training_y[index_removed]
-                # RankWarning should never be triggered with a 4/7 ceiling
-                # warnings.simplefilter('ignore', np.RankWarning)
                 poly = polyfit(training_x, training_y, tested_degree)
                 squared_error += (self.y[index_removed] - polyval(poly, self.x[index_removed])) ** 2
             error_for_each_degree.append(np.sqrt(squared_error))
-        return np.argmin(error_for_each_degree)
+            best = np.argmin(error_for_each_degree)
+            if best >= len(self.x) // 2:
+                warnings.warn(_("Degree abnormally high. Predictions might be unreliable."))
+        return best
 
     def error_matrix(self):
         """
