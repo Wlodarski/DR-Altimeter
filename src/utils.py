@@ -88,4 +88,4 @@ def pretty_polyid(polynomial: object, f_text: str = "f", var_symbol: str = "x", 
 
     formula_up, formula_down = re.split("\n", str(ugly(polynomial, variable=var_symbol)), maxsplit=1)
     spaces = "".rjust(len(f_text + " " + equal_sign), " ")
-    return "{s} {u}\n{f} {e} {d}".format(u=formula_up, d=formula_down, f=f_text, s=spaces, e=equal_sign)
+    return f"{spaces} {formula_up}\n{f_text} {equal_sign} {formula_down}"
