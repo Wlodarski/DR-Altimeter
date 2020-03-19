@@ -346,7 +346,7 @@ class Program:
             self.ELEVATION = 0
         printf(
             self.register_info(
-                _("Weather station elevation : " "{}m (ISA={:7.2f}hPa)").format(
+                _("Weather station elevation : {}m (ISA={:7.2f}hPa)").format(
                     self.ELEVATION, isa.pressure(altitude=self.ELEVATION)
                 )
             )
@@ -359,15 +359,15 @@ class Program:
 
     def send_to_slack(self):
         _txt = self.result.display_table()
-        _title = "{}-{}".format(self.STATION_NAME, strftime("%Y%m%d-%H%M")).replace(" ", "_")
-        _comment = "{st} ({el}m)\n\n".format(st=self.STATION_NAME, el=self.ELEVATION)
+        _title = f"{self.STATION_NAME}-{strftime('%Y%m%d-%H%M')}".replace(" ", "_")
+        _comment = f"{self.STATION_NAME} ({self.ELEVATION}m)\n\n"
         try:
-            printf(_("Sending timetable to Slack channel {}").format(args.slack))
+            printf(_(f"Sending timetable to Slack channel {args.slack}"))
             _response = self.slack.files_upload(
                 content=_txt, channels=args.slack, title=_title, filename=_title + ".txt", initial_comment=_comment,
             )
             assert _response["ok"]
-            printf(_("Sending {} to Slack channel {}").format(program.GRAPH_FILENAME, args.slack))
+            printf(_(f"Sending {program.GRAPH_FILENAME} to Slack channel {args.slack}"))
             _response = self.slack.files_upload(
                 file=program.GRAPH_FILENAME,
                 channels=args.slack,
@@ -401,7 +401,7 @@ class Console:
         self.version = version
         self.subtitle = subtitle
 
-        system("title {name} {version}".format(name=self.title, version=self.version))
+        system(f"title {self.title} {self.version}")
 
         printf(colored("{name} {version}".format(name=self.title, version=self.version), attrs=["bold"], ))
         printf(self.subtitle)
@@ -530,15 +530,15 @@ try:
     curvefit = PolynomialCurveFit(x, y)
 
     if program.VERBOSE:
-        printf(program.register_info(_("Degree : {}").format(curvefit.degree)))
+        printf(program.register_info(_(f"Degree : {curvefit.degree}")))
         print()
-        printf(program.register_info(_("Coefficients : {}").format(curvefit.poly)))
+        printf(program.register_info(_(f"Coefficients : {curvefit.poly}")))
         print()
-        printf(program.register_info(_("Time vector (x) : {}").format(curvefit.x)))
+        printf(program.register_info(_(f"Time vector (x) : {curvefit.x}")))
         print()
-        printf(program.register_info(_("Altitude vector (y) : {}").format(curvefit.y)))
+        printf(program.register_info(_(f"Altitude vector (y) : {curvefit.y}")))
         print()
-        printf(program.register_info(_("Pressure vector (z) : {}").format(z)))
+        printf(program.register_info(_(f"Pressure vector (z) : {z}")))
         print()
         print(
             program.register_info(
@@ -564,7 +564,7 @@ try:
     t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour)
 
     for i in range(0, len(s)):
-        step_text = "{}[{}]".format(t[i].strftime("%#Hh%M"), s[i])
+        step_text = f"{t[i].strftime('%#Hh%M')}[{s[i]}]"
         this_hour = t[i].hour
 
         if this_hour != previous_hour:
@@ -626,12 +626,12 @@ try:
 
     # one figure
     fig = plt.figure(
-        dpi=96, figsize=(16, 9), num="{} {}".format(program.STATION_NAME, fix_hour.strftime("%Y%m%d-%H%M")),
+        dpi=96, figsize=(16, 9), num=f"{program.STATION_NAME} {fix_hour.strftime('%Y%m%d-%H%M')}",
     )
     plt.figtext(
         0.95,
         0.01,
-        "{} {}".format(program.NAME, program.VERSION),
+        f"{program.NAME} {program.VERSION}",
         horizontalalignment="right",
         alpha=0.8,
         fontsize="x-small",
@@ -640,7 +640,7 @@ try:
     # two subplots on a grid system
     gs = GridSpec(figure=fig, ncols=1, nrows=2, height_ratios=[3, 1], hspace=0.1, bottom=0.07)
     topsubplot = fig.add_subplot(
-        gs[0], title="{} ― {}".format(program.STATION_NAME, fix_hour.strftime("%Y.%m.%d %H:%M")),
+        gs[0], title=f"{program.STATION_NAME} ― {fix_hour.strftime('%Y.%m.%d %H:%M')}",
     )
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection="No Pan X Axes")
 
@@ -671,7 +671,7 @@ try:
     bottomsubplot.yaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
-    bottomsubplot.set_yticklabels(list(map(lambda new: "{:.0f} hPa".format(new), old_ticks)) + ["MSL$_{ISA}$"])
+    bottomsubplot.set_yticklabels(list(map(lambda new: f"{new:.0f} hPa", old_ticks)) + ["MSL$_{ISA}$"])
     bottomsubplot.set_ylim(
         # fmt: off
         round(2 * (min(z) - 2.5), -1) // 2,  # multiple of 5, just below the minimum pressure
@@ -706,7 +706,7 @@ try:
         "time", "steps", data=curvefit.curvefit_dict(start_full_hour, margin=0),
         where="post",
         color="red", marker="", linestyle="solid",
-        label=_("Polynomlal Steps of {}{} degree").format(curvefit.degree, _("$^{th}$")),
+        label=_(f"Polynomlal Steps of {curvefit.degree}{_('$^{th}$')} degree"),
         zorder=9,
         # fmt: on
     )
@@ -715,7 +715,7 @@ try:
         # fmt: off
         fix_hour, 0,
         color="black", marker=9,
-        label=_("Fix at {}").format(fix_hour.strftime("%#H:%M")),
+        label=_(f"Fix at {fix_hour.strftime('%#H:%M')}"),
         zorder=11,
         # fmt: on
     )
