@@ -89,3 +89,13 @@ def pretty_polyid(polynomial: object, f_text: str = "f", var_symbol: str = "x", 
     formula_up, formula_down = re.split("\n", str(ugly(polynomial, variable=var_symbol)), maxsplit=1)
     spaces = "".rjust(len(f_text + " " + equal_sign), " ")
     return f"{spaces} {formula_up}\n{f_text} {equal_sign} {formula_down}"
+
+
+def cross_platform(s, c="#"):
+    """
+    Removes leading zeros. For instance, #05h12 becomes 5h12
+    :param s: string
+    :param c: character that precedes possible leading zeros 
+    :return: string without any leading zeros
+    """
+    return s.replace(c + "0", c).replace(c, "")
