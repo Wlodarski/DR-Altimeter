@@ -40,9 +40,7 @@ class Translation:
 
     def set_lang(self, clp):
         current_locale, encoding = getdefaultlocale()
-        lang = ""
-        if clp.args.lang in clp.all_lang:
-            lang = clp.args.lang
+        lang = clp.args.lang if clp.args.lang in clp.all_lang else ""
         chosen_lang = gettext.translation(
             "DR-Altimeter", localedir=clp.localedir, languages=[lang, current_locale], fallback=True,
         )
