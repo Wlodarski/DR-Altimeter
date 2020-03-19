@@ -30,7 +30,6 @@ from datetime import datetime, timedelta
 from os import system, environ
 from pathlib import Path
 from re import search
-from time import strftime
 
 import colorama
 import matplotlib.pyplot as plt
@@ -361,9 +360,9 @@ class Program:
         logging.info("\n\n" + _txt)
         print(_txt)
 
-    def send_to_slack(self):
+    def send_to_slack(self, _fix_hour):
         _txt = self.result.display_table()
-        _title = f"{self.STATION_NAME}-{strftime('%Y%m%d-%H%M')}".replace(" ", "_")
+        _title = f"{self.STATION_NAME}-{_fix_hour:%Y%m%d-%H%M}".replace(" ", "_")
         _comment = f"{self.STATION_NAME} ({self.ELEVATION}m)\n\n"
         try:
             printf(_(f"Sending timetable to Slack channel {args.slack}"))
@@ -563,7 +562,7 @@ try:
     t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour)
 
     for i in range(0, len(s)):
-        step_text = f"{t[i].strftime('%#Hh%M')}[{s[i]}]"
+        step_text = f"{t[i]:%#Hh%M}[{s[i]}]"  # TODO platform independant strftime
         this_hour = t[i].hour
 
         if this_hour != previous_hour:
@@ -627,7 +626,7 @@ try:
     fig = plt.figure(
         # fmt: off
         dpi=96, figsize=(16, 9),
-        num=f"{program.STATION_NAME} {fix_hour.strftime('%Y%m%d-%H%M')}",
+        num=f"{program.STATION_NAME} {fix_hour:%Y%m%d-%H%M}",
         # fmt: on
     )
     plt.figtext(
@@ -640,7 +639,7 @@ try:
 
     # two subplots on a grid system
     gs = GridSpec(figure=fig, ncols=1, nrows=2, height_ratios=[3, 1], hspace=0.1, bottom=0.07)
-    topsubplot = fig.add_subplot(gs[0], title=f"{program.STATION_NAME} ― {fix_hour.strftime('%Y.%m.%d %H:%M')}", )
+    topsubplot = fig.add_subplot(gs[0], title=f"{program.STATION_NAME} ― {fix_hour:%Y.%m.%d %H:%M}", )
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection="No Pan X Axes")
 
     # formatting the top (altitude) graph
@@ -714,7 +713,7 @@ try:
         # fmt: off
         fix_hour, 0,
         color="black", marker=9,
-        label=_(f"Fix at {fix_hour.strftime('%#H:%M')}"),
+        label=_(f"Fix at {fix_hour:%#H:%M}"),
         zorder=11,
         # fmt: on
     )
@@ -754,7 +753,7 @@ try:
     )
 
     if args.slack is not None:
-        program.send_to_slack()
+        program.send_to_slack(fix_hour)
 
     if not args.no_key:
         mng = plt.get_current_fig_manager()
