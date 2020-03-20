@@ -668,8 +668,8 @@ try:
     bottomsubplot.set_yticklabels(list(map(lambda new: f"{new:.0f} hPa", old_ticks)) + ["MSL$_{ISA}$"])
     bottomsubplot.set_ylim(  # multiple of 5, just below the minimum pressure and just above maximum pressure
         # fmt: off
-        round(2 * (max(z) + 2.5), -1) // 2,
         round(2 * (min(z) - 2.5), -1) // 2,
+        round(2 * (max(z) + 2.5), -1) // 2,
         # fmt: on
     )
 
