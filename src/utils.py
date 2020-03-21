@@ -50,24 +50,24 @@ def nb_date_changes(first_day: datetime, last_day: datetime) -> int:
     return elapsed.days
 
 
-def nb_days_between(first_day: datetime, last_day: datetime) -> int:
-    """
-    Number of days (1 day = 24 hours) between two dates
-    
-    :param first_day: datetime
-    :param last_day: datetime
-    :return: number of days
-    
-    """
-    elapsed = last_day - first_day
-    return elapsed.days
+# def nb_days_between(first_day: datetime, last_day: datetime) -> int:
+#     """
+#     Number of days (1 day = 24 hours) between two dates
+#
+#     :param first_day: datetime
+#     :param last_day: datetime
+#     :return: number of days
+#
+#     """
+#     elapsed = last_day - first_day
+#     return elapsed.days
 
 
-def set_locale_to_user_defaults():
-    import locale
-
-    current_locale, encoding = locale.getdefaultlocale()
-    locale.setlocale(locale.LC_TIME, current_locale)
+# def set_locale_to_user_defaults():
+#     import locale
+#
+#     current_locale, encoding = locale.getdefaultlocale()
+#     locale.setlocale(locale.LC_TIME, current_locale)
 
 
 def pretty_polyid(polynomial: object, f_text: str = "f", var_symbol: str = "x", equal_sign: str = "=") -> str:
