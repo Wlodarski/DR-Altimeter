@@ -54,7 +54,7 @@ class NoPanXAxes(Axes):
         Axes.drag_pan(self, button, "x", _x, _y)  # pretend key=='x'
 
 
-class LinkedRectangles:
+class LinkedRectangles:  # TODO: not sure it needs to be a class
     """
     links two rectangles to two axes. Any zoom/pan propagates to the two rectangles
     """

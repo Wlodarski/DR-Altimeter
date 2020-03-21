@@ -28,7 +28,7 @@ import sys
 from pathlib import Path
 
 
-class CommandLineParser:
+class CommandLineParser:  # TODO: not sure it needs to be a class
     __slots__ = ["parser", "bundle_dir", "localedir", "all_lang", "args"]
 
     def __init__(self, prog_path: Path, description: str, shortname: str, version: str):
