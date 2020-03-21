@@ -82,7 +82,6 @@ class Program:
         "STATION_NAME",
         "ELEVATION",
         "P_INITIAL",
-        "console",
         "result",
         "forecast",
         "slack",
@@ -147,10 +146,7 @@ class Program:
         self.ELEVATION = None
         self.P_INITIAL = None
 
-        self.console = Console(title=self.NAME, version=self.VERSION, subtitle=self.DESCRIPTION)
-        self.result = PredictionTable()
-        self.forecast = Forecast()
-        self.slack = slack.WebClient(token=environ["SLACK_API_TOKEN"])
+        self.start_console()
 
         # starts logging
         self.LOG_FILENAME = self.SHORTNAME + ".log"
@@ -161,6 +157,10 @@ class Program:
             format="%(asctime)s %(levelname)s : %(message)s",
             datefmt="%Y-%m-%d %H:%M",
         )
+
+        self.result = PredictionTable()
+        self.forecast = Forecast()
+        self.slack = slack.WebClient(token=environ["SLACK_API_TOKEN"])
 
         # reads configuration file and recreates missing values
         self.CONFIG_FILENAME = "config.ini"
@@ -248,6 +248,17 @@ class Program:
         self.MISSING_LATLONG = self.LATITUDE is None or self.LONGITUDE is None
 
         self.browser = ChromeBrowser()
+
+    def start_console(self):
+        """
+        Open OS console for stdout
+        :return: 
+        """
+        system(f"title {self.NAME} {self.VERSION}")
+
+        print80(colored(f"{self.NAME} {self.VERSION}", attrs=["bold"], ))
+        print80(self.DESCRIPTION)
+        print()
 
     def save_ini(self):
         # fmt: off
@@ -443,26 +454,6 @@ class Program:
     def register_error(msg):
         logging.error(msg)
         return msg
-
-
-class Console:
-    __slots__ = ["title", "version", "subtitle"]
-
-    def __init__(self, title: str, version: str, subtitle: str):
-        """
-        :param title: window title
-        :param version: program version
-        :param subtitle: short description
-        """
-        self.title = title
-        self.version = version
-        self.subtitle = subtitle
-
-        system(f"title {self.title} {self.version}")
-
-        print80(colored(f"{self.title} {self.version}", attrs=["bold"], ))
-        print80(self.subtitle)
-        print()
 
 
 class ChromeBrowser:
