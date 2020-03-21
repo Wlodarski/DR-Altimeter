@@ -44,7 +44,7 @@ class MyDateFormatter(mdates.DateFormatter):
 
 class NoPanXAxes(Axes):
     """
-    Defintion of a Matplotlib Projection that forbids any perpendiculat (up/down) pan
+    Defintion of a Matplotlib Projection that forbids any perpendicular (up/down) pan
     """
 
     name = "No Pan X Axes"
