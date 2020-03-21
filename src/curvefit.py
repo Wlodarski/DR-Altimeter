@@ -60,37 +60,49 @@ class PolynomialCurveFit:
         self.poly = polyfit(self.x, self.y, self.degree)
         self.error = self.error_matrix()
 
-    # def best_degree(self):
-    #     return len(self.x) // 2
-
     def best_degree(self) -> int:
         """
         Finds the polynomial degree with the best fit by removing one point of data
-        :return: degree with least square error
+        and then checking whether the curve fit approximates accurately the removed point
+        
+        :return: polynomial degree that produces the smallest error
         """
-        error_for_each_degree = []
-        full_len = len(self.x)
-        half_len = full_len // 2
-        slightly_larger_than_half = (4 * full_len) // 7  # 4/7 is slightly larger than 1/2
-        for tested_degree in range(slightly_larger_than_half):
-            squared_error = 0
-            for index_removed in range(full_len):
-                training_x = self.x.copy()
-                training_y = self.y.copy()
-                del training_x[index_removed]
-                del training_y[index_removed]
-                # RankWarning should never be triggered with a 4/7 ceiling
-                # Hence the warning is not currently supressed
-                #
-                # code to supress warning, for future reference:
-                #       warnings.simplefilter('ignore', np.RankWarning)
-                #
-                poly = polyfit(training_x, training_y, tested_degree)
-                squared_error += (self.y[index_removed] - polyval(poly, self.x[index_removed])) ** 2
-            error_for_each_degree.append(np.sqrt(squared_error))
-        best = np.argmin(error_for_each_degree)
-        if best >= half_len:
+
+        def without(iterable, *, dismiss_index: int):
+            for index, value in enumerate(iterable):
+                if index != dismiss_index:
+                    yield value
+
+        def indexes(iterable):
+            for index, _ in enumerate(iterable):
+                yield index
+
+        times = self.x
+        altitudes = self.y
+        index_list = list(indexes(zip(times, altitudes)))
+
+        full_length = len(index_list)
+        half = full_length // 2
+        slighty_more_than_half = (full_length * 4) // 7  # 4/7 is a reliable ceiling
+
+        min_error = float("inf")
+        for tested_degree in index_list[:slighty_more_than_half]:
+
+            error = 0
+            for case in index_list:
+                training_times = list(without(iterable=times, dismiss_index=case))
+                training_altitudes = list(without(iterable=altitudes, dismiss_index=case))
+                expected_altitude = altitudes[case]
+                poly = polyfit(training_times, training_altitudes, tested_degree)
+                error += abs(expected_altitude - polyval(poly, times[case]))
+
+            if error < min_error:
+                best = tested_degree
+                min_error = error
+
+        if best >= half:
             warnings.warn(_("Degree abnormally high. Predictions might be unreliable."))
+
         return best
 
     def error_matrix(self):
