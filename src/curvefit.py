@@ -103,8 +103,9 @@ class PolynomialCurveFit:
         sum_down = 0
         error_up = []
         error_down = []
-        for t in range(0, len(self.x)):
-            error = self.y[t] - polyval(self.poly, self.x[t])
+        for time, altitude in zip(self.x, self.y):
+            curve_fit_altitude = polyval(self.poly, time)
+            error = altitude - curve_fit_altitude
             if error > 0:
                 sum_up += error
             else:
