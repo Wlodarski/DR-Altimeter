@@ -29,6 +29,8 @@ from pathlib import Path
 
 
 class CommandLineParser:
+    __slots__ = ["parser", "bundle_dir", "localedir", "all_lang", "args"]
+
     def __init__(self, prog_path: Path, description: str, shortname: str, version: str):
         self.parser = argparse.ArgumentParser(
             prog=prog_path.name, description=description, epilog="{}, version {}".format(shortname, version),

@@ -74,6 +74,62 @@ colorama.init()  # otherwise termcolor won't be fully included at compilation by
 
 
 class Program:
+    __slots__ = [
+        "NAME",
+        "SHORTNAME",
+        "VERSION",
+        "DESCRIPTION",
+        "STATION_NAME",
+        "ELEVATION",
+        "P_INITIAL",
+        "console",
+        "result",
+        "forecast",
+        "slack",
+        "LOG_FILENAME",
+        "CONFIG_FILENAME",
+        "CS",
+        "cfg",
+        "TIMEOUT_T",
+        "TIMEOUT",
+        "TIMEOUT_LONG_T",
+        "TIMEOUT_LONG",
+        "GEOLOCATION_ALWAYS_ON_T",
+        "GEOLOCATION_ALWAYS_ON",
+        "WAIT_FOR_KEY_T",
+        "WAIT_FOR_KEY",
+        "PAUSE",
+        "OVERRIDE_URL_T",
+        "OVERRIDE_URL_",
+        "OVERRIDE_URL",
+        "OVERRIDE_URL_EXISTS",
+        "ANY_HTTPS_PAGE_T",
+        "ANY_HTTPS_PAGE",
+        "GEOLOCATED_URL_T",
+        "GEOLOCATED_URL",
+        "GRAPH_FILENAME_T",
+        "GRAPH_FILENAME",
+        "GRAPH_DPI_T",
+        "GRAPH_DPI",
+        "GRAPH_ORIENTATION_T",
+        "GRAPH_ORIENTATION",
+        "GRAPH_PAPERTYPE_T",
+        "GRAPH_PAPERTYPE",
+        "VERBOSE_T",
+        "VERBOSE_",
+        "VERBOSE",
+        "SHOW_X_HOURS_T",
+        "SHOW_X_HOURS",
+        "MIN_HOURS_T",
+        "MIN_HOURS",
+        "LATITUDE_T",
+        "LATITUDE",
+        "LONGITUDE_T",
+        "LONGITUDE",
+        "MISSING_LATLONG",
+        "browser",
+    ]
+
     def __init__(self, fullname: str, version: str, description: str, shortname: str):
         """
         :param fullname: program name
@@ -390,6 +446,8 @@ class Program:
 
 
 class Console:
+    __slots__ = ["title", "version", "subtitle"]
+
     def __init__(self, title: str, version: str, subtitle: str):
         """
         :param title: window title
@@ -409,6 +467,8 @@ class Console:
 
 class ChromeBrowser:
     """ Controls *chromedriver.exe* """
+
+    __slots__ = ["options", "driver"]
 
     def __init__(self):
         self.options = Options()
