@@ -184,4 +184,4 @@ class PolynomialCurveFit:
                 times.append(current_time)
                 steps.append(_("fix"))
 
-        return times, steps
+        return zip(times, steps)

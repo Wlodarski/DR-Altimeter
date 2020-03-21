@@ -606,11 +606,9 @@ try:
     index = 0
     previous_hour = start.hour
 
-    t, s = curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour)
-
-    for i in range(0, len(s)):
-        step_text = no_leading_zeros(f"{t[i]:#%Hh%M}[{s[i]}]")
-        this_hour = t[i].hour
+    for this_time, this_step in curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour):
+        step_text = no_leading_zeros(f"{this_time:#%Hh%M}[{this_step}]")
+        this_hour = this_time.hour
 
         if this_hour != previous_hour:
             if first:
