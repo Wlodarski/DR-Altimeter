@@ -29,6 +29,8 @@ class AtmosphericPressure:
         Atmospheric pressure in hectopascals.
     """
 
+    __slots__ = ["value"]
+
     def __init__(self, hectopascal: float):
         """
         :param hectopascal: 260 hPa < pressure < 1100 hPa
@@ -52,6 +54,8 @@ class InternationalStandardAtmosphere:
      |   a) altitude below 11 km
      |   b) barometric altimeter at constant temperature and humidity
     """
+
+    __slots__ = ["TEMP_MSL", "PRESSURE_MSL", "TEMP_GRADIANT", "PERFECT_GAS"]
 
     def __init__(self):
         # fmt: off

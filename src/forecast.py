@@ -29,6 +29,8 @@ from ISA import AtmosphericPressure, InternationalStandardAtmosphere
 
 
 class Forecast:
+    __slots__ = ["values"]
+
     def __init__(self):
         self.values = []
 

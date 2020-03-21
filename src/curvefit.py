@@ -53,6 +53,8 @@ def date2dhour(date_ref: datetime, date: datetime) -> float:
 
 
 class PolynomialCurveFit:
+    __slots__ = ["x", "y", "degree", "poly", "error"]
+
     def __init__(self, x_vector, y_vector):
         self.x = x_vector
         self.y = y_vector

@@ -25,6 +25,8 @@ SOFTWARE.
 
 
 class PredictionTable:
+    __slots__ = ["table"]
+
     def __init__(self):
         from texttable import Texttable
 

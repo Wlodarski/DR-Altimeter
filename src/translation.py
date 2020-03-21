@@ -28,6 +28,8 @@ from locale import getdefaultlocale
 
 
 class Translation:
+    __slots__ = ["gettext"]
+
     @staticmethod
     def temporary_(message):
         return message

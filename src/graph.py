@@ -59,6 +59,8 @@ class LinkedRectangles:
     links two rectangles to two axes. Any zoom/pan propagates to the two rectangles
     """
 
+    __slots__ = ["r", "aa"]
+
     def __init__(self, ax1: Axes, r1: Rectangle, ax2: Axes, r2: Rectangle):
         self.r = [r1, r2]
         self.aa = [ax1, ax2]
