@@ -69,25 +69,28 @@ class PolynomialCurveFit:
         :return: degree with least square error
         """
         error_for_each_degree = []
-        for tested_degree in range(0, (4 * len(self.x)) // 7):  # 4/7 = slightly larger than half point
-            # RankWarning should never be triggered with a 4/7 ceiling
-            # Hence the warning is not currently supressed
-            #
-            # code to supress warning, for future reference:
-            #       warnings.simplefilter('ignore', np.RankWarning)
-            #
+        full_len = len(self.x)
+        half_len = full_len // 2
+        slightly_larger_than_half = (4 * full_len) // 7  # 4/7 is slightly larger than 1/2
+        for tested_degree in range(slightly_larger_than_half):
             squared_error = 0
-            for index_removed in range(0, len(self.x)):
+            for index_removed in range(full_len):
                 training_x = self.x.copy()
                 training_y = self.y.copy()
                 del training_x[index_removed]
                 del training_y[index_removed]
+                # RankWarning should never be triggered with a 4/7 ceiling
+                # Hence the warning is not currently supressed
+                #
+                # code to supress warning, for future reference:
+                #       warnings.simplefilter('ignore', np.RankWarning)
+                #
                 poly = polyfit(training_x, training_y, tested_degree)
                 squared_error += (self.y[index_removed] - polyval(poly, self.x[index_removed])) ** 2
             error_for_each_degree.append(np.sqrt(squared_error))
-            best = np.argmin(error_for_each_degree)
-            if best >= len(self.x) // 2:
-                warnings.warn(_("Degree abnormally high. Predictions might be unreliable."))
+        best = np.argmin(error_for_each_degree)
+        if best >= half_len:
+            warnings.warn(_("Degree abnormally high. Predictions might be unreliable."))
         return best
 
     def error_matrix(self):
