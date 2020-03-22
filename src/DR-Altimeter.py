@@ -29,6 +29,7 @@ from configparser import ConfigParser
 from datetime import datetime, timedelta
 from os import system, environ
 from pathlib import Path
+from platform import python_version
 from re import search
 
 import colorama
@@ -254,11 +255,15 @@ class Program:
         Open OS console for stdout
         :return: 
         """
-        system(f"title {self.NAME} {self.VERSION}")
+        system("title {} {} (Python {})".format(self.NAME, self.VERSION, python_version()))
 
-        print80(colored(f"{self.NAME} {self.VERSION}", attrs=["bold"], ))
+        print80(colored("{} {}".format(self.NAME, self.VERSION), attrs=["bold"], ))
         print80(self.DESCRIPTION)
         print()
+        if python_version() < "3.9":  # TODO: really required, sure not in the right sequence?
+            print(_("{} works best with Python version 3.6 and above.").format(self.NAME))
+            print(_("Please consider updating."))
+            print()
 
     def save_ini(self):
         # fmt: off
@@ -289,7 +294,7 @@ class Program:
         print80(_("Latitude : {:.7f}").format(pos["latitude"]))
         print80(_("Longitude : {:.7f}").format(pos["longitude"]))
         print80(_("Accuracy : {}m").format(pos["accuracy"]))
-        logging.info(f"{pos['latitude']:.7f} {pos['longitude']:.7f} ±{pos['accuracy']}m")
+        logging.info("{:.7f} {:.7f} ±{}m".format(pos["latitude"], pos["longitude"], pos["accuracy"]))
         print()
 
     def hourly_forecast_url(self):
@@ -301,7 +306,9 @@ class Program:
             self.browser.quit()
 
             #  decreased precision (3 digits instead of 7) to partially preserve anonymity
-            _hourly_forecast_url = self.GEOLOCATED_URL + f"{position['latitude']:.3f},{position['longitude']:.3f}"
+            _hourly_forecast_url = self.GEOLOCATED_URL + "{:.3f},{:.3f}".format(
+                position["latitude"], position["longitude"]
+            )
 
         elif self.OVERRIDE_URL_EXISTS:
 
@@ -316,7 +323,7 @@ class Program:
             print80(_("Longitude: {}").format(self.LONGITUDE))
             print()
             #  decreased precision (3 digits instead of 7) to partially preserve anonymity
-            _hourly_forecast_url = self.GEOLOCATED_URL + f"{self.LATITUDE:.3f},{self.LONGITUDE:.3f}"
+            _hourly_forecast_url = self.GEOLOCATED_URL + "{:.3f},{:.3f}".format(self.LATITUDE, self.LONGITUDE)
 
         else:  # if everything fails, an example url
             _hourly_forecast_url = "https://www.wunderground.com/hourly/ca/montreal/IMONTR15"
@@ -425,8 +432,8 @@ class Program:
 
     def send_to_slack(self, _fix_hour):
         _txt = self.result.display_table()
-        _title = f"{self.STATION_NAME}-{_fix_hour:%Y%m%d-%H%M}".replace(" ", "_")
-        _comment = f"{self.STATION_NAME} ({self.ELEVATION}m)\n\n"
+        _title = "{}-{:}".format(self.STATION_NAME, _fix_hour.strftime("%Y%m%d-%H%M")).replace(" ", "_")
+        _comment = "{} ({}m)\n\n".format(self.STATION_NAME, self.ELEVATION)
         try:
             print80(_("Sending timetable to Slack channel {}").format(args.slack))
             _response = self.slack.files_upload(
@@ -475,7 +482,7 @@ class ChromeBrowser:
         self.options.add_experimental_option("prefs", {"geolocation": geolocation})
         if hidden and not geolocation:  # geolocation only works if not headless
             self.options.add_argument("--headless")
-        self.driver = webdriver.Chrome(chrome_options=self.options)
+        self.driver = webdriver.Chrome(options=self.options)
         self.driver.get(webpage)
 
     def close_window(self):
@@ -593,7 +600,7 @@ try:
         print()
         print80(program.register_info(_("Pressure vector (z) : {}").format(z)))
         print()
-        print(program.register_info(f"\n{formula}\n"))
+        print(program.register_info("\n{}\n".format(formula)))
         print(program.register_info("".center(79, "-")))
         print()
 
@@ -607,7 +614,7 @@ try:
     previous_hour = start.hour
 
     for this_time, this_step in curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour):
-        step_text = no_leading_zeros(f"{this_time:#%Hh%M}[{this_step}]")
+        step_text = no_leading_zeros("{}[{}]".format(this_time.strftime("#%Hh%M"), this_step))
         this_hour = this_time.hour
 
         if this_hour != previous_hour:
@@ -671,20 +678,22 @@ try:
     fig = plt.figure(
         # fmt: off
         dpi=96, figsize=(16, 9),
-        num=f"{program.STATION_NAME} {fix_hour:%Y%m%d-%H%M}",
+        num="{} {}".format(program.STATION_NAME, fix_hour.strftime('%Y%m%d-%H%M')),
         # fmt: on
     )
     plt.figtext(
         # fmt: off
         0.95, 0.01,
-        f"{program.NAME} {program.VERSION}",
+        "{} {}".format(program.NAME, program.VERSION),
         horizontalalignment="right", alpha=0.8, fontsize="x-small",
         # fmt: on
     )
 
     # two subplots on a grid system
     gs = GridSpec(figure=fig, ncols=1, nrows=2, height_ratios=[3, 1], hspace=0.1, bottom=0.07)
-    topsubplot = fig.add_subplot(gs[0], title=f"{program.STATION_NAME} ― {fix_hour:%Y.%m.%d %H:%M}", )
+    topsubplot = fig.add_subplot(
+        gs[0], title="{} ― {}".format(program.STATION_NAME, fix_hour.strftime("%Y.%m.%d %H:%M")),
+    )
     bottomsubplot = fig.add_subplot(gs[1], sharex=topsubplot, projection="No Pan X Axes")
 
     # formatting the top (altitude) graph
@@ -714,7 +723,7 @@ try:
     bottomsubplot.yaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     old_ticks = bottomsubplot.get_yticks()
     bottomsubplot.set_yticks(list(old_ticks) + [1013.25])
-    bottomsubplot.set_yticklabels(list(map(lambda new: f"{new:.0f} hPa", old_ticks)) + ["MSL$_{ISA}$"])
+    bottomsubplot.set_yticklabels(list(map(lambda new: "{:.0f} hPa".format(new), old_ticks)) + ["MSL$_{ISA}$"])
     bottomsubplot.set_ylim(  # multiple of 5, just below the minimum pressure and just above maximum pressure
         # fmt: off
         round(2 * (min(z) - 2.5), -1) // 2,
