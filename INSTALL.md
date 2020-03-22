@@ -33,9 +33,15 @@ DR-Altimeter has not been tested on operating systems other than Windows 10 runn
 
 1. Download the Python [source files](src):
    - DR-Altimeter.py
-   - forcastarray.py
    - ISA.py
+   - commandline.py
+   - curvefit.py
+   - forecast.py
+   - graph.py
+   - translation.py
    - txttable.py
+   - utils.py
+   - ...
    
 2. Download the Chrome driver compatible with your OS at [Chromium.org](https://chromedriver.chromium.org/downloads)
    
