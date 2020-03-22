@@ -29,7 +29,7 @@ from configparser import ConfigParser
 from datetime import datetime, timedelta
 from os import system, environ
 from pathlib import Path
-from platform import python_version
+from platform import python_version, python_version_tuple
 from re import search
 
 import colorama
@@ -260,7 +260,9 @@ class Program:
         print80(colored("{} {}".format(self.NAME, self.VERSION), attrs=["bold"], ))
         print80(self.DESCRIPTION)
         print()
-        if python_version() < "3.6":
+
+        major, minor, patchlevel = map(int, python_version_tuple())
+        if major != 3 or minor < 6:
             print80(_("{} works best with Python version 3.6 and above. Please consider updating.").format(self.NAME))
             print()
 
