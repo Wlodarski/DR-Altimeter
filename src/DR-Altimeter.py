@@ -260,9 +260,8 @@ class Program:
         print80(colored("{} {}".format(self.NAME, self.VERSION), attrs=["bold"], ))
         print80(self.DESCRIPTION)
         print()
-        if python_version() < "3.9":  # TODO: really required, sure not in the right sequence?
-            print(_("{} works best with Python version 3.6 and above.").format(self.NAME))
-            print(_("Please consider updating."))
+        if python_version() < "3.6":
+            print80(_("{} works best with Python version 3.6 and above. Please consider updating.").format(self.NAME))
             print()
 
     def save_ini(self):
