@@ -29,7 +29,7 @@ If you encounter problems with the provided Chrome driver, download another vers
 
 ## Linux and other OS
 
-DR-Altimeter has not been tested on operating systems other than Windows 10 running Python 3.6, but it should work with only minor tweaks.
+DR-Altimeter has not been tested on operating systems other than Windows 10 running Python 3.6, but it should work with only minor tweaks. Python version 3.6 or above is recommended, but it should be usable with version 3.2 and above.
 
 1. Download the Python [source files](src):
    - DR-Altimeter.py
@@ -40,7 +40,7 @@ DR-Altimeter has not been tested on operating systems other than Windows 10 runn
 2. Download the Chrome driver compatible with your OS at [Chromium.org](https://chromedriver.chromium.org/downloads)
    
 3. Install all the required libraries:
-   - ``pip install matplotlib numpy slack selenium termcolor colorama``
+   - ``pip install matplotlib numpy slack selenium termcolor colorama [pathlib, ...]``
 
 4. Run ``python DR-Altimeter.py`` and adapt the configuration file, [config.ini](CONFIG.md), generated at first run to suit your need.
 
