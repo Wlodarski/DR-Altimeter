@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-03-20 16:03-0400\n"
-"PO-Revision-Date: 2020-03-20 16:06-0400\n"
+"POT-Creation-Date: 2020-03-22 14:34-0400\n"
+"PO-Revision-Date: 2020-03-22 15:33-0400\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,6 +25,9 @@ msgstr "If one is provided, both --latitude and --longitude must be provided"
 
 msgid "Regenerating {}"
 msgstr "Regenerating {}"
+
+msgid "{} works best with Python version 3.6 and above. Please consider updating."
+msgstr "{} works best with Python version 3.6 and above. Please consider updating."
 
 msgid "Latitude : {:.7f}"
 msgstr "Latitude : {:.7f}"
@@ -126,10 +129,10 @@ msgid "Hourly Forecast"
 msgstr "Hourly Forecast"
 
 msgid "$^{th}$"
-msgstr "$^{th}$"
+msgstr "$^{ }$"
 
 msgid "Polynomlal Steps of {}{} degree"
-msgstr "Curve fit (polynomial of {}{} degree)"
+msgstr "Polynomial Regression of degree {}{} degree"
 
 msgid "Fix at {}"
 msgstr "Fix at {}"
