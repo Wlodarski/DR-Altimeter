@@ -759,7 +759,7 @@ try:
         "time", "steps", data=curvefit.curvefit_dict(start_full_hour, margin=0),
         where="post",
         color="red", marker="", linestyle="solid",
-        label=_("Polynomlal Steps of {}{} degree").format(curvefit.degree, _("$^{th}$")),
+        label=_("Polynomial Regression of degree {}").format(curvefit.degree),
         zorder=9,
         # fmt: on
     )
