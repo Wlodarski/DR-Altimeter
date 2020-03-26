@@ -520,8 +520,12 @@ try:
     hourly_forecast_url = program.hourly_forecast_url()
 
     first_day = datetime.today()
+    same_day = 1
+    if datetime.now().hour == 23:  # https://github.com/Wlodarski/DR-Altimeter/issues/6
+        first_day += timedelta(days=1)
+        same_day = 0
     last_day = first_day + timedelta(hours=program.MIN_HOURS)
-    nth_days = range(0, 1 + nb_date_changes(first_day, last_day))
+    nth_days = range(0, same_day + nb_date_changes(first_day, last_day))
     dates = [first_day.date() + timedelta(days=day) for day in nth_days]
 
     first_page = True
