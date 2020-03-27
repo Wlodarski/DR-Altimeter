@@ -50,9 +50,9 @@ class PredictionTable:
 
     def add(self, hour: int, pressure: float, alt: float, alt_h: float, times: iter) -> int:
         _h = "{:d}h".format(int(hour))
-        _p = "{:.2f} hPa".format(float(pressure))
-        _a = "{:.1f}m".format(float(alt))
-        _ah = "{:.1f}m".format(float(alt_h))
+        _p = "{:.2f} hPa".format(pressure) if type(pressure) is float else ""
+        _a = "{:.1f}m".format(alt) if type(alt) is float else ""
+        _ah = "{:.1f}m".format(alt_h) if type(alt) is float else ""
         _t = ", ".join(times)
 
         return self._add(hour=_h, pressure=_p, alt=_a, alt_h=_ah, times=_t)
