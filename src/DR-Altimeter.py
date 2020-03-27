@@ -38,6 +38,7 @@ import matplotlib.ticker as ticker
 import slack
 from matplotlib.gridspec import GridSpec
 from matplotlib.projections import register_projection
+from numpy import arange
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.chrome.options import Options
@@ -53,7 +54,12 @@ from forecast import Forecast
 from graph import NoPanXAxes, MyMatplotlibTools
 from translation import Translation
 from txttable import PredictionTable
-from utils import print80, nb_date_changes, pretty_polyid, cross_platform_leading_zeros_removal as no_leading_zeros
+from utils import (
+    print80,
+    nb_date_changes,
+    pretty_polyid,
+    cross_platform_leading_zeros_removal as no_leading_zeros,
+)
 
 _ = Translation()
 
@@ -576,6 +582,7 @@ try:
     end = times[-1]
     start_full_hour = start.replace(microsecond=0, second=0, minute=0)
     end_full_hour = end.replace(microsecond=0, second=0, minute=0)
+    middle_full_hours = arange(start_full_hour + timedelta(hours=1), end_full_hour, timedelta(hours=1)).astype(datetime)
 
     x = [date2dhour(start_full_hour, t) for t in program.forecast.times()]  # time since start
     y = program.forecast.delta_altitudes(p_ref=program.P_INITIAL)  # altitude change
@@ -613,58 +620,37 @@ try:
     # TEXT OUTPUT
     # ----------------------------------------------------------------------
 
-    first = True
-    times_string = ""
-    index = 0
-    previous_hour = start.hour
+    curvefit.compute_steps(ref_hour=start_full_hour, fix_hour=fix_hour)
 
-    for this_time, this_step in curvefit.step_changes(ref_hour=start_full_hour, fix_hour=fix_hour):
-        step_text = no_leading_zeros("{}[{}]".format(this_time.strftime("#%Hh%M"), this_step))
-        this_hour = this_time.hour
-
-        if this_hour != previous_hour:
-            if first:
-                program.result.add_start(
-                    hour=start.hour, minute=start.minute, pressure=z[index], times=[times_string],
-                )
-                first = False
-            else:
-                program.result.add(
-                    hour=previous_hour,
-                    pressure=z[index],
-                    alt=y[index],
-                    alt_h=y[index] - y[index - 1],
-                    times=[times_string],
-                )
-
-            for hours_with_no_change in range(1, (this_hour - previous_hour) % 24):
-                index += 1
-                program.result.add(
-                    hour=(previous_hour + hours_with_no_change) % 24,
-                    pressure=z[index],
-                    alt=y[index],
-                    alt_h=y[index] - y[index - 1],
-                    times="",
-                )
-            index += 1
-            times_string = ""
-            previous_hour = this_hour
-
-        if len(times_string) > 0:
-            times_string += ", "
-
-        times_string += step_text
-
-    # last curvefit prediction
-    program.result.add(
-        hour=this_hour, pressure=z[index], alt=y[index], alt_h=y[index] - y[index - 1], times=[times_string],
+    program.result.add_start(
+        hour=start.hour, minute=start.minute, pressure=program.P_INITIAL, times=[curvefit.step_text(start_full_hour)],
     )
+    previous_pressure = program.P_INITIAL
 
-    # last atm. pressure from Wunderground
-    index += 1
-    this_hour = (previous_hour + 1) % 24
+    for loop_hour in middle_full_hours:
+        if loop_hour in times:
+
+            this_pressure = program.forecast.get_pressure(loop_hour)
+            program.result.add(
+                hour=loop_hour.hour,
+                pressure=this_pressure,
+                alt=program.forecast.get_delta_altitude(loop_hour, p_ref=program.P_INITIAL),
+                alt_h=program.forecast.get_delta_altitude(loop_hour, p_ref=previous_pressure),
+                times=[curvefit.step_text(loop_hour)],
+            )
+            previous_pressure = this_pressure
+
+        else:
+            program.result.add(
+                hour=loop_hour.hour, pressure=None, alt=None, alt_h=None, times=[curvefit.step_text(loop_hour)],
+            )
+
     program.result.add(
-        hour=this_hour, pressure=z[index], alt=y[index], alt_h=y[index] - y[index - 1], times="",
+        hour=end.hour,
+        pressure=program.forecast.get_pressure(end),
+        alt=program.forecast.get_altitude(end),
+        alt_h=program.forecast.get_delta_altitude(end, p_ref=previous_pressure),
+        times=[],
     )
 
     program.display_results()
