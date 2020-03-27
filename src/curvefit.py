@@ -53,7 +53,7 @@ def date2dhour(date_ref: datetime, date: datetime) -> float:
 
 
 class PolynomialCurveFit:
-    __slots__ = ["x", "y", "degree", "poly", "error"]
+    __slots__ = ["x", "y", "degree", "poly", "error", "steps"]
 
     def __init__(self, x_vector, y_vector):
         self.x = x_vector
@@ -61,6 +61,7 @@ class PolynomialCurveFit:
         self.degree = self.best_degree()
         self.poly = polyfit(self.x, self.y, self.degree)
         self.error = self.error_matrix()
+        self.steps = None
 
     def best_degree(self) -> int:
         """
@@ -167,7 +168,7 @@ class PolynomialCurveFit:
         c_fit["steps"] = list(map(self._int_round, c_fit["dotted line"]))
         return c_fit
 
-    def step_changes(self, ref_hour, fix_hour=None):
+    def step_changes(self, ref_hour, fix_hour=None):  # TODO remove when done refactoring
         times = []
         steps = []
         cfit = self.curvefit_dict(ref_hour=ref_hour)
@@ -185,3 +186,31 @@ class PolynomialCurveFit:
                 steps.append(_("fix"))
 
         return zip(times, steps)
+
+    def compute_steps(self, ref_hour, fix_hour=None):
+        times = []
+        steps = []
+        cfit = self.curvefit_dict(ref_hour=ref_hour)
+        previous_step = cfit["steps"][0]
+        if fix_hour is not None:
+            fix_hour = fix_hour.replace(microsecond=0, second=0)
+
+        for current_time, current_step in zip(cfit["time"], cfit["steps"]):
+            if current_step != previous_step:
+                times.append(current_time)
+                steps.append(current_step)
+            previous_step = current_step
+            if current_time == fix_hour:
+                times.append(current_time)
+                steps.append(_("fix"))
+
+        self.steps = times, steps
+
+    def step_text(self, hr):
+        from utils import filter_by_hour, cross_platform_leading_zeros_removal as nz
+
+        times, steps = self.steps
+        in_hour = filter_by_hour(times, hr=hr)
+        index = [times.index(t) for t in in_hour]
+        texts = [f"{nz(times[i].strftime('#%Hh%M'))}[{steps[i]}]" for i in index]
+        return ", ".join(texts)
