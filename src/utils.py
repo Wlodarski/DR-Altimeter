@@ -106,3 +106,21 @@ def cross_platform_leading_zeros_removal(s, c="#"):
     
     """
     return s.replace(c + "0", c).replace(c, "")
+
+
+def share_same_hour(d1: datetime, d2: datetime) -> bool:
+    """
+    Returns True if both datetimes share the same hour and date 
+    """
+    h1 = d1.replace(microsecond=0, second=0, minute=0)
+    h2 = d2.replace(microsecond=0, second=0, minute=0)
+    return h1 == h2
+
+
+def filter_by_hour(list_of_times: list, *, hr: datetime) -> filter:
+    """
+    Return only the items in the list_of_times that share the same hour and day as hr
+    """
+    from functools import partial
+    in_same_hour = partial(share_same_hour, d2=hr)
+    return filter(in_same_hour, list_of_times)
