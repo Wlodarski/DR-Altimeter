@@ -37,22 +37,31 @@ class Forecast:
     def add(self, time: datetime, pressure: AtmosphericPressure) -> None:
         self.values.append({"time": time, "pressure": AtmosphericPressure(hectopascal=pressure)})
 
-    def get(self, key: str):
+    def _get(self, key: str):
         return [_point[key] for _point in self.values]
 
-    def pressures(self):
-        return [_i.value for _i in self.get("pressure")]
+    def get_pressure(self, time: datetime) -> AtmosphericPressure:
+        return self.pressures()[self.times().index(time)]
 
-    def altitudes(self) -> float:
+    def get_altitude(self, time: datetime):
+        return self.altitudes()[self.times().index(time)]
+
+    def get_delta_altitude(self, time: datetime, *, p_ref: AtmosphericPressure):
+        return self.delta_altitudes(p_ref=p_ref)[self.times().index(time)]
+
+    def pressures(self):
+        return [_i.value for _i in self._get("pressure")]
+
+    def altitudes(self):
         _isa = InternationalStandardAtmosphere()
-        return [_isa.altitude(i.value) for i in self.get("pressure")]
+        return [_isa.altitude(i.value) for i in self._get("pressure")]
 
     def delta_altitudes(self, p_ref):
         _isa = InternationalStandardAtmosphere()
-        return [_isa.delta_altitude(p_ref=p_ref, current_p=i.value) for i in self.get("pressure")]
+        return [_isa.delta_altitude(p_ref=p_ref, current_p=i.value) for i in self._get("pressure")]
 
     def times(self):
-        return self.get("time")
+        return self._get("time")
 
     def sorted_by(self, key, reverse=False) -> bytearray:
         return sorted(self.values, key=lambda _i: _i[key], reverse=reverse)
