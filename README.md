@@ -38,82 +38,48 @@ _Altitude dead reckoning_ uses the same principle as dead reckoning but applies 
 ```
   H      PRESSURE       ALT     ALT/hr                                         
 ===============================================================================
-21h00   1018.63 hPa                      21h01[fix], 21h12[1], 21h47[2]        
+13h05   1019.98 hPa                      13h12[fix], 13h29[1], 13h56[2]        
 -------------------------------------------------------------------------------
- 22h    1018.59 hPa      0.3m     0.3m   22h04[1]                              
+ 14h    1019.80 hPa      1.5m     1.5m   14h20[3], 14h43[4]                    
 -------------------------------------------------------------------------------
- 23h    1018.39 hPa      2.0m     1.7m                                         
+ 15h    1019.50 hPa      4.0m     2.5m   15h07[5], 15h33[6]                    
 -------------------------------------------------------------------------------
- 0h     1018.39 hPa      2.0m     0.0m   00h02[2], 00h44[3]                    
+ 16h    1019.20 hPa      6.5m     2.5m   16h05[7]                              
 -------------------------------------------------------------------------------
- 1h     1018.29 hPa      2.8m     0.8m   01h16[4], 01h49[5]                    
+ 17h    1019.00 hPa      8.1m     1.7m   17h04[8], 17h35[7]                    
 -------------------------------------------------------------------------------
- 2h     1018.09 hPa      4.5m     1.7m   02h28[6]                              
+ 18h    1019.10 hPa      7.3m    -0.8m   18h34[6]                              
 -------------------------------------------------------------------------------
- 3h     1017.98 hPa      5.4m     0.9m                                         
+ 19h    1019.40 hPa      4.8m    -2.5m   19h05[5], 19h30[4], 19h52[3]          
 -------------------------------------------------------------------------------
- 4h     1017.90 hPa      6.1m     0.7m   04h48[5]                              
+ 20h    1019.61 hPa      3.1m    -1.7m   20h14[2], 20h35[1], 20h57[0]          
 -------------------------------------------------------------------------------
- 5h     1017.98 hPa      5.4m    -0.7m   05h31[4]                              
+ 21h    1019.87 hPa      0.9m    -2.2m   21h21[-1], 21h52[-2]                  
 -------------------------------------------------------------------------------
- 6h     1018.09 hPa      4.5m    -0.9m   06h09[3], 06h49[2]                    
+ 22h    1020.20 hPa     -1.8m    -2.7m                                         
 -------------------------------------------------------------------------------
- 7h     1018.23 hPa      3.3m    -1.2m                                         
--------------------------------------------------------------------------------
- 8h     1018.51 hPa      1.0m    -2.3m                                         
--------------------------------------------------------------------------------
- 9h     1018.53 hPa      0.8m    -0.2m   09h24[3], 09h55[4]                    
--------------------------------------------------------------------------------
- 10h    1018.21 hPa      3.5m     2.7m   10h19[5], 10h40[6], 10h59[7]          
--------------------------------------------------------------------------------
- 11h    1017.81 hPa      6.8m     3.3m   11h17[8], 11h34[9], 11h51[10]         
--------------------------------------------------------------------------------
- 12h    1017.38 hPa     10.4m     3.6m   12h07[11], 12h24[12], 12h40[13],      
-                                         12h57[14]                             
--------------------------------------------------------------------------------
- 13h    1017.00 hPa     13.5m     3.2m   13h15[15], 13h34[16], 13h55[17]       
--------------------------------------------------------------------------------
- 14h    1016.58 hPa     17.0m     3.5m   14h20[18], 14h50[19]                  
--------------------------------------------------------------------------------
- 15h    1016.28 hPa     19.5m     2.5m   15h38[20]                             
--------------------------------------------------------------------------------
- 16h    1016.28 hPa     19.5m     0.0m                                         
--------------------------------------------------------------------------------
- 17h    1016.31 hPa     19.3m    -0.2m   17h29[19]                             
--------------------------------------------------------------------------------
- 18h    1016.40 hPa     18.5m    -0.7m                                         
--------------------------------------------------------------------------------
- 19h    1016.31 hPa     19.3m     0.7m   19h32[20]                             
--------------------------------------------------------------------------------
- 20h    1016.08 hPa     21.2m     1.9m   20h13[21], 20h38[22], 20h58[23]       
--------------------------------------------------------------------------------
- 21h    1015.91 hPa     22.6m     1.4m   21h16[24], 21h32[25], 21h46[26]       
--------------------------------------------------------------------------------
- 22h    1015.51 hPa     25.9m     3.3m   22h01[27], 22h14[28], 22h28[29],      
-                                         22h43[30], 22h58[31]                  
--------------------------------------------------------------------------------
- 23h    1014.91 hPa     30.9m     5.0m   23h15[32], 23h38[33]                  
+ 23h    1020.17 hPa    -57.5m     0.2m                                         
 ````
 
 ##### Simple Example
-At 21h01, you determine that you are at a known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
+At 13h12, you determine that you are at a known altitude of 450 meters above mean sea level. This is your reference or initial [fix].
 
-      21h01[fix] = 450m ASL 
+      13h12[fix] = 450m ASL 
 
-Later, at twelve minutes past midnight, your watch indicates an altitude of 476 meters. And since, between 00h02 and 00h43, the expected contribution of weather is 2 meters (see [Figure 2](README.md#figure-2-textual-output)), you can estimate your true altitude to be 476 - 2 = 474 meters above sea level.
+Later, at 13h56, your watch indicates an altitude of 476 meters. And since, between 13h12 and 13h56, the expected contribution of weather is 2 meters (see [Figure 2](README.md#figure-2-textual-output)), you can estimate your true altitude to be 476 - 2 = 474 meters above sea level.
 
-      00h12[I] = 476m, indicated
-      00h12[DR] = 476m - 00h02[2] = 474m ASL, compensated for forecasted weather
+      13h56[I] = 476m, indicated
+      13h56[DR] = 476m - 13h12[2] = 474m ASL, compensated for forecasted weather
       
 ##### More Advanced Example
-On the same trek ([see above](DR-Altimeter#simple-use)), at 00h50, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this known altitude. Here and on after, this new [fix] becomes your new reference.
+On the same trek ([see above](DR-Altimeter#simple-use)), at 19h52, you reach a point of known altitude (523m ASL). You recalibrate your watch to match this known altitude. Here and on after, this new [fix] becomes your new reference.
 
-      00h50[fix @ 3] = 523m ASL
+      19h52[fix @ 3] = 523m ASL
      
-Next morning, at 07:30, your watch indicates an altitude of 478 meters. Since your last fix was taken at the [3] compensation level (00h44[3]) and you are current at the [2] compensation level (06h49[2]), your deduced altitude is 478 + @[3] - [2] = 479 meters.
+Later that evening, at 20h22, your watch indicates an altitude of 478 meters. Since your last fix was taken at the [3] compensation level (19h52[3]) and you are current at the [2] compensation level (20h22 ≈ 20h14[2]), your deduced altitude is 478 + @[3] - [2] = 479 meters.
 
-      07h30[I] = 478m, indicated
-      07h30[DR] = (478m + @ 0044[3]) - 06h49[2]
+      20h22[I] = 478m, indicated
+      20h22[DR] = (478m + @ 19h52[3]) - 20h14[2]
                 = 481 - 2
                 = 479m ASL, compensated for forecasted weather 
                
