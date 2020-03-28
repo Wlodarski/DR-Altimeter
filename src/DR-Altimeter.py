@@ -766,7 +766,8 @@ try:
     inset_altitude.plot(
         # fmt: off
         times, y,
-        color="red", alpha=0.95
+        color="red", alpha=0.95,
+        picker=lambda hit, evt: (True, {"inset": "altitude"}),
         # fmt: on
     )
 
@@ -782,12 +783,32 @@ try:
         # fmt: off
         times, z,
         color="tab:blue", alpha=0.95,
+        picker=lambda hit, evt: (True, {"inset": "pressure"}),
         # fmt: on
     )
 
     # post-processing subplots
     topsubplot.legend()
     bottomsubplot.legend()
+
+    saved_view = None
+
+
+    def onpick(event):
+        global saved_view
+        if saved_view is None:
+            saved_view = (topsubplot.get_xlim(), topsubplot.get_ylim())
+            topsubplot.autoscale(True)
+            topsubplot.redraw_in_frame()
+        else:
+            topsubplot.autoscale(False)
+            topsubplot.set_xlim(saved_view[0])
+            topsubplot.set_ylim(saved_view[1])
+            topsubplot.redraw_in_frame()
+            saved_view = None
+
+
+    fig.canvas.mpl_connect("pick_event", onpick)
 
     plt.rcParams["savefig.directory"] = None  # To force output in default directories
     plt.savefig(  # save first because plt.show() clears the plot
