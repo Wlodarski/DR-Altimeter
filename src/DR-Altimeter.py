@@ -807,12 +807,12 @@ try:
             topsubplot.redraw_in_frame()
             saved_view = None
 
-
     fig.canvas.mpl_connect("pick_event", onpick)
 
     plt.rcParams["savefig.directory"] = None  # To force output in default directories
     plt.savefig(  # save first because plt.show() clears the plot
         program.GRAPH_FILENAME,
+        bbox_inches="tight" if args.slack is not None else None,
         dpi=program.GRAPH_DPI,
         orientation=program.GRAPH_ORIENTATION,
         papertype=program.GRAPH_PAPERTYPE,
