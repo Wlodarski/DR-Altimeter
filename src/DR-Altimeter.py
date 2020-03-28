@@ -64,7 +64,7 @@ from utils import (
 _ = Translation()
 
 FULLNAME = "DR Polynomial Altimeter"
-VERSION = "v1.0"  # TODO: change when ready to release
+VERSION = "v1.1-alpha"  # TODO: change when ready to release
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = "DR-Altimeter"
 
