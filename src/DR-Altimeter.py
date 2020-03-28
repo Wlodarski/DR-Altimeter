@@ -791,23 +791,24 @@ try:
     topsubplot.legend()
     bottomsubplot.legend()
 
-    saved_view = None
+    zoom_saved = None
 
 
-    def onpick(event):
-        global saved_view
-        if saved_view is None:
-            saved_view = (topsubplot.get_xlim(), topsubplot.get_ylim())
+    def toggle_zoom(_):
+        global zoom_saved
+        if zoom_saved is None:
+            zoom_saved = (topsubplot.get_xlim(), topsubplot.get_ylim())
             topsubplot.autoscale(True)
             topsubplot.redraw_in_frame()
         else:
             topsubplot.autoscale(False)
-            topsubplot.set_xlim(saved_view[0])
-            topsubplot.set_ylim(saved_view[1])
+            topsubplot.set_xlim(zoom_saved[0])
+            topsubplot.set_ylim(zoom_saved[1])
             topsubplot.redraw_in_frame()
-            saved_view = None
+            zoom_saved = None
 
-    fig.canvas.mpl_connect("pick_event", onpick)
+
+    fig.canvas.mpl_connect("pick_event", toggle_zoom)
 
     plt.rcParams["savefig.directory"] = None  # To force output in default directories
     plt.savefig(  # save first because plt.show() clears the plot
