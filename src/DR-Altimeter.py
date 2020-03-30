@@ -620,7 +620,7 @@ try:
     # TEXT OUTPUT
     # ----------------------------------------------------------------------
 
-    curvefit.compute_steps(ref_hour=start_full_hour, fix_hour=fix_hour)
+    curvefit.compute_steps(ref_hour=start_full_hour, start=start, fix_hour=fix_hour)
 
     program.result.add_start(
         hour=start.hour, minute=start.minute, pressure=program.P_INITIAL, times=[curvefit.step_text(start_full_hour)],
@@ -648,7 +648,7 @@ try:
     program.result.add(
         hour=end.hour,
         pressure=program.forecast.get_pressure(end),
-        alt=program.forecast.get_altitude(end),
+        alt=program.forecast.get_delta_altitude(end, p_ref=program.P_INITIAL),
         alt_h=program.forecast.get_delta_altitude(end, p_ref=previous_pressure),
         times=[],
     )
@@ -799,16 +799,21 @@ try:
         if zoom_saved is None:
             zoom_saved = (topsubplot.get_xlim(), topsubplot.get_ylim())
             topsubplot.autoscale(True)
-            topsubplot.redraw_in_frame()
+            fig.canvas.draw_idle()
         else:
             topsubplot.autoscale(False)
             topsubplot.set_xlim(zoom_saved[0])
             topsubplot.set_ylim(zoom_saved[1])
-            topsubplot.redraw_in_frame()
+            fig.canvas.draw_idle()
             zoom_saved = None
 
 
+    def hover(event):
+        inset_altitude.set_label("hover")
+        fig.canvas.draw_idle()
+
     fig.canvas.mpl_connect("pick_event", toggle_zoom)
+    fig.canvas.mpl_connect("motion_notify_event", hover)
 
     plt.rcParams["savefig.directory"] = None  # To force output in default directories
     plt.savefig(  # save first because plt.show() clears the plot
