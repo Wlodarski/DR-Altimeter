@@ -187,22 +187,24 @@ class PolynomialCurveFit:
 
         return zip(times, steps)
 
-    def compute_steps(self, ref_hour, fix_hour=None):
+    def compute_steps(self, ref_hour, start, fix_hour=None):
         times = []
         steps = []
         cfit = self.curvefit_dict(ref_hour=ref_hour)
         previous_step = cfit["steps"][0]
+
         if fix_hour is not None:
             fix_hour = fix_hour.replace(microsecond=0, second=0)
 
         for current_time, current_step in zip(cfit["time"], cfit["steps"]):
-            if current_step != previous_step:
-                times.append(current_time)
-                steps.append(current_step)
-            previous_step = current_step
-            if current_time == fix_hour:
-                times.append(current_time)
-                steps.append(_("fix"))
+            if current_time >= start:  # no extrapolations, only interpolations
+                if current_step != previous_step:
+                    times.append(current_time)
+                    steps.append(current_step)
+                previous_step = current_step
+                if current_time == fix_hour:
+                    times.append(current_time)
+                    steps.append(_("fix"))
 
         self.steps = times, steps
 
