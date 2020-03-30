@@ -232,7 +232,7 @@ class Program:
         self.SHOW_X_HOURS = max(int(self.cfg.get(self.CS, self.SHOW_X_HOURS_T, fallback="6")), 1)
 
         self.MIN_HOURS_T = "minimum hours"
-        self.MIN_HOURS = max(int(self.cfg.get(self.CS, self.MIN_HOURS_T, fallback="8")), self.SHOW_X_HOURS, )
+        self.MIN_HOURS = max(int(self.cfg.get(self.CS, self.MIN_HOURS_T, fallback="8")), self.SHOW_X_HOURS,)
 
         self.save_ini()  # save immediately to renew all required values
 
@@ -263,7 +263,7 @@ class Program:
         """
         system("title {} {} (Python {})".format(self.NAME, self.VERSION, python_version()))
 
-        print80(colored("{} {}".format(self.NAME, self.VERSION), attrs=["bold"], ))
+        print80(colored("{} {}".format(self.NAME, self.VERSION), attrs=["bold"],))
         print80(self.DESCRIPTION)
         print()
 
@@ -408,7 +408,7 @@ class Program:
 
     def get_obs_time(self):
         _elem = self.browser.driver.find_element(By.XPATH, '//*[@id="app-root-state"]')
-        _st = search("obsTimeLocal&q;:&q;(....-..-.. ..:..:..)&q;", _elem.get_attribute("innerHTML"), )
+        _st = search("obsTimeLocal&q;:&q;(....-..-.. ..:..:..)&q;", _elem.get_attribute("innerHTML"),)
         if _st is not None:
             return datetime.strptime(_st.group(1), "%Y-%m-%d %H:%M:%S")
         else:
@@ -433,7 +433,10 @@ class Program:
         )
 
     def display_results(self):
-        _txt = self.result.display_table()
+        _txt = (
+            self.result.display_table()
+            + "\n==============================================================================="
+        )
         logging.info("\n\n" + _txt)
         print(_txt)
 
@@ -793,7 +796,6 @@ try:
 
     zoom_saved = None
 
-
     def toggle_zoom(_):
         global zoom_saved
         if zoom_saved is None:
@@ -806,7 +808,6 @@ try:
             topsubplot.set_ylim(zoom_saved[1])
             fig.canvas.draw_idle()
             zoom_saved = None
-
 
     def hover(event):
         inset_altitude.set_label("hover")
