@@ -122,5 +122,26 @@ def filter_by_hour(list_of_times: list, *, hr: datetime) -> filter:
     Return only the items in the list_of_times that share the same hour and day as hr
     """
     from functools import partial
+
     in_same_hour = partial(share_same_hour, d2=hr)
     return filter(in_same_hour, list_of_times)
+
+
+def cleanup_mei():
+    """
+    Rudimentary workaround for https://github.com/pyinstaller/pyinstaller/issues/2379
+    """
+    import sys
+    import os
+    from shutil import rmtree
+
+    mei_bundle = getattr(sys, "_MEIPASS", False)
+
+    if mei_bundle:
+        dir_mei, current_mei = mei_bundle.split("_MEI")
+        for file in os.listdir(dir_mei):
+            if file.startswith("_MEI") and not file.endswith(current_mei):
+                try:
+                    rmtree(os.path.join(dir_mei, file))
+                except PermissionError:  # mainly to allow simultaneous pyinstaller instances
+                    pass
