@@ -59,6 +59,7 @@ from utils import (
     nb_date_changes,
     pretty_polyid,
     cross_platform_leading_zeros_removal as no_leading_zeros,
+    cleanup_mei,
 )
 
 _ = Translation()
@@ -68,6 +69,7 @@ VERSION = "v1.1-alpha"  # TODO: change when ready to release
 DESCRIPTION = _("Altitude 'Dead Reckoning' for Casio Triple Sensor v.3")
 SHORTNAME = "DR-Altimeter"
 
+cleanup_mei()
 command_line_parser = CommandLineParser(
     prog_path=Path(__file__), description=DESCRIPTION, shortname=SHORTNAME, version=VERSION,
 )
