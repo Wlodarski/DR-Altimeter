@@ -145,3 +145,10 @@ def cleanup_mei():
                     rmtree(os.path.join(dir_mei, file))
                 except PermissionError:  # mainly to allow simultaneous pyinstaller instances
                     pass
+
+
+def full_hour(dt: datetime) -> datetime:
+    """
+    Truncates datetime to full hour, <date>14h34:13 -> <date>14h00:00
+    """
+    return dt.replace(microsecond=0, second=0, minute=0)
